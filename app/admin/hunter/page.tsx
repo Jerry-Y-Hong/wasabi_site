@@ -39,7 +39,15 @@ export default function HunterPage() {
         }, 1500);
     };
 
-    const handleGeneratePPT = (partner: HunterResult) => {
+    const [opened, setOpened] = useState(false);
+    const [selectedPartner, setSelectedPartner] = useState<HunterResult | null>(null);
+
+    const handlePreview = (partner: HunterResult) => {
+        setSelectedPartner(partner);
+        setOpened(true);
+    };
+
+    const handleDownloadPPT = (partner: HunterResult) => {
         // 1. Create a new Presentation
         let pres = new pptxgen();
 
@@ -146,7 +154,7 @@ export default function HunterPage() {
                                                 size="xs"
                                                 color="wasabi"
                                                 leftSection={<IconFileText size={14} />}
-                                                onClick={() => handleGeneratePPT(element)}
+                                                onClick={() => handlePreview(element)}
                                             >
                                                 Proposal
                                             </Button>
@@ -162,6 +170,47 @@ export default function HunterPage() {
                     </Group>
                 </Stack>
             )}
+
+            <Modal opened={opened} onClose={() => setOpened(false)} title="Proposal Preview" size="xl" centered>
+                {selectedPartner && (
+                    <Stack>
+                        <Card withBorder shadow="sm" bg="gray.1" padding="xl">
+                            <Text size="xl" fw={700} c="green.9" ta="center" mt="md">Strategic Partnership Proposal</Text>
+                            <Text size="lg" ta="center" mt="sm">K-Farm International x {selectedPartner.name}</Text>
+                            <Text size="sm" c="dimmed" ta="center" mt="xl">Prepared for: {selectedPartner.contact}</Text>
+                            <Badge color="red" variant="outline" mx="auto" mt="md">CONFIDENTIAL</Badge>
+                        </Card>
+
+                        <Card withBorder padding="lg">
+                            <Title order={4} mb="md">1. Why We Connected</Title>
+                            <List size="sm" spacing="xs">
+                                <List.Item><b>Target Relevance:</b> {selectedPartner.relevance}</List.Item>
+                                <List.Item><b>Organization Type:</b> {selectedPartner.type}</List.Item>
+                                <List.Item><b>Potential Synergy:</b> Shared R&D goals in smart agriculture.</List.Item>
+                            </List>
+                        </Card>
+
+                        <Card withBorder padding="lg">
+                            <Title order={4} mb="md">2. K-Farm Solutions</Title>
+                            <List size="sm" spacing="xs">
+                                <List.Item>Virus-Free Seedlings (Tissue Culture)</List.Item>
+                                <List.Item>Hyper-Cycle Aeroponic Systems (9 Months Cycle)</List.Item>
+                                <List.Item>ESG & Energy Efficient LED Technology</List.Item>
+                            </List>
+                        </Card>
+
+                        <Button
+                            leftSection={<IconDownload size={16} />}
+                            color="grape"
+                            fullWidth
+                            mt="md"
+                            onClick={() => handleDownloadPPT(selectedPartner)}
+                        >
+                            Download as PPTX
+                        </Button>
+                    </Stack>
+                )}
+            </Modal>
         </Container>
     );
 }
