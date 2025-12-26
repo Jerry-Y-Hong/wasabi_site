@@ -1,0 +1,46 @@
+.hero {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/hero-smart-farm.jpg');
+    background-size: cover;
+    background-position: center;
+    padding-top: calc(var(--mantine-spacing-xl) * 3);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 3);
+}
+
+.inner {
+    position: relative;
+    z-index: 1;
+}
+
+.title {
+    color: var(--mantine-color-white);
+    font-size: 62px;
+    font-weight: 900;
+    line-height: 1.1;
+
+    @media (max-width: 48em) {
+        font-size: 42px;
+        line-height: 1.2;
+    }
+}
+
+.highlight {
+    color: var(--mantine-color-wasabi-6);
+}
+
+.description {
+    color: var(--mantine-color-gray-3);
+    max-width: 600px;
+}
+
+.control {
+    padding-left: 50px;
+    padding-right: 50px;
+    font-family: var(--mantine-font-family);
+    font-size: 22px;
+
+    @media (max-width: 36em) {
+        width: 100%;
+        font-size: 18px;
+    }
+}
