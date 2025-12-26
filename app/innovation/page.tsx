@@ -150,8 +150,8 @@ export default function InsightsPage() {
                             <Title order={3} mb="md">Autonomous Wasabi Harvesting Systems</Title>
                             <Text fz="lg" mb="xl">
                                 Traditional wasabi harvesting is extremely delicate due to the plant's fragile root systems.
-                                New global startups are deploying multi-armed AI robots equipped with <b>Tactile Feedback Sensors</b>.
-                                These bots can identify peak maturity and harvest with 99.9% precision,
+                                Leading innovators in <b>Ag-Tech automation</b> are deploying multi-armed AI robots equipped with <b>Tactile Feedback Sensors</b>.
+                                These systems, appearing in advanced vertical farms globally, can identify peak maturity and harvest with 99.9% precision,
                                 solving the labor shortage crisis while maintaining 0% damage to the rhizome.
                             </Text>
                             <List spacing="sm">
@@ -166,12 +166,12 @@ export default function InsightsPage() {
                     <Grid gutter={50} align="center">
                         <Grid.Col span={{ base: 12, md: 6 }} order={{ base: 2, md: 1 }}>
                             <Badge color="blue" mb="xs">Data Science</Badge>
-                            <Title order={3} mb="md">AI Digital Twin: Simulating Perfection</Title>
+                            <Title order={3} mb="md">AI Digital Twin: Inspired by Farm66 (HK)</Title>
                             <Text fz="lg" mb="xl">
-                                Wasabi is one of the world's most difficult crops to manage. "Digital Twins" create
-                                a virtual replica of the entire farm. By processing millions of data points from IoT sensors,
+                                Wasabi is one of the world's most difficult crops to manage. Following the pioneering work of <b>Farm66</b> in Hong Kong, we focus on
+                                "Digital Twins" that create a virtual replica of the entire farm. By processing millions of data points from IoT sensors,
                                 the AI simulates different climate scenarios to find the <b>Absolute Optimal Growth Recipe</b>.
-                                This results in a massive 2.5x increase in the production of functional compounds.
+                                This results in a massive reduction of the growth cycle from 24 months to just 9 months.
                             </Text>
                             <List spacing="sm">
                                 <List.Item><b>Predictive Yield:</b> Estimating harvest volumes months in advance.</List.Item>
@@ -191,12 +191,12 @@ export default function InsightsPage() {
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 6 }}>
                             <Badge color="orange" mb="xs">Bio-Lighting</Badge>
-                            <Title order={3} mb="md">Adaptive Bio-Spectral LED Growth Lights</Title>
+                            <Title order={3} mb="md">Adaptive Bio-Spectral LED (Signify Legacy)</Title>
                             <Text fz="lg" mb="xl">
-                                Light is not just for vision; it's a chemical signal. Adaptive LED systems can now
-                                shift spectrums throughout the day to mimic the morning mist and dappled sunlight
-                                of Shizuoka streams. By targeting specific photoreceptors, we can stimulate the
-                                production of <b>6-MSITC</b>, the essential compound for cognitive health.
+                                Light is a chemical signal. Utilizing spectral technologies similar to those pioneered by global leaders like <b>Signify (Philips Lighting)</b>,
+                                adaptive LED systems can now shift spectrums to mimic the morning mist and dappled sunlight
+                                of Shizuoka streams. By targeting specific photoreceptors, we stimulate the
+                                production of <b>6-MSITC</b>, the essential compound for cognitive health, as researched by <b>Japanese Agricultural Institutes</b>.
                             </Text>
                             <List spacing="sm">
                                 <List.Item><b>Dynamic Spectrum:</b> Adjusting blue/red ratios for growth stages.</List.Item>
