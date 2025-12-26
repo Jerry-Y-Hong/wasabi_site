@@ -21,9 +21,11 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
     return (
         <Container size="md" py={80}>
-            <Button component={Link} href="/news" variant="subtle" color="gray" mb="xl">
-                ← Back to News
-            </Button>
+            <Link href="/news" style={{ textDecoration: 'none' }}>
+                <Button variant="subtle" color="gray" mb="xl">
+                    ← Back to News
+                </Button>
+            </Link>
 
             <Badge color="blue" size="lg" mb="md">{news.category}</Badge>
             <Title order={1} mb="xs">{news.title}</Title>
