@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Group, Anchor, Text, Stack } from '@mantine/core';
+import { Container, Group, Anchor, Text, Stack, Image } from '@mantine/core';
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/icons-react';
 import classes from './Footer.module.css';
 
@@ -27,13 +27,16 @@ export function Footer() {
     return (
         <div className={classes.footer}>
             <Container className={classes.inner} size="xl">
-                <Stack gap={0}>
-                    <Text size="lg" fw={700} c="wasabi">K-Farm International Co., Ltd</Text>
-                    <Text size="xs" c="dimmed">강원특별자치도 화천군 상서면 다목리 745</Text>
-                    <Text size="xs" c="dimmed">Tel: 82-10-4355-0633</Text>
-                    <Text size="xs" c="dimmed" mt={5}>International Marketing: Jerry Y. Hong</Text>
-                    <Text size="xs" c="dimmed">Premium Quality & Technology</Text>
-                </Stack>
+                <Group gap="md">
+                    <Image src="/images/logo.jpg" alt="Logo" h={60} w="auto" radius="md" />
+                    <Stack gap={0}>
+                        <Text size="lg" fw={700} c="wasabi">K-Farm International Co., Ltd</Text>
+                        <Text size="xs" c="dimmed">강원특별자치도 화천군 상서면 다목리 745</Text>
+                        <Text size="xs" c="dimmed">Tel: 82-10-4355-0633</Text>
+                        <Text size="xs" c="dimmed" mt={5}>International Marketing: Jerry Y. Hong</Text>
+                        <Text size="xs" c="dimmed">Premium Quality & Technology</Text>
+                    </Stack>
+                </Group>
 
                 <Group className={classes.links}>{items}</Group>
                 <Group gap="xs" justify="flex-end" wrap="nowrap">

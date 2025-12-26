@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Group, Burger, Drawer, Stack, Button, Text, Box } from '@mantine/core';
+import { Container, Group, Burger, Drawer, Stack, Button, Text, Box, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
 import classes from './Header.module.css';
@@ -35,14 +35,17 @@ export function Header() {
         <header className={classes.header}>
             <Container size="xl" className={classes.inner}>
                 <Link href="/" style={{ textDecoration: 'none' }}>
-                    <Text
-                        size="xl"
-                        fw={900}
-                        variant="gradient"
-                        gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
-                    >
-                        K-Farm International
-                    </Text>
+                    <Group gap="xs">
+                        <Image src="/images/logo.jpg" alt="Logo" h={40} w="auto" radius="md" />
+                        <Text
+                            size="xl"
+                            fw={900}
+                            variant="gradient"
+                            gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
+                        >
+                            K-Farm International
+                        </Text>
+                    </Group>
                 </Link>
                 <Group gap={5} visibleFrom="xs">
                     {items}
