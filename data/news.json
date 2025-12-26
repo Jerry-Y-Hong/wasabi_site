@@ -1,0 +1,20 @@
+[
+    {
+        "id": "1",
+        "title": "K-Farm International Secures Major Export Deal for Virus-Free Seedlings",
+        "date": "2024-12-27",
+        "category": "Export",
+        "summary": "Our specialized tissue culture laboratory has signed an agreement to export 100,000 virus-free wasabi seedlings to Southeast Asia.",
+        "content": "K-Farm International is proud to announce its first major export agreement for our high-quality tissue culture seedlings. This deal marks a significant milestone in our mission to lead the global wasabi revolution...",
+        "image": "/images/seedlings-lab.jpg"
+    },
+    {
+        "id": "2",
+        "title": "New AI-Driven Harvest Robot Successfully Deployed",
+        "date": "2024-12-20",
+        "category": "Innovation",
+        "summary": "The latest generation of our autonomous harvesting robot has achieved a 99.9% success rate in field tests.",
+        "content": "In collaboration with global Ag-Tech leaders, we have successfully integrated advanced tactile feedback sensors into our harvesting robots, ensuring zero-damage to the delicate wasabi rhizomes...",
+        "image": "/images/tech-robot.png"
+    }
+]

@@ -12,6 +12,7 @@ const links = [
     { link: '/cultivation', label: 'Cultivation' },
     { link: '/products/fresh', label: 'Products' },
     { link: '/innovation', label: 'Innovation' },
+    { link: '/news', label: 'News' },
     { link: '/partnership', label: 'Partnership' },
     { link: '/consulting', label: 'Consulting' },
     { link: '/contact', label: 'Contact' },
