@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image } from '@mantine/core';
-import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles } from '@tabler/icons-react';
+import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles, IconShieldCheck } from '@tabler/icons-react';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
 
 export default function InsightsPage() {
@@ -126,40 +126,40 @@ export default function InsightsPage() {
                 <Title order={2} ta="center" mb={40}>Global Innovation & Tech Trends</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
                     <InsightCard
-                        title="AI & Smart Robotics"
-                        description="Autonomous harvesting robots and AI-driven pest detection systems are revolutionizing labor-intensive farming tasks."
+                        title="Hyper-Cycle Cultivation"
+                        description="Innovations from tech hubs like Hong Kong (Farm66) use IoT and AI to reduce the traditional wasabi harvest cycle from 24 months to just 9 months."
+                        icon={IconRotateClockwise}
+                    />
+                    <InsightCard
+                        title="AI Digital Twin Management"
+                        description="Global players are adopting Digital Twin technology to simulate the complex environmental needs of Wasabi, predicting yields with 95% accuracy."
                         icon={IconChartLine}
                     />
                     <InsightCard
-                        title="Specialized LED Systems"
-                        description="Next-generation spectrum-tunable LEDs optimized specifically for wasabi growth cycles, reducing energy costs by 30%."
+                        title="Adaptive Spectrum LED"
+                        description="New spectrum-tunable LED systems can mimic the precise indirect sunlight found in Japanese Shizuoka streams, maximizing the potent 6-MSITC compound."
                         icon={IconSparkles}
-                    />
-                    <InsightCard
-                        title="Energy-Efficient Systems"
-                        description="Geothermal and solar-integrated climate control systems ensuring 100% sustainable smart farm operations."
-                        icon={IconWorld}
                     />
                 </SimpleGrid>
             </Box>
 
             <Box py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} ta="center" mb={40}>Expansion into Food Processing & Bio-Sector</Title>
+                <Title order={2} ta="center" mb={40}>Future Scale & Global Expansion</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
                     <InsightCard
-                        title="High-Value Processing"
-                        description="Beyond fresh rhizomes, we are expanding into processed pastes, oils, and seasonings that command premium prices in international retail."
-                        icon={IconChartLine}
+                        title="Urban Vertical Hubs"
+                        description="Repurposing large-scale industrial spaces into vertical farms to produce fresh wasabi globally, eliminating high air-freight costs and spoilage."
+                        icon={IconWorld}
                     />
                     <InsightCard
-                        title="Functional Foods"
-                        description="Wasabi contains 6-MSITC, a powerful antioxidant. We are developing functional dietary supplements targeting cognitive and immune health."
+                        title="Precision Bio-Analytics"
+                        description="Utilizing mass spectrometry and AI to monitor active compounds in real-time, ensuring medicinal-grade quality for the bio-pharmaceutical sector."
                         icon={IconFlask}
                     />
                     <InsightCard
-                        title="Cosmetics & Bio"
-                        description="Utilizing the antimicrobial properties of wasabi for natural preservatives and luxury skincare ingredients."
-                        icon={IconSparkles}
+                        title="ESG Integrated Systems"
+                        description="Renewable energy integration (solar/geothermal) and water recycling systems that uses 95% less water than traditional valley cultivation."
+                        icon={IconShieldCheck}
                     />
                 </SimpleGrid>
             </Box>
