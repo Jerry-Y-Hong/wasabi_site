@@ -31,7 +31,7 @@ export function Footer() {
                     <Image src="/images/logo.jpg" alt="Logo" h={60} w="auto" radius="md" />
                     <Stack gap={0}>
                         <Text size="lg" fw={700} c="wasabi">K-Farm International Co., Ltd</Text>
-                        <Text size="xs" c="dimmed">강원특별자치도 화천군 상서면 다목리 745</Text>
+                        <Text size="xs" c="dimmed">745, Damok-ri, Sangseo-myeon, Hwacheon-gun, Gangwon-state, Republic of Korea</Text>
                         <Text size="xs" c="dimmed">Tel: 82-10-4355-0633</Text>
                         <Text size="xs" c="dimmed" mt={5}>International Marketing: Jerry Y. Hong</Text>
                         <Text size="xs" c="dimmed">Premium Quality & Technology</Text>
