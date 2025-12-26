@@ -9,6 +9,8 @@ interface HunterResult {
     name: string;
     type: string;
     relevance: string;
+    contact?: string;
+    phone?: string;
     url: string;
 }
 
@@ -25,11 +27,11 @@ export default function HunterPage() {
         // In a real scenario, this would call a server action connected to a search API
         setTimeout(() => {
             const mockResults = [
-                { id: 1, name: 'Kangwon National University - College of Agriculture', type: 'University', relevance: 'High (Smart Farm Research)', url: 'https://cals.kangwon.ac.kr' },
-                { id: 2, name: 'Rural Development Administration (RDA)', type: 'Government', relevance: 'High (Funding & Policy)', url: 'https://www.rda.go.kr' },
-                { id: 3, name: 'Green Bio Venture Campus', type: 'Incubator', relevance: 'Medium (Startup Support)', url: '#Link' },
-                { id: 4, name: 'Smart Farm Korea', type: 'Association', relevance: 'High (Industry Network)', url: 'https://www.smartfarmkorea.net' },
-                { id: 5, name: 'Seoul National University - Dept. of Plant Science', type: 'University', relevance: 'Medium (Bio-Tech)', url: 'https://cals.snu.ac.kr' },
+                { id: 1, name: 'Kangwon National University - College of Agriculture', type: 'University', relevance: 'High (Smart Farm Research)', contact: 'Prof. Kim Cheol-soo', phone: '033-250-1234', url: 'https://cals.kangwon.ac.kr' },
+                { id: 2, name: 'Rural Development Administration (RDA)', type: 'Government', relevance: 'High (Funding & Policy)', contact: 'Dr. Lee Young-hee', phone: '063-238-1000', url: 'https://www.rda.go.kr' },
+                { id: 3, name: 'Green Bio Venture Campus', type: 'Incubator', relevance: 'Medium (Startup Support)', contact: 'Manager Park', phone: '033-333-5678', url: '#Link' },
+                { id: 4, name: 'Smart Farm Korea', type: 'Association', relevance: 'High (Industry Network)', contact: 'Secretariat', phone: '1522-2911', url: 'https://www.smartfarmkorea.net' },
+                { id: 5, name: 'Seoul National University - Dept. of Plant Science', type: 'University', relevance: 'Medium (Bio-Tech)', contact: 'Admin Office', phone: '02-880-5114', url: 'https://cals.snu.ac.kr' },
             ];
             setResults(mockResults);
             setLoading(false);
@@ -81,6 +83,8 @@ export default function HunterPage() {
                                 <Table.Th>Organization Name</Table.Th>
                                 <Table.Th>Type</Table.Th>
                                 <Table.Th>Relevance Analysis</Table.Th>
+                                <Table.Th>Contact Person</Table.Th>
+                                <Table.Th>Phone</Table.Th>
                                 <Table.Th>Action</Table.Th>
                             </Table.Tr>
                         </Table.Thead>
@@ -90,6 +94,8 @@ export default function HunterPage() {
                                     <Table.Td fw={500}>{element.name}</Table.Td>
                                     <Table.Td><Badge variant="light" color="blue">{element.type}</Badge></Table.Td>
                                     <Table.Td>{element.relevance}</Table.Td>
+                                    <Table.Td>{element.contact}</Table.Td>
+                                    <Table.Td>{element.phone}</Table.Td>
                                     <Table.Td>
                                         <Button component="a" href={element.url} target="_blank" variant="subtle" size="xs" rightSection={<IconExternalLink size={14} />}>
                                             Visit
