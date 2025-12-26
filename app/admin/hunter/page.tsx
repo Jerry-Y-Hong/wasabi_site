@@ -1,8 +1,9 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, Loader, ActionIcon } from '@mantine/core';
+import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, Loader, ActionIcon, Modal, List, ThemeIcon } from '@mantine/core';
 import { useState } from 'react';
-import { IconSearch, IconExternalLink, IconRobot } from '@tabler/icons-react';
+import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck } from '@tabler/icons-react';
+import pptxgen from 'pptxgenjs';
 
 interface HunterResult {
     id: number;
@@ -36,6 +37,42 @@ export default function HunterPage() {
             setResults(mockResults);
             setLoading(false);
         }, 1500);
+    };
+
+    const handleGeneratePPT = (partner: HunterResult) => {
+        // 1. Create a new Presentation
+        let pres = new pptxgen();
+
+        // 2. Add Cover Slide
+        let slide1 = pres.addSlide();
+        slide1.background = { color: 'F1F3F5' };
+        slide1.addText('Strategic Partnership Proposal', { x: 1, y: 2, w: '80%', fontSize: 36, bold: true, color: '2B8A3E' });
+        slide1.addText(`K-Farm International  x  ${partner.name}`, { x: 1, y: 3.5, w: '80%', fontSize: 24, color: '343A40' });
+        slide1.addText(`Prepared for: ${partner.contact}`, { x: 1, y: 5, fontSize: 14, color: '868E96' });
+        slide1.addText('Confidential', { x: 8, y: 5, fontSize: 12, color: 'Red' });
+
+        // 3. Add Context/Analysis Slide
+        let slide2 = pres.addSlide();
+        slide2.addText('Why We Connected', { x: 0.5, y: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
+        slide2.addText(`Analysis of ${partner.name}`, { x: 0.5, y: 1.0, fontSize: 24, bold: true });
+        slide2.addText([
+            { text: `Target Relevance: ${partner.relevance}`, options: { bullet: true, breakLine: true } },
+            { text: `Organization Type: ${partner.type}`, options: { bullet: true, breakLine: true } },
+            { text: 'Potential Synergy: Shared R&D goals in smart agriculture.', options: { bullet: true } }
+        ], { x: 0.5, y: 2.0, w: '40%', fontSize: 14 });
+
+        // 4. Add Our Solution Slide
+        let slide3 = pres.addSlide();
+        slide3.addText('Our Core Competency', { x: 0.5, y: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
+        slide3.addText('K-Farm Smart Solutions', { x: 0.5, y: 1.0, fontSize: 24, bold: true });
+        slide3.addText([
+            { text: 'Virus-Free Seedlings (Tissue Culture)', options: { bullet: true, breakLine: true } },
+            { text: 'Hyper-Cycle Aeroponic Systems (9 Months Cycle)', options: { bullet: true, breakLine: true } },
+            { text: 'ESG & Energy Efficient LED Technology', options: { bullet: true } }
+        ], { x: 0.5, y: 2.0, fontSize: 16 });
+
+        // 5. Save the Presentation
+        pres.writeFile({ fileName: `K-Farm_Proposal_${partner.name}.pptx` });
     };
 
     return (
@@ -97,9 +134,20 @@ export default function HunterPage() {
                                     <Table.Td>{element.contact}</Table.Td>
                                     <Table.Td>{element.phone}</Table.Td>
                                     <Table.Td>
-                                        <Button component="a" href={element.url} target="_blank" variant="subtle" size="xs" rightSection={<IconExternalLink size={14} />}>
-                                            Visit
-                                        </Button>
+                                        <Group gap="xs">
+                                            <Button component="a" href={element.url} target="_blank" variant="subtle" size="xs" color="gray">
+                                                <IconExternalLink size={14} />
+                                            </Button>
+                                            <Button
+                                                variant="light"
+                                                size="xs"
+                                                color="wasabi"
+                                                leftSection={<IconFileText size={14} />}
+                                                onClick={() => handleGeneratePPT(element)}
+                                            >
+                                                Proposal
+                                            </Button>
+                                        </Group>
                                     </Table.Td>
                                 </Table.Tr>
                             ))}
@@ -108,7 +156,6 @@ export default function HunterPage() {
 
                     <Group justify="flex-end" mt="md">
                         <Button variant="outline" color="gray">Export List</Button>
-                        <Button variant="filled" color="grape">Generate Proposals (Coming Soon)</Button>
                     </Group>
                 </Stack>
             )}
