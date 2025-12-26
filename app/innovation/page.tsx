@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image } from '@mantine/core';
+import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image, Grid } from '@mantine/core';
 import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles, IconShieldCheck } from '@tabler/icons-react';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
 
@@ -122,44 +122,95 @@ export default function InsightsPage() {
                 </SimpleGrid>
             </Box>
 
-            <Box py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} ta="center" mb={40}>Global Innovation & Tech Trends</Title>
-                <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    <InsightCard
-                        title="Hyper-Cycle Cultivation"
-                        description="Innovations from tech hubs like Hong Kong (Farm66) use IoT and AI to reduce the traditional wasabi harvest cycle from 24 months to just 9 months."
-                        icon={IconRotateClockwise}
-                    />
-                    <InsightCard
-                        title="AI Digital Twin Management"
-                        description="Global players are adopting Digital Twin technology to simulate the complex environmental needs of Wasabi, predicting yields with 95% accuracy."
-                        icon={IconChartLine}
-                    />
-                    <InsightCard
-                        title="Adaptive Spectrum LED"
-                        description="New spectrum-tunable LED systems can mimic the precise indirect sunlight found in Japanese Shizuoka streams, maximizing the potent 6-MSITC compound."
-                        icon={IconSparkles}
-                    />
-                </SimpleGrid>
+            <Box py={80} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+                <Title order={2} ta="center" mb={60} size="h1">Global Innovation Deep-Dive</Title>
+
+                <Stack gap={100}>
+                    {/* Tech 1: AI & Robotics */}
+                    <Grid gutter={50} align="center">
+                        <Grid.Col span={{ base: 12, md: 6 }}>
+                            <Image src="/images/tech-robot.png" radius="lg" style={{ boxShadow: 'var(--mantine-shadow-xl)' }} alt="AI Harvesting Robot" />
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 6 }}>
+                            <Badge color="wasabi" mb="xs">Robotics & Automation</Badge>
+                            <Title order={3} mb="md">Autonomous Wasabi Harvesting Systems</Title>
+                            <Text fz="lg" mb="xl">
+                                Traditional wasabi harvesting is extremely delicate due to the plant's fragile root systems.
+                                New global startups are deploying multi-armed AI robots equipped with <b>Tactile Feedback Sensors</b>.
+                                These bots can identify peak maturity and harvest with 99.9% precision,
+                                solving the labor shortage crisis while maintaining 0% damage to the rhizome.
+                            </Text>
+                            <List spacing="sm">
+                                <List.Item><b>Computer Vision:</b> Real-time ripeness detection.</List.Item>
+                                <List.Item><b>24/7 Operation:</b> Maximizing facility throughput.</List.Item>
+                                <List.Item><b>Zero-Waste:</b> Precise cutting reduces raw material loss.</List.Item>
+                            </List>
+                        </Grid.Col>
+                    </Grid>
+
+                    {/* Tech 2: Digital Twin */}
+                    <Grid gutter={50} align="center">
+                        <Grid.Col span={{ base: 12, md: 6 }} order={{ base: 2, md: 1 }}>
+                            <Badge color="blue" mb="xs">Data Science</Badge>
+                            <Title order={3} mb="md">AI Digital Twin: Simulating Perfection</Title>
+                            <Text fz="lg" mb="xl">
+                                Wasabi is one of the world's most difficult crops to manage. "Digital Twins" create
+                                a virtual replica of the entire farm. By processing millions of data points from IoT sensors,
+                                the AI simulates different climate scenarios to find the <b>Absolute Optimal Growth Recipe</b>.
+                                This results in a massive 2.5x increase in the production of functional compounds.
+                            </Text>
+                            <List spacing="sm">
+                                <List.Item><b>Predictive Yield:</b> Estimating harvest volumes months in advance.</List.Item>
+                                <List.Item><b>Risk Mitigation:</b> Predicting disease before visible symptoms appear.</List.Item>
+                                <List.Item><b>Nutrient Optimization:</b> Perfecting the flavor profile via AI.</List.Item>
+                            </List>
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 6 }} order={{ base: 1, md: 2 }}>
+                            <Image src="/images/tech-digital-twin.png" radius="lg" style={{ boxShadow: 'var(--mantine-shadow-xl)' }} alt="Digital Twin Dashboard" />
+                        </Grid.Col>
+                    </Grid>
+
+                    {/* Tech 3: LED Spectrum */}
+                    <Grid gutter={50} align="center">
+                        <Grid.Col span={{ base: 12, md: 6 }}>
+                            <Image src="/images/tech-led.png" radius="lg" style={{ boxShadow: 'var(--mantine-shadow-xl)' }} alt="Advanced LED Lighting" />
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 6 }}>
+                            <Badge color="orange" mb="xs">Bio-Lighting</Badge>
+                            <Title order={3} mb="md">Adaptive Bio-Spectral LED Growth Lights</Title>
+                            <Text fz="lg" mb="xl">
+                                Light is not just for vision; it's a chemical signal. Adaptive LED systems can now
+                                shift spectrums throughout the day to mimic the morning mist and dappled sunlight
+                                of Shizuoka streams. By targeting specific photoreceptors, we can stimulate the
+                                production of <b>6-MSITC</b>, the essential compound for cognitive health.
+                            </Text>
+                            <List spacing="sm">
+                                <List.Item><b>Dynamic Spectrum:</b> Adjusting blue/red ratios for growth stages.</List.Item>
+                                <List.Item><b>30% Energy Savings:</b> Pulsed-lighting technology for efficiency.</List.Item>
+                                <List.Item><b>Bioluminescence Simulation:</b> Maximizing cellular regeneration.</List.Item>
+                            </List>
+                        </Grid.Col>
+                    </Grid>
+                </Stack>
             </Box>
 
             <Box py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} ta="center" mb={40}>Future Scale & Global Expansion</Title>
+                <Title order={2} ta="center" mb={40}>Expansion into Food Processing & Bio-Sector</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
                     <InsightCard
-                        title="Urban Vertical Hubs"
-                        description="Repurposing large-scale industrial spaces into vertical farms to produce fresh wasabi globally, eliminating high air-freight costs and spoilage."
-                        icon={IconWorld}
+                        title="High-Value Processing"
+                        description="Beyond fresh rhizomes, we are expanding into processed pastes, oils, and seasonings that command premium prices in international retail."
+                        icon={IconChartLine}
                     />
                     <InsightCard
-                        title="Precision Bio-Analytics"
-                        description="Utilizing mass spectrometry and AI to monitor active compounds in real-time, ensuring medicinal-grade quality for the bio-pharmaceutical sector."
+                        title="Functional Foods"
+                        description="Wasabi contains 6-MSITC, a powerful antioxidant. We are developing functional dietary supplements targeting cognitive and immune health."
                         icon={IconFlask}
                     />
                     <InsightCard
-                        title="ESG Integrated Systems"
-                        description="Renewable energy integration (solar/geothermal) and water recycling systems that uses 95% less water than traditional valley cultivation."
-                        icon={IconShieldCheck}
+                        title="Cosmetics & Bio"
+                        description="Utilizing the antimicrobial properties of wasabi for natural preservatives and luxury skincare ingredients."
+                        icon={IconSparkles}
                     />
                 </SimpleGrid>
             </Box>
