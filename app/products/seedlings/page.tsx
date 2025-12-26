@@ -13,18 +13,24 @@ export default function SeedlingsPage() {
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing={50} verticalSpacing={50}>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Image
-                        src="/images/tissue-culture.jpg"
+                        src="/images/seedlings-lab.jpg"
                         radius="md"
-                        alt="Tissue Culture Lab"
-                        max-width="100%"
+                        alt="High-Tech Research Lab"
+                        style={{ border: '4px solid var(--mantine-color-wasabi-light)' }}
                     />
                 </div>
                 <div>
-                    <Title order={2} mb="md">Elite Virus-Free Seedlings</Title>
+                    <Title order={2} mb="md">World-Class R&D and Tissue Culture</Title>
                     <Text c="dimmed" mb="lg">
-                        Our specialized tissue culture laboratory produces high-quality "無病묘" (virus-free seedlings).
-                        By utilizing advanced biotechnology in a sterile environment, we ensure genetic stability and
-                        robustness, enabling a stable, year-round supply system that is independent of seasonal changes.
+                        At <strong>K-Farm International</strong>, our core strength lies in our cutting-edge laboratory environment.
+                        We don't just grow plants; we engineer success through advanced biotechnology. Our research facility
+                        focuses on the mass production of premium virus-free seedlings utilizing sophisticated
+                        tissue culture techniques.
+                    </Text>
+                    <Text c="dimmed" mb="lg">
+                        This state-of-the-art sterile environment ensures that every seedling starts its life with maximum vigor,
+                        providing our partners with the genetic stability and robustness needed for successful
+                        large-scale cultivation.
                     </Text>
 
                     <List
