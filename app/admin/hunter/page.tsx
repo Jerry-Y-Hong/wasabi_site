@@ -46,20 +46,21 @@ export default function HunterPage() {
         // 2. Add Cover Slide
         let slide1 = pres.addSlide();
         slide1.background = { color: 'F1F3F5' };
-        slide1.addText('Strategic Partnership Proposal', { x: 1, y: 2, w: '80%', fontSize: 36, bold: true, color: '2B8A3E' });
-        slide1.addText(`K-Farm International  x  ${partner.name}`, { x: 1, y: 3.5, w: '80%', fontSize: 24, color: '343A40' });
-        slide1.addText(`Prepared for: ${partner.contact}`, { x: 1, y: 5, fontSize: 14, color: '868E96' });
-        slide1.addText('Confidential', { x: 8, y: 5, fontSize: 12, color: 'Red' });
+        slide1.addText('Strategic Partnership Proposal', { x: 1, y: 2, w: 8, fontSize: 36, bold: true, color: '2B8A3E' });
+        slide1.addText(`K-Farm International  x  ${partner.name}`, { x: 1, y: 3.5, w: 8, fontSize: 24, color: '343A40' });
+        const contactInfo = partner.contact || 'Partner';
+        slide1.addText(`Prepared for: ${contactInfo}`, { x: 1, y: 5, fontSize: 14, color: '868E96' });
+        slide1.addText('Confidential', { x: 8, y: 5, fontSize: 12, color: 'FF0000' });
 
         // 3. Add Context/Analysis Slide
         let slide2 = pres.addSlide();
         slide2.addText('Why We Connected', { x: 0.5, y: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
-        slide2.addText(`Analysis of ${partner.name}`, { x: 0.5, y: 1.0, fontSize: 24, bold: true });
+        slide2.addText(`Analysis of ${partner.name}`, { x: 0.5, y: 1.0, fontSize: 24, bold: true, w: 9 });
         slide2.addText([
             { text: `Target Relevance: ${partner.relevance}`, options: { bullet: true, breakLine: true } },
             { text: `Organization Type: ${partner.type}`, options: { bullet: true, breakLine: true } },
             { text: 'Potential Synergy: Shared R&D goals in smart agriculture.', options: { bullet: true } }
-        ], { x: 0.5, y: 2.0, w: '40%', fontSize: 14 });
+        ], { x: 0.5, y: 2.0, w: 9, fontSize: 14 });
 
         // 4. Add Our Solution Slide
         let slide3 = pres.addSlide();
@@ -69,10 +70,12 @@ export default function HunterPage() {
             { text: 'Virus-Free Seedlings (Tissue Culture)', options: { bullet: true, breakLine: true } },
             { text: 'Hyper-Cycle Aeroponic Systems (9 Months Cycle)', options: { bullet: true, breakLine: true } },
             { text: 'ESG & Energy Efficient LED Technology', options: { bullet: true } }
-        ], { x: 0.5, y: 2.0, fontSize: 16 });
+        ], { x: 0.5, y: 2.0, w: 9, fontSize: 16 });
 
         // 5. Save the Presentation
-        pres.writeFile({ fileName: `K-Farm_Proposal_${partner.name}.pptx` });
+        // Sanitize filename to remove special chars like / \ : * ? " < > |
+        const safeName = partner.name.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
+        pres.writeFile({ fileName: `K-Farm_Proposal_${safeName}.pptx` });
     };
 
     return (
