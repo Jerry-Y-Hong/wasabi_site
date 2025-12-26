@@ -11,7 +11,7 @@ const links = [
     { link: '/products/seedlings', label: 'Seedlings' },
     { link: '/cultivation', label: 'Cultivation' },
     { link: '/products/fresh', label: 'Products' },
-    { link: '/insights', label: 'Insights' },
+    { link: '/innovation', label: 'Innovation' },
     { link: '/partnership', label: 'Partnership' },
     { link: '/consulting', label: 'Consulting' },
     { link: '/contact', label: 'Contact' },
