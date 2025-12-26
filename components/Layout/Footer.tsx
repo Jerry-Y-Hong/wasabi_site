@@ -28,7 +28,8 @@ export function Footer() {
         <div className={classes.footer}>
             <Container className={classes.inner} size="xl">
                 <Stack gap={0}>
-                    <Text size="lg" fw={700} c="wasabi">Wasabi Smart Farm</Text>
+                    <Text size="lg" fw={700} c="wasabi">K-Farm International Co., Ltd</Text>
+                    <Text size="xs" c="dimmed">강원특별자치도 화천군 상서면 다목리 745</Text>
                     <Text size="xs" c="dimmed">Premium Quality & Technology</Text>
                 </Stack>
 

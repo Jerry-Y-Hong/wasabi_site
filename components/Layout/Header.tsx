@@ -41,7 +41,7 @@ export function Header() {
                         variant="gradient"
                         gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
                     >
-                        Wasabi Smart Farm
+                        K-Farm International
                     </Text>
                 </Link>
                 <Group gap={5} visibleFrom="xs">
