@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Title, Text, SimpleGrid, Card, Image, Badge, Group, Button, Box, Paper, Grid, List } from '@mantine/core';
+import { Container, Title, Text, SimpleGrid, Card, Image, Badge, Group, Button, Box, Paper, Grid, List, Stack } from '@mantine/core';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
 
 const products = [
@@ -64,6 +64,30 @@ export default function FreshProductsPage() {
                     </Card>
                 ))}
             </SimpleGrid>
+
+            <Card shadow="md" radius="lg" p={0} mb={80} withBorder style={{ overflow: 'hidden' }}>
+                <Grid gutter={0} align="center">
+                    <Grid.Col span={{ base: 12, md: 5 }}>
+                        <Image src="/images/tech-flavor-timer.jpg" alt="Wasabi Peak Flavor" />
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 12, md: 7 }} p="xl">
+                        <Stack>
+                            <Badge color="red" size="lg" variant="filled">Critical Freshness</Badge>
+                            <Title order={2}>A Moment of Awakening: The 15-Minute Rule</Title>
+                            <Text size="lg">
+                                Real wasabi is an experience of time. Once grated, the volatile allyl isothiocyanate
+                                compounds reach their peak flavor within minutes. Our smart farm ensures
+                                that you receive the freshest rhizomes, allowing you to capture that
+                                <b>"Moment of Awakening"</b> at its absolute pinnacle.
+                            </Text>
+                            <Text c="dimmed">
+                                Unlike tube wasabi, fresh wasabi offers a complex sweetness followed by a clean,
+                                nasal-clearing heat that vanishes quickly, leaving a refreshed palate.
+                            </Text>
+                        </Stack>
+                    </Grid.Col>
+                </Grid>
+            </Card>
 
             <Box mt={100} py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
                 <Title order={2} ta="center" mb={10}>Industrial Applications & Marketability</Title>

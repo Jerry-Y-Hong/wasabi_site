@@ -15,6 +15,20 @@ export default function InsightsPage() {
                 </Text>
             </Stack>
 
+            <Grid gutter={50} align="center" mb={80}>
+                <Grid.Col span={{ base: 12, md: 5 }}>
+                    <Image src="/images/traditional-stream.jpg" radius="lg" style={{ boxShadow: 'var(--mantine-shadow-md)' }} alt="Traditional Stream" />
+                    <Text size="xs" c="dimmed" ta="center" mt="sm">Traditional stream-grown wasabi (400+ days Cycle)</Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 2 }} ta="center">
+                    <Title order={2} c="wasabi">VS</Title>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 5 }}>
+                    <Image src="/images/tech-blueprint.jpg" radius="lg" style={{ boxShadow: 'var(--mantine-shadow-md)' }} alt="Smart Farm Blueprint" />
+                    <Text size="xs" c="dimmed" ta="center" mt="sm">K-Farm AI-Aeroponic System (9 months Cycle)</Text>
+                </Grid.Col>
+            </Grid>
+
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing={50} mb={80}>
                 <Box>
                     <Title order={2} mb="md" c="wasabi.7">Global Supply Crisis</Title>

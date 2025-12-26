@@ -2,7 +2,7 @@
 
 import { Hero } from '@/components/ui/Hero';
 import { FeatureCard } from '@/components/ui/FeatureCard';
-import { Container, SimpleGrid, Title, Text, Box, Grid, Paper, Stack, Badge, Button, Group } from '@mantine/core';
+import { Container, SimpleGrid, Title, Text, Box, Grid, Paper, Stack, Badge, Button, Group, Image } from '@mantine/core';
 import Link from 'next/link';
 
 export default function Home() {
@@ -71,6 +71,27 @@ export default function Home() {
                   <TrendItem label="Product Potential" value="Food, Bio, Cosmetics" color="blue" />
                 </Stack>
               </Paper>
+            </Grid.Col>
+          </Grid>
+        </Box>
+        <Box mt={100} py={60}>
+          <Grid gutter={50} align="center">
+            <Grid.Col span={{ base: 12, md: 5 }}>
+              <Paper shadow="xl" radius="lg" style={{ overflow: 'hidden' }}>
+                <Image src="/images/lifestyle-family.jpg" alt="Family enjoying wasabi" />
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 7 }}>
+              <Badge color="red" size="lg" mb="md">The Ultimate Experience</Badge>
+              <Title order={2} mb="md">Nature's Shield on Your Plate</Title>
+              <Text size="lg" mb="xl">
+                Wasabi is more than a condiment; it's a protector of flavor and health.
+                Whether it's paired with premium Sashimi or a perfectly marbled K-BBQ steak,
+                our fresh wasabi elevates every meal into a joyful, healthy experience for the whole family.
+              </Text>
+              <Button component={Link} href="/products/fresh" size="lg" color="wasabi" radius="md">
+                Buy Fresh Wasabi
+              </Button>
             </Grid.Col>
           </Grid>
         </Box>
