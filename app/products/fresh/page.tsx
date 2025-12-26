@@ -137,7 +137,7 @@ export default function FreshProductsPage() {
                                 </Box>
                                 <Box>
                                     <Text fw={700} c="wasabi.9">Sustainability</Text>
-                                    <Text size="sm">Stable supply regardless of climate crises, meeting ESG requirements.</Text>
+                                    <Text size="sm">Stable supply regardless of climate crisis, meeting ESG requirements.</Text>
                                 </Box>
                             </SimpleGrid>
                         </Grid.Col>
