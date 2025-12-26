@@ -1,8 +1,9 @@
 'use client';
 
-import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image, Grid } from '@mantine/core';
+import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image, Grid, Button } from '@mantine/core';
 import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles, IconShieldCheck } from '@tabler/icons-react';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
+import newsData from '@/data/news.json';
 
 export default function InsightsPage() {
     return (
@@ -227,8 +228,31 @@ export default function InsightsPage() {
                         icon={IconSparkles}
                     />
                 </SimpleGrid>
+
             </Box>
-        </Container>
+
+            <Box py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+                <Group justify="space-between" align="center" mb={40}>
+                    <Title order={2}>Latest Innovation News</Title>
+                    <Button component="a" href="/news" variant="subtle" color="wasabi">View All News →</Button>
+                </Group>
+
+                <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
+                    {newsData.filter(n => n.category === 'Innovation').slice(0, 2).map((item) => (
+                        <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder component="a" href={`/news/${item.id}`}>
+                            <Group>
+                                <Image src={item.image} w={120} h={120} radius="md" alt={item.title} />
+                                <Box flex={1}>
+                                    <Text size="xs" c="dimmed" mb={4}>{item.date}</Text>
+                                    <Title order={4} mb={8} lineClamp={2}>{item.title}</Title>
+                                    <Text size="sm" c="dimmed" lineClamp={2}>{item.summary}</Text>
+                                </Box>
+                            </Group>
+                        </Card>
+                    ))}
+                </SimpleGrid>
+            </Box>
+        </Container >
     );
 }
 
