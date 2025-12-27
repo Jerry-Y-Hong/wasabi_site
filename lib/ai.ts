@@ -5,7 +5,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Initialize Gemini API
 // Note: This requires GEMINI_API_KEY in .env.local
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
+// Use Flash model for faster response (avoids Vercel timeout)
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
 interface ProposalRequest {
     partnerName: string;
