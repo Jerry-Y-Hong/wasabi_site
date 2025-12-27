@@ -7,9 +7,10 @@ export async function setAuthCookie(password: string) {
     const CORRECT_PASSWORD = process.env.ADMIN_PASSWORD || '3357';
 
     if (password === CORRECT_PASSWORD) {
-        cookies().set('wasabi_auth', 'authenticated', {
+        const cookieStore = await cookies();
+        cookieStore.set('wasabi_auth', 'authenticated', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: true, // Always true in production
             maxAge: 60 * 60 * 24 * 7, // 1 week
             path: '/',
         });
