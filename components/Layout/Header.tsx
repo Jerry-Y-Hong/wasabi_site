@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Group, Burger, Drawer, Stack, Button, Text, Box, Image } from '@mantine/core';
+import { Container, Group, Burger, Drawer, Stack, Button, Text, Box, Image, ThemeIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
+import { IconPlant } from '@tabler/icons-react';
 import classes from './Header.module.css';
 
 const links = [
@@ -37,7 +38,9 @@ export function Header() {
             <Container size="xl" className={classes.inner}>
                 <Link href="/" style={{ textDecoration: 'none' }}>
                     <Group gap="xs">
-                        <Image src="/images/logo.jpg" alt="Logo" h={40} w="auto" radius="md" />
+                        <ThemeIcon size={40} radius="md" variant="light" color="wasabi">
+                            <IconPlant size={24} />
+                        </ThemeIcon>
                         <Text
                             size="xl"
                             fw={900}
