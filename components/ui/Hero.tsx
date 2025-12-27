@@ -15,11 +15,11 @@ export function Hero() {
                 </Text>
 
                 <Group mt={40}>
-                    <Button component={Link} href="/partnership" size="xl" className={classes.control} variant="gradient" gradient={{ from: 'wasabi', to: 'lime' }}>
-                        Partner Inquiry
+                    <Button component={Link} href="/admin" size="xl" className={classes.control} variant="gradient" gradient={{ from: 'wasabi', to: 'lime' }}>
+                        Get Started (Admin)
                     </Button>
-                    <Button component={Link} href="/innovation" size="xl" variant="default" className={classes.control}>
-                        Our Technology
+                    <Button component={Link} href="/admin/hunter" size="xl" variant="default" className={classes.control}>
+                        Hunter AI
                     </Button>
                 </Group>
             </Container>
