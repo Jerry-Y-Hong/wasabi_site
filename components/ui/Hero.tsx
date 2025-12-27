@@ -1,6 +1,5 @@
-'use client';
-
 import { Container, Title, Text, Button, Group } from '@mantine/core';
+import Link from 'next/link';
 import classes from './Hero.module.css';
 
 export function Hero() {
@@ -16,11 +15,11 @@ export function Hero() {
                 </Text>
 
                 <Group mt={40}>
-                    <Button size="xl" className={classes.control} variant="gradient" gradient={{ from: 'wasabi', to: 'lime' }}>
-                        Get Started
+                    <Button component={Link} href="/partnership" size="xl" className={classes.control} variant="gradient" gradient={{ from: 'wasabi', to: 'lime' }}>
+                        Partner Inquiry
                     </Button>
-                    <Button size="xl" variant="default" className={classes.control}>
-                        Our Products
+                    <Button component={Link} href="/innovation" size="xl" variant="default" className={classes.control}>
+                        Our Technology
                     </Button>
                 </Group>
             </Container>

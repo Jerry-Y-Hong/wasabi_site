@@ -46,6 +46,12 @@ export default function ContactPage() {
                 Fill out the form below and we will get back to you shortly.
             </Text>
 
+            <Paper p="md" withBorder mb="lg" bg="gray.0">
+                <Text fw={500} size="sm" ta="center">Direct Contact</Text>
+                <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>sbienv0633@gmail.com</Text></Text>
+                <Text ta="center" size="sm" c="dimmed">Mobile: 82-10-4355-0633</Text>
+            </Paper>
+
             <Paper p="xl" withBorder radius="md shadow-md">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
