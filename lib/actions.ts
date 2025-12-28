@@ -3,16 +3,21 @@
 import { promises as fsp } from 'fs';
 import pathLib from 'path';
 
-// Use /tmp for Vercel/Serverless environments (ephemeral storage)
-const DB_PATH = process.env.NODE_ENV === 'production'
+// Use /tmp only on Vercel deployment
+const DB_PATH = process.env.VERCEL === '1'
     ? pathLib.join('/tmp', 'data')
     : pathLib.join(process.cwd(), 'data');
+
+console.log('[Debug] Env Check - VERCEL:', process.env.VERCEL);
+console.log('[Debug] Env Check - NODE_ENV:', process.env.NODE_ENV);
+console.log('[Debug] DB_PATH:', DB_PATH);
 
 async function ensureDataDir() {
     try {
         await fsp.access(DB_PATH);
     } catch {
         try {
+            console.log('[Debug] Creating data directory at:', DB_PATH);
             await fsp.mkdir(DB_PATH, { recursive: true });
         } catch (e) {
             console.error('Failed to create data directory (likely read-only fs):', e);
