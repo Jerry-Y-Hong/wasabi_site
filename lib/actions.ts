@@ -217,8 +217,52 @@ export async function updateHunterInfo(id: number, data: any) {
         await writeDb('hunter.json', currentData);
         return { success: true };
     }
-    // ... existing code ...
     return { success: false };
+}
+
+export async function scanWebsite(url: string) {
+    try {
+        console.log(`[Scan] Visiting: ${url}`);
+
+        // Timeout handling (5 seconds max)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(url, {
+            signal: controller.signal,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error('Failed to load page');
+
+        const html = await response.text();
+
+        // Regex Patterns
+        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+        const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
+
+        // Extraction
+        const foundEmails = html.match(emailRegex) || [];
+        const foundPhones = html.match(phoneRegex) || [];
+
+        // Filter valid stuff (remove junk like image@2x.png)
+        const validEmails = [...new Set(foundEmails)].filter(e => !e.endsWith('.png') && !e.endsWith('.jpg') && !e.endsWith('.svg') && !e.endsWith('.webp') && e.length < 50).slice(0, 3); // Max 3 unique
+        const validPhones = [...new Set(foundPhones)].filter(p => p.length > 8 && p.length < 20).slice(0, 3); // Max 3 unique
+
+        return {
+            success: true,
+            emails: validEmails,
+            phones: validPhones,
+            message: `Found ${validEmails.length} emails, ${validPhones.length} phones.`
+        };
+
+    } catch (error) {
+        console.error(`[Scan] Error scanning ${url}:`, error);
+        return { success: false, error: 'Could not access website. (Block/Timeout)' };
+    }
 }
 
 export async function deleteHunterResult(id: number) {

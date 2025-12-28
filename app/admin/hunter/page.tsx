@@ -2,10 +2,10 @@
 
 import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX } from '@tabler/icons-react';
+import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
-import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult } from '@/lib/actions';
+import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite } from '@/lib/actions';
 import { generateProposalEmail } from '@/lib/ai';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
@@ -251,6 +251,43 @@ export default function HunterPage() {
         }
     };
 
+    const handleScan = async (partner: HunterResult) => {
+        if (!partner.url) return notifications.show({ title: 'No Link', message: 'This partner has no website to scan.', color: 'red' });
+
+        notifications.show({ title: 'Scanning...', message: `Visiting ${partner.name}...`, color: 'blue', loading: true });
+        const result = await scanWebsite(partner.url);
+
+        if (result.success) {
+            let updateMsg = '';
+            const updates: any = {};
+
+            if (result.emails && result.emails.length > 0) {
+                updates.email = result.emails[0];
+                updateMsg += `Email: ${result.emails[0]} `;
+            }
+            if (result.phones && result.phones.length > 0) {
+                updates.phone = result.phones[0];
+                updateMsg += `Phone: ${result.phones[0]}`;
+            }
+
+            if (Object.keys(updates).length > 0) {
+                // Determine if we should update DB (only if saved) or just UI (if search result)
+                if (savedPartners.some(p => p.id === partner.id)) {
+                    await updateHunterInfo(partner.id, updates);
+                    loadSavedPartners(); // Refresh UI from DB
+                } else {
+                    // Just update local results state for now
+                    setResults(prev => prev.map(p => p.id === partner.id ? { ...p, ...updates } : p));
+                }
+                notifications.show({ title: 'Scan Complete', message: updateMsg || 'Found contact info!', color: 'green' });
+            } else {
+                notifications.show({ title: 'Scan Complete', message: 'No contact info found on the main page.', color: 'orange' });
+            }
+        } else {
+            notifications.show({ title: 'Scan Failed', message: (result as any).error || 'Could not access site.', color: 'red' });
+        }
+    };
+
     const handlePreview = (partner: HunterResult) => {
         setSelectedPartner(partner);
         setEmailMode(false);
@@ -491,6 +528,11 @@ Web: www.k-farm.or.kr`;
                                                     <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element)}>
                                                         Proposal
                                                     </Button>
+                                                    <Tooltip label="Scan Website">
+                                                        <ActionIcon variant="light" color="grape" size="sm" onClick={() => handleScan(element)}>
+                                                            <IconScan size={14} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
                                                     <Tooltip label="Dismiss">
                                                         <ActionIcon variant="subtle" color="gray" size="sm" onClick={() => handleDismiss(element.id)}>
                                                             <IconX size={14} />
@@ -601,6 +643,11 @@ Web: www.k-farm.or.kr`;
                                                     <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element as any)}>
                                                         Proposal
                                                     </Button>
+                                                    <Tooltip label="Scan Website">
+                                                        <ActionIcon variant="light" color="grape" size="sm" onClick={() => handleScan(element)}>
+                                                            <IconScan size={14} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
                                                     <Tooltip label="Visit Website">
                                                         <ActionIcon component="a" href={element.url} target="_blank" variant="default" size="sm">
                                                             <IconWorld size={14} />
