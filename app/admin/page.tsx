@@ -4,6 +4,8 @@ import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, RingProgress, 
 import { IconMail, IconArrowRight, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconSettings, IconMovie } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
+import { logout } from '@/app/login/actions';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 interface DashboardStats {
@@ -19,6 +21,12 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState<DashboardStats | null>(null);
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await logout();
+        router.push('/login');
+    };
 
     useEffect(() => {
         loadStats();
@@ -51,13 +59,18 @@ export default function AdminDashboard() {
                 <div>
                     <Badge variant="dot" color="wasabi" size="lg" mb="xs">Live Overview</Badge>
                     <Title order={1} style={{ fontSize: '2.2rem' }}>
-                        Executive <Text span c="grape" inherit>Dashboard</Text>
+                        Executive <Text span c="grape" inherit>Dashboard</Text> <Badge color="red" variant="light" size="sm" style={{ verticalAlign: 'middle' }}>SECURE v2.0</Badge>
                     </Title>
                     <Text c="dimmed" size="lg" mt={5}>Good morning, CEO. Your sales engine is running.</Text>
                 </div>
-                <Button component={Link} href="/admin/hunter" size="md" color="black" variant="filled" leftSection={<IconSearch size={18} />}>
-                    Open Hunter
-                </Button>
+                <Group>
+                    <Button component={Link} href="/admin/hunter" size="md" color="black" variant="filled" leftSection={<IconSearch size={18} />}>
+                        Open Hunter
+                    </Button>
+                    <Button onClick={handleLogout} size="md" color="red" variant="light">
+                        Logout
+                    </Button>
+                </Group>
             </Group>
 
             {/* KPI Cards */}

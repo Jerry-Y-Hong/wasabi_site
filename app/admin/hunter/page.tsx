@@ -7,6 +7,9 @@ import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
 import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo } from '@/lib/actions';
 import { generateProposalEmail } from '@/lib/ai';
+import { logout } from '@/app/login/actions';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface HunterResult {
     id: number;
@@ -50,6 +53,12 @@ export default function HunterPage() {
     // Edit Form State
     const [editForm, setEditForm] = useState<Partial<HunterResult>>({});
     const [draftEmail, setDraftEmail] = useState({ subject: '', body: '' });
+
+    const router = useRouter();
+    const handleLogout = async () => {
+        await logout();
+        router.push('/login');
+    };
 
     // Initial Data Load
     useEffect(() => {
@@ -244,8 +253,21 @@ Web: www.k-farm.or.kr`;
     return (
         <Container size="xl" py={40}>
             <Stack align="center" mb={40}>
-                <Badge variant="filled" color="grape" size="lg">Sales Agent Beta</Badge>
-                <Title order={1}>Hunter: Partner Discovery Engine</Title>
+                <Group justify="space-between" w="100%">
+                    <div /> {/* Spacer for centering */}
+                    <Stack align="center" gap="xs">
+                        <Badge variant="filled" color="grape" size="lg">Sales Agent Beta</Badge>
+                        <Title order={1}>Hunter <Badge color="red" variant="light" size="sm">SECURE v2.0</Badge></Title>
+                    </Stack>
+                    <Group>
+                        <Button component={Link} href="/admin" variant="subtle" color="gray">
+                            Dashboard
+                        </Button>
+                        <Button onClick={handleLogout} size="sm" color="red" variant="light">
+                            Logout
+                        </Button>
+                    </Group>
+                </Group>
                 <Text c="dimmed" ta="center" maw={600}>
                     I will scour the web to find the best potential partners for K-Farm.
                     Save them to your pipeline and manage your outreach.
