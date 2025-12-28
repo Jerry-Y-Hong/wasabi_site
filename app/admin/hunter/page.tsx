@@ -203,7 +203,7 @@ export default function HunterPage() {
             notifications.show({ title: 'Saved', message: `${partner.name} added to your pipeline.`, color: 'green' });
             loadSavedPartners();
         } else {
-            notifications.show({ title: 'Notice', message: result.message, color: 'orange' });
+            notifications.show({ title: 'Notice', message: (result as any).message || (result as any).warning || 'Partner already saved.', color: 'orange' });
         }
     };
 
