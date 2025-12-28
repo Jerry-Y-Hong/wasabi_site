@@ -1,18 +1,27 @@
 'use server';
 
+import fs from 'fs';
 import { promises as fsp } from 'fs';
 import pathLib from 'path';
+import { revalidatePath } from 'next/cache';
+import { put, list } from '@vercel/blob';
 
 // Use /tmp only on Vercel deployment
+// Use /tmp only on Vercel deployment, otherwise use strict absolute path for local
 const DB_PATH = process.env.VERCEL === '1'
     ? pathLib.join('/tmp', 'data')
-    : pathLib.join(process.cwd(), 'data');
+    : 'c:\\Users\\car13\\.gemini\\antigravity\\scratch\\wasabi-smart-farm\\data';
+
+console.log('[Debug] DB_PATH Fixed:', DB_PATH);
+
+const IS_VERCEL = process.env.VERCEL === '1';
 
 console.log('[Debug] Env Check - VERCEL:', process.env.VERCEL);
 console.log('[Debug] Env Check - NODE_ENV:', process.env.NODE_ENV);
-console.log('[Debug] DB_PATH:', DB_PATH);
+console.log('[Debug] DB_PATH:', DB_PATH); // Not usually needed for Blob, but good for local
 
 async function ensureDataDir() {
+    if (IS_VERCEL) return; // Not usually needed for Blob, but good for local
     try {
         await fsp.access(DB_PATH);
     } catch {
@@ -20,181 +29,173 @@ async function ensureDataDir() {
             console.log('[Debug] Creating data directory at:', DB_PATH);
             await fsp.mkdir(DB_PATH, { recursive: true });
         } catch (e) {
-            console.error('Failed to create data directory (likely read-only fs):', e);
+            console.error('Failed to create data directory:', e);
         }
     }
 }
 
-export async function saveContactInquiry(data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'contacts.json');
-        let currentData = [];
+// --- Persistence Helpers ---
+
+async function readDb(filename: string): Promise<any[]> {
+    if (IS_VERCEL) {
         try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            // File doesn't exist yet
+            // Check for Blob Token
+            if (!process.env.BLOB_READ_WRITE_TOKEN) {
+                console.warn('[Blob] Missing BLOB_READ_WRITE_TOKEN. Returning empty data.');
+                return [];
+            }
+
+            // Find file in Blob
+            const { blobs } = await list({ prefix: filename, limit: 1 });
+            // Exact match check recommended
+            const blob = blobs.find(b => b.pathname === filename);
+
+            if (!blob) return [];
+
+            const res = await fetch(blob.url, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Fetch failed: ${res.status} `);
+            return await res.json();
+        } catch (error) {
+            console.error(`[Blob] Read error for ${filename}: `, error);
+            return [];
         }
-
-        const newEntry = {
-            ...data,
-            id: Date.now(),
-            timestamp: new Date().toISOString(),
-        };
-
-        currentData.push(newEntry);
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true };
-    } catch (error) {
-        console.error('File write failed:', error);
-        // Fallback: Return success so UI doesn't break, even if data isn't saved persistently
-        return { success: true, warning: 'Data not saved (Read-only mode)' };
+    } else {
+        // Local
+        try {
+            await ensureDataDir();
+            const filePath = pathLib.join(DB_PATH, filename);
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            return JSON.parse(fileContent);
+        } catch (e) {
+            console.error('[Error] getHunterResults failed:', e);
+            return [];
+        }
     }
+}
+
+async function writeDb(filename: string, data: any[]) {
+    if (IS_VERCEL) {
+        try {
+            if (!process.env.BLOB_READ_WRITE_TOKEN) {
+                console.warn('[Blob] Missing BLOB_READ_WRITE_TOKEN. Data not saved.');
+                return { success: true, warning: 'Persistence disabled (No Token)' };
+            }
+
+            await put(filename, JSON.stringify(data, null, 2), {
+                access: 'public',
+                addRandomSuffix: false // Overwrite existing file
+            });
+            return { success: true };
+        } catch (error) {
+            console.error(`[Blob] Write error for ${filename}: `, error);
+            return { success: true, warning: 'Save failed (Blob Error)' };
+        }
+    } else {
+        // Local
+        try {
+            await ensureDataDir();
+            const filePath = pathLib.join(DB_PATH, filename);
+            console.log(`[Debug] Writing to file: ${filePath}`);
+            console.log(`[Debug] Data count: ${data.length}`);
+
+            await fsp.writeFile(filePath, JSON.stringify(data, null, 2));
+            console.log('[Debug] Write successful');
+
+            // Revalidate paths if hunter.json was updated
+            if (filename === 'hunter.json') {
+                revalidatePath('/admin/hunter');
+                revalidatePath('/admin');
+            }
+            return { success: true };
+        } catch (error) {
+            console.error('File write failed:', error);
+            return { success: true, warning: 'Save failed (FS Error)' };
+        }
+    }
+}
+
+// --- Action Implementations ---
+
+export async function saveContactInquiry(data: any) {
+    const currentData = await readDb('contacts.json');
+    const newEntry = {
+        ...data,
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+    };
+    currentData.push(newEntry);
+    return await writeDb('contacts.json', currentData);
 }
 
 export async function getContactInquiries() {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'contacts.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (e) {
-        return [];
-    }
+    return await readDb('contacts.json');
 }
 
 export async function saveConsultingInquiry(data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'consulting.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            // File doesn't exist yet
-        }
-
-        const newEntry = {
-            ...data,
-            id: Date.now(),
-            timestamp: new Date().toISOString(),
-        };
-
-        currentData.push(newEntry);
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true };
-    } catch (error) {
-        console.error('File write failed:', error);
-        return { success: true, warning: 'Data not saved (Read-only mode)' };
-    }
+    const currentData = await readDb('consulting.json');
+    const newEntry = {
+        ...data,
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+    };
+    currentData.push(newEntry);
+    return await writeDb('consulting.json', currentData);
 }
 
 export async function getConsultingInquiries() {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'consulting.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (e) {
-        return [];
-    }
+    return await readDb('consulting.json');
 }
 
 export async function saveHunterResult(data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'hunter.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            // File doesn't exist yet
-        }
+    const currentData = await readDb('hunter.json');
 
-        // Check for duplicates based on name
-        const exists = currentData.some((item: any) => item.name === data.name);
-        if (exists) {
-            return { success: false, message: 'Already exists in your list.' };
-        }
-
-        const newEntry = {
-            ...data,
-            status: 'New', // Default status
-            addedAt: new Date().toISOString(),
-        };
-
-        currentData.push(newEntry);
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true };
-    } catch (error) {
-        console.error('File write failed:', error);
-        return { success: true, warning: 'Data not saved (Read-only mode)' };
+    // Check for duplicates
+    const exists = currentData.some((item: any) => item.name === data.name);
+    if (exists) {
+        return { success: false, message: 'Already exists in your list.' };
     }
+
+    const newEntry = {
+        ...data,
+        status: 'New',
+        addedAt: new Date().toISOString(),
+    };
+
+    currentData.push(newEntry);
+    return await writeDb('hunter.json', currentData);
 }
 
 export async function getHunterResults() {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'hunter.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (e) {
-        return [];
-    }
+    return await readDb('hunter.json');
 }
 
 export async function updateHunterStatus(id: number, status: string) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'hunter.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            return { success: false };
-        }
-
-        const index = currentData.findIndex((item: any) => item.id === id);
-        if (index !== -1) {
-            currentData[index].status = status;
-            currentData[index].lastContacted = new Date().toISOString();
-            await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-            return { success: true };
-        }
-    } catch (error) {
-        // Ignore write error
+    const currentData = await readDb('hunter.json');
+    const index = currentData.findIndex((item: any) => item.id === id);
+    if (index !== -1) {
+        currentData[index].status = status;
+        currentData[index].lastContacted = new Date().toISOString();
+        await writeDb('hunter.json', currentData);
+        // Revalidate paths after updating status, especially for Vercel Blob storage
+        revalidatePath('/admin/hunter');
+        revalidatePath('/admin');
+        return { success: true };
     }
     return { success: false };
 }
 
 export async function updateHunterInfo(id: number, data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'hunter.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            return { success: false };
-        }
-
-        const index = currentData.findIndex((item: any) => item.id === id);
-        if (index !== -1) {
-            currentData[index] = { ...currentData[index], ...data };
-            await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-            return { success: true };
-        }
-    } catch (error) {
-        // Ignore write error
+    const currentData = await readDb('hunter.json');
+    const index = currentData.findIndex((item: any) => item.id === id);
+    if (index !== -1) {
+        currentData[index] = { ...currentData[index], ...data };
+        await writeDb('hunter.json', currentData);
+        return { success: true };
     }
     return { success: false };
 }
 
+// Dashboard Stats (uses helpers)
 export async function getDashboardStats() {
     const hunterData = await getHunterResults();
     const contactData = await getContactInquiries();
@@ -206,46 +207,129 @@ export async function getDashboardStats() {
         return acc;
     }, {});
 
-    // Recent 5 activities (combine contact and consulting)
     const recentInquiries = [...contactData, ...consultingData]
         .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, 5)
         .map((item: any) => ({
             ...item,
-            type: item.category || (item.companyName ? 'Consulting' : 'General'), // Use category if exists, else infer
+            type: item.category || (item.companyName ? 'Consulting' : 'General'),
             subject: item.subject || 'Consulting Request'
         }));
 
-    // Aggregate Categories
     const categoryCounts: Record<string, number> = {
-        'Product Inquiry': 0,
-        'Partnership': 0,
-        'Farm Visit': 0,
-        'Investment': 0,
-        'Other': 0,
+        'Product Inquiry': 0, 'Partnership': 0, 'Farm Visit': 0, 'Investment': 0, 'Other': 0,
         'Consulting': consultingData.length
     };
 
     contactData.forEach((item: any) => {
-        const cat = item.category || 'Other'; // Default to Other if missing (legacy data)
-        if (categoryCounts[cat] !== undefined) {
-            categoryCounts[cat]++;
-        } else {
-            categoryCounts['Other']++;
-        }
+        const cat = item.category || 'Other';
+        if (categoryCounts[cat] !== undefined) categoryCounts[cat]++;
+        else categoryCounts['Other']++;
     });
 
     return {
-        pipeline: {
-            total: hunterData.length,
-            statusCounts: statusCounts
-        },
-        inquiries: {
-            total: contactData.length + consultingData.length,
-            categoryCounts: categoryCounts,
-            recent: recentInquiries
-        }
+        pipeline: { total: hunterData.length, statusCounts },
+        inquiries: { total: contactData.length + consultingData.length, categoryCounts, recent: recentInquiries }
     };
+}
+
+
+// Blog & Video Scripts also use JSON
+export async function saveBlogPost(data: any) {
+    console.log('[Debug] Saving Blog Post...');
+    const currentData = await readDb('posts.json');
+    console.log('[Debug] Current Posts Count:', currentData.length);
+
+    // Generate slug: try English conversion, fallback to timestamp if empty
+    let slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    // If slug became empty (e.g. fully Korean title), use timestamp or ID
+    if (!slug || slug.length < 3) {
+        slug = `post-${Date.now()}`;
+    }
+
+    const newEntry = {
+        ...data,
+        id: Date.now(),
+        slug: slug,
+        timestamp: new Date().toISOString(),
+    };
+    currentData.push(newEntry);
+
+    console.log('[Debug] New Posts Count:', currentData.length);
+    await writeDb('posts.json', currentData);
+
+    revalidatePath('/admin/blog');
+    revalidatePath('/blog');
+
+    return { success: true, slug };
+}
+
+export async function getBlogPosts() {
+    const data = await readDb('posts.json');
+    return data.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+}
+
+export async function getBlogPost(slug: string) {
+    const data = await readDb('posts.json');
+    return data.find((p: any) => p.slug === slug) || null;
+}
+
+export async function saveVideoScript(data: any) {
+    const currentData = await readDb('scripts.json');
+    const newEntry = {
+        ...data,
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+    };
+    currentData.push(newEntry);
+    await writeDb('scripts.json', currentData);
+    return { success: true, id: newEntry.id };
+}
+
+export async function getVideoScripts() {
+    const data = await readDb('scripts.json');
+    return data.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+}
+
+
+// Image Upload needs special handling
+export async function saveAnimatorImage(base64Data: string, fileName: string) {
+    if (IS_VERCEL) {
+        try {
+            if (!process.env.BLOB_READ_WRITE_TOKEN) {
+                return { success: false, warning: 'No Blob Token' };
+            }
+            const data = base64Data.replace(/^data:image\/\w+;base64,/, '');
+            const buffer = Buffer.from(data, 'base64');
+            const finalFileName = `uploads / ${Date.now()} -${fileName} `;
+
+            const blob = await put(finalFileName, buffer, { access: 'public', addRandomSuffix: false });
+
+            return { success: true, path: blob.url, localPath: blob.url };
+        } catch (error) {
+            console.error('Blob image save failed:', error);
+            return { success: false };
+        }
+    } else {
+        // Local
+        try {
+            await ensureDataDir();
+            const uploadDir = pathLib.join(DB_PATH, 'uploads');
+            try { await fsp.access(uploadDir); } catch { await fsp.mkdir(uploadDir, { recursive: true }); }
+
+            const data = base64Data.replace(/^data:image\/\w+;base64,/, '');
+            const buffer = Buffer.from(data, 'base64');
+            const finalFileName = `${Date.now()}-${fileName}`;
+            const filePath = pathLib.join(uploadDir, finalFileName);
+
+            await fsp.writeFile(filePath, buffer);
+            return { success: true, path: `/api/uploads/${finalFileName}`, localPath: filePath };
+        } catch (error) {
+            console.error('Image save failed:', error);
+            return { success: false };
+        }
+    }
 }
 
 // Mock Data based on real research
@@ -280,7 +364,8 @@ export async function searchPartners(keyword: string, page: number = 1, country:
 
     if (apiKey && cx) {
         try {
-            // Add 'gl' (geolocation) parameter for country restriction
+            // Add 'gl' (geolocation) parameter for country restriction ONLY if specific country selected
+            // If country is empty string (Global), we do NOT send gl param
             const glParam = country ? `&gl=${country}` : '';
             const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(keyword)}&start=${start}${glParam}`);
             const data = await res.json();
@@ -351,126 +436,4 @@ export async function searchPartners(keyword: string, page: number = 1, country:
 
     // Add isMock flag
     return paginatedResults.map(item => ({ ...item, isMock: true }));
-}
-
-// Blog Actions
-export async function saveBlogPost(data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'posts.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            // File doesn't exist yet
-        }
-
-        const slug = data.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)+/g, '');
-
-        const newEntry = {
-            ...data,
-            id: Date.now(),
-            slug: slug,
-            timestamp: new Date().toISOString(),
-        };
-
-        currentData.push(newEntry);
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true, slug };
-    } catch (error) {
-        console.error('File write failed:', error);
-        return { success: false, error: 'Failed to save post' };
-    }
-}
-
-export async function getBlogPosts() {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'posts.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    } catch (e) {
-        return [];
-    }
-}
-
-export async function getBlogPost(slug: string) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'posts.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        const posts = JSON.parse(fileContent);
-        return posts.find((p: any) => p.slug === slug) || null;
-    } catch (e) {
-        return null;
-    }
-}
-// Video Script Actions
-export async function saveVideoScript(data: any) {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'scripts.json');
-        let currentData = [];
-        try {
-            const fileContent = await fsp.readFile(filePath, 'utf-8');
-            currentData = JSON.parse(fileContent);
-        } catch (e) {
-            // File doesn't exist yet
-        }
-
-        const newEntry = {
-            ...data,
-            id: Date.now(),
-            timestamp: new Date().toISOString(),
-        };
-
-        currentData.push(newEntry);
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true, id: newEntry.id };
-    } catch (error) {
-        console.error('File write failed:', error);
-        return { success: false, error: 'Failed to save script' };
-    }
-}
-
-export async function getVideoScripts() {
-    try {
-        await ensureDataDir();
-        const filePath = pathLib.join(DB_PATH, 'scripts.json');
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    } catch (e) {
-        return [];
-    }
-}
-
-export async function saveAnimatorImage(base64Data: string, fileName: string) {
-    try {
-        await ensureDataDir();
-        const uploadDir = pathLib.join(DB_PATH, 'uploads');
-        try {
-            await fsp.access(uploadDir);
-        } catch {
-            await fsp.mkdir(uploadDir, { recursive: true });
-        }
-
-        const data = base64Data.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(data, 'base64');
-        const finalFileName = `${Date.now()}-${fileName}`;
-        const filePath = pathLib.join(uploadDir, finalFileName);
-
-        await fsp.writeFile(filePath, buffer);
-
-        // Return a path that can be served (using /api/uploads workaround or similar if needed)
-        // For local dev, we might need a way to serve these. 
-        // But for now, returning the relative path or base64 as fallback.
-        return { success: true, path: `/api/uploads/${finalFileName}`, localPath: filePath };
-    } catch (error) {
-        console.error('Image save failed:', error);
-        return { success: false };
-    }
 }

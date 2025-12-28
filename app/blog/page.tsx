@@ -1,10 +1,15 @@
-import { Container, Title, Text, SimpleGrid, Card, Badge, Group, Button, ThemeIcon } from '@mantine/core';
+import { Container, Title, Text, Card, Badge, Group, Button, ThemeIcon, Grid } from '@mantine/core';
 import { IconArrowRight, IconLeaf } from '@tabler/icons-react';
 import Link from 'next/link';
 import { getBlogPosts } from '@/lib/actions';
 
+export const dynamic = 'force-dynamic'; // Force real-time data fetching
+export const revalidate = 0;
+
 export default async function BlogListPage() {
     const posts = await getBlogPosts();
+    // Filter valid posts first to prevent render errors
+    const validPosts = Array.isArray(posts) ? posts.filter((p: any) => p && p.title) : [];
 
     return (
         <Container size="xl" py={60}>
@@ -19,41 +24,63 @@ export default async function BlogListPage() {
                 </Text>
             </div>
 
-            {/* Posts Grid */}
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl">
-                {posts.length > 0 ? (
-                    posts.map((post: any) => (
-                        <Card key={post.id} padding="lg" radius="md" withBorder shadow="sm" component={Link} href={`/blog/${post.slug}`} style={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-5px)' } }}>
+            {/* Manual Grid Implementation (Safer than Mantine Grid for now) */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: '24px'
+            }}>
+                {validPosts.length > 0 ? (
+                    validPosts.map((post: any) => (
+                        <Card key={post.id || Math.random()} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column' }}>
                             <Group justify="space-between" mb="xs">
                                 <Badge color="wasabi" variant="light">{post.topic || 'Opinion'}</Badge>
-                                <Text size="xs" c="dimmed">{new Date(post.timestamp).toLocaleDateString()}</Text>
+                                <Text size="xs" c="dimmed">
+                                    {post.timestamp ? new Date(post.timestamp).toLocaleDateString() : 'Date'}
+                                </Text>
                             </Group>
 
-                            <Title order={3} size="h4" mb="sm" style={{ minHeight: 50, lineHeight: 1.3 }}>
-                                {post.title}
-                            </Title>
+                            <Link href={`/blog/${post.slug || '#'}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Title order={3} size="h4" mb="sm" style={{ minHeight: 50, lineHeight: 1.3, cursor: 'pointer' }}>
+                                    {post.title}
+                                </Title>
+                            </Link>
 
                             <Text size="sm" c="dimmed" lineClamp={3} mb="md" style={{ minHeight: 60 }}>
-                                {post.content.replace(/[#*`]/g, '')}
+                                {(post.content || '').replace(/[#*`]/g, '')}
                             </Text>
 
                             <Group mt="auto">
-                                <Text size="sm" c="wasabi" fw={500} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                    Read Article <IconArrowRight size={16} />
-                                </Text>
+                                <a
+                                    href={`/blog/${post.slug || '#'}`}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        padding: '8px 12px',
+                                        color: '#2b8a3e',
+                                        fontWeight: 600,
+                                        fontSize: '0.875rem',
+                                        textDecoration: 'none',
+                                        backgroundColor: '#ebfbee',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Read Article <IconArrowRight size={16} style={{ marginLeft: 6 }} />
+                                </a>
                             </Group>
                         </Card>
                     ))
                 ) : (
-                    <Container py={60} ta="center">
+                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 0' }}>
                         <ThemeIcon size={60} radius="xl" color="gray" variant="light" mb="md">
                             <IconLeaf size={30} />
                         </ThemeIcon>
                         <Title order={3} c="dimmed">No articles yet.</Title>
                         <Text c="dimmed">Check back soon for updates!</Text>
-                    </Container>
+                    </div>
                 )}
-            </SimpleGrid>
-        </Container>
+            </div>
+        </Container >
     );
 }

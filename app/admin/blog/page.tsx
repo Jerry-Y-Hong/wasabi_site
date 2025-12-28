@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Textarea, Button, Group, Stack, Select, Paper, Badge, Loader, SimpleGrid, Card } from '@mantine/core';
+import { Container, Title, Text, TextInput, Textarea, Button, Group, Stack, Select, Paper, Badge, Loader, SimpleGrid, Card, Code, CopyButton } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useState, useEffect } from 'react';
@@ -11,6 +11,9 @@ import { saveBlogPost, getBlogPosts } from '@/lib/actions';
 export default function BlogAdminPage() {
     const [loading, setLoading] = useState(false);
     const [generatedContent, setGeneratedContent] = useState('');
+    const [suggestedPrompt, setSuggestedPrompt] = useState('');
+    const [selectedImage, setSelectedImage] = useState('');
+    const [aiTitle, setAiTitle] = useState(''); // Store AI generated title separately
     const [posts, setPosts] = useState<any[]>([]);
 
     const form = useForm({
@@ -19,6 +22,7 @@ export default function BlogAdminPage() {
             keywords: '',
             tone: 'Professional & Authoritative',
             language: 'Korean', // Default to Korean for local SEO
+            category: 'Company Blog', // Default category
         },
         validate: {
             topic: (value) => (value.length < 2 ? 'Topic is required' : null),
@@ -37,16 +41,36 @@ export default function BlogAdminPage() {
     const handleGenerate = async () => {
         setLoading(true);
         try {
-            // Call AI Generation (We'll update lib/ai.ts to handle keywords)
+            // Call AI Generation
             const result = await generateBlogContent(
                 form.values.topic,
                 form.values.tone,
-                form.values.language
+                form.values.language,
+                form.values.keywords
             );
 
             if (result.content) {
                 setGeneratedContent(result.content); // Markdown content
-                notifications.show({ title: 'Draft Generated', message: 'You can edit the content below.', color: 'wasabi' });
+
+                // Store title but DO NOT overwrite user's topic input
+                if (result.title) {
+                    setAiTitle(result.title);
+                }
+
+                // 🚀 Generate AI Image using Pollinations.ai (Free & High Quality)
+                if (result.imagePrompt) {
+                    setSuggestedPrompt(result.imagePrompt);
+                    const safePrompt = encodeURIComponent(result.imagePrompt);
+                    // Add seed to ensure unique image every time
+                    const seed = Math.floor(Math.random() * 1000000);
+                    // Use 'flux' model for realistic quality
+                    const imageUrl = `https://image.pollinations.ai/prompt/${safePrompt}?width=1024&height=600&seed=${seed}&model=flux&nologo=true`;
+
+                    setSelectedImage(imageUrl);
+                }
+
+                notifications.show({ title: 'Draft Generated', message: 'Review the content below.', color: 'wasabi' });
+
             } else {
                 notifications.show({ title: 'Error', message: 'Failed to generate content.', color: 'red' });
             }
@@ -60,9 +84,8 @@ export default function BlogAdminPage() {
     const handlePublish = async () => {
         if (!generatedContent) return;
 
-        // Simple extraction of title from markdown if possible, else use topic
-        const titleMatch = generatedContent.match(/^#\s+(.+)$/m);
-        const title = titleMatch ? titleMatch[1] : form.values.topic;
+        // Use AI title if available, otherwise user topic
+        const title = aiTitle || form.values.topic;
 
         const postData = {
             title: title,
@@ -71,6 +94,8 @@ export default function BlogAdminPage() {
             keywords: form.values.keywords,
             tags: form.values.keywords.split(',').map(s => s.trim()).filter(Boolean),
             author: 'AI Writer', // or 'K-Farm Team'
+            image: selectedImage, // Save the selected image path
+            category: form.values.category // Save category
         };
 
         const result = await saveBlogPost(postData);
@@ -100,6 +125,16 @@ export default function BlogAdminPage() {
                                 required
                                 {...form.getInputProps('topic')}
                             />
+
+                            <Select
+                                label="Post Category"
+                                data={[
+                                    { value: 'Company Blog', label: 'Company Blog (K-Farm News)' },
+                                    { value: 'Global News', label: 'Global Tech & Trends' }
+                                ]}
+                                {...form.getInputProps('category')}
+                            />
+
                             <TextInput
                                 label="Target Keywords (Optional)"
                                 placeholder="e.g. smart farm, hydroponics, investment"
@@ -134,6 +169,63 @@ export default function BlogAdminPage() {
                             </Button>
                         </Stack>
                     </Paper>
+
+                    {/* Image Selection Panel */}
+                    {generatedContent && (
+                        <Paper p="md" withBorder radius="md">
+                            <Stack>
+                                <Title order={4}>Cover Image Selection</Title>
+
+                                {suggestedPrompt && (
+                                    <Stack gap={5}>
+                                        <Text size="xs" fw={700} c="dimmed">AI SUGGESTED IMAGE PROMPT (Copy for Midjourney/DALL-E):</Text>
+                                        <Group>
+                                            <Code block style={{ flex: 1, whiteSpace: 'normal' }}>
+                                                {suggestedPrompt}
+                                            </Code>
+                                            <CopyButton value={suggestedPrompt}>
+                                                {({ copied, copy }) => (
+                                                    <Button color={copied ? 'teal' : 'gray'} onClick={copy} size="xs">
+                                                        {copied ? 'Copied' : 'Copy'}
+                                                    </Button>
+                                                )}
+                                            </CopyButton>
+                                        </Group>
+                                    </Stack>
+                                )}
+
+                                <Text size="sm" fw={500} mt="sm">Or Select a Quick Stock Image:</Text>
+                                <SimpleGrid cols={3}>
+                                    {[
+                                        { id: 'stock_lab', src: '/images/blog/stock_lab.png', label: 'Lab' },
+                                        { id: 'stock_leaf', src: '/images/blog/stock_leaf.png', label: 'Leaf' },
+                                        { id: 'none', src: '', label: 'None' }
+                                    ].map((img) => (
+                                        <Card
+                                            key={img.id}
+                                            p={0}
+                                            radius="sm"
+                                            withBorder
+                                            style={{
+                                                cursor: 'pointer',
+                                                borderColor: selectedImage === img.src ? '#40C057' : 'transparent',
+                                                borderWidth: 3
+                                            }}
+                                            onClick={() => setSelectedImage(img.src)}
+                                        >
+                                            {img.src ? (
+                                                <img src={img.src} alt={img.label} style={{ width: '100%', height: 60, objectFit: 'cover' }} />
+                                            ) : (
+                                                <Stack align="center" justify="center" h={60} bg="gray.1">
+                                                    <Text size="xs" c="dimmed">No Image</Text>
+                                                </Stack>
+                                            )}
+                                        </Card>
+                                    ))}
+                                </SimpleGrid>
+                            </Stack>
+                        </Paper>
+                    )}
 
                     {/* Editor Area */}
                     {generatedContent && (
@@ -179,7 +271,7 @@ export default function BlogAdminPage() {
                                     {post.content.replace(/[#*`]/g, '')}
                                 </Text>
                                 <Group justify="flex-end" mt="xs">
-                                    <Button component="a" href={`/blog/${post.slug}`} size="xs" variant="subtle" rightSection={<IconEye size={14} />}>
+                                    <Button component="a" href={`/blog/${post.slug}`} target="_blank" size="xs" variant="subtle" rightSection={<IconEye size={14} />}>
                                         View
                                     </Button>
                                 </Group>

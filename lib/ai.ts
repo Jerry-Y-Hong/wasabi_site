@@ -115,42 +115,82 @@ export async function generateBlogContent(topic: string, tone: string, language:
         await new Promise(resolve => setTimeout(resolve, 2000));
         return {
             title: `[Mock] Future of ${topic}`,
-            content: `# Future of ${topic}\n\nThis is a mock post about **${topic}**.\n\n## Key Benefits\n1. Efficiency\n2. Sustainability\n\n*Please set GEMINI_API_KEY to generate real content.*`
+            content: `# Future of ${topic}\n\nThis is a mock post about **${topic}**.\n\n## Key Benefits of K-Farm Technology\n1. **Virus-Free Seedlings**: Our tissue culture technology ensures 99.9% survival.\n2. **Hyper-Cycle Aeroponics**: Harvest in just 9 months instead of 2 years.\n\n*Please set GEMINI_API_KEY to generate real content.*`,
+            imagePrompt: "A futuristic smart farm laboratory with glowing green wasabi plants in vertical aeroponic towers, clean white aesthetic, high resolution."
         };
     }
 
     try {
-        const prompt = `
-        Act as an Expert SEO Content Writer for "K-Farm International" (Smart Farm Technology).
-        Write a comprehensive, high-quality blog post about "${topic}".
+        // 1. Define Company Context (The "Brain" of the AI)
+        const companyContext = `
+        You are the Chief Editor for "K-Farm International", a global leader in Wasabi Smart Farming.
         
-        Parameters:
-        - Keywords to include: ${keywords}
-        - Tone: ${tone}
+        Our Core Competologies:
+        1. **Virus-Free Seedlings (Tissue Culture)**: We produce genetically superior, pathogen-free wasabi seedlings.
+        2. **Hyper-Cycle Aeroponics**: Our proprietary system shortens the cultivation cycle to 9 months (vs. 18-24 months for traditional soil farming).
+        3. **Data-Driven Quality**: We control EC, pH, and lighting (PPFD) to maximize Allyl Isothiocyanate (the spicy component).
+        
+        Your Goal:
+        Write a high-quality, engaging blog post that positions K-Farm as the industry authority.
+        The content should be informative but subtly promote our specific technologies as the solution.
+        `;
+
+        // 2. Construct the Prompt
+        const prompt = `
+        ${companyContext}
+
+        Task: Write a blog post about: "${topic}"
+        
+        Configuration:
+        - Target Keywords: ${keywords}
+        - Tone of Voice: ${tone}
         - Language: ${language}
         
-        Format Requirements:
-        - Use standard Markdown formatting.
-        - Start with a Level 1 Header (# Title).
-        - Use Level 2 Headers (##) for main sections.
-        - include bullet points and bold text for readability.
-        - Length: Approximately 1000-1500 characters (rich content).
-        - Structure: Introduction -> Problem/State -> Solution (Smart Farm) -> Conclusion.
+        Structure Requirements:
+        1. **Catchy Title**: Write an optimization title (H1).
+        2. **Introduction**: Hook the reader, define the problem or trend.
+        3. **Body Paragraphs**: Deep dive into the topic. Use subheadings (H2, H3). Use bullet points.
+        4. **The K-Farm Edge**: Explain how K-Farm's specific tech (Seedlings or Aeroponics) addresses this topic.
+        5. **Conclusion**: Summary and a professional Call to Action (Partnership/Investment).
+
+        Style Requirements:
+        - Use standard Markdown.
+        - **IMPORTANT**: Use relevant emojis (🌱, 🚀, 💧, 🔬) throughout the text to make it engaging and visually appealing.
+        - Use bold text for emphasis.
         
-        Output only the markdown content.
+        Output Format:
+        Return a valid JSON object with these fields:
+        {
+            "title": "The exact title of the post",
+            "content": "The full blog post in Markdown format",
+            "imagePrompt": "A detailed description to generate a cover image for this blog post using an AI image generator"
+        }
         `;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
 
+        // 3. Parse JSON
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]);
+        }
+
+        // Fallback for non-JSON output
         return {
-            content: text
+            title: `Insights on ${topic}`,
+            content: text,
+            imagePrompt: `A professional representation of ${topic} in a high-tech agricultural setting.`
         };
 
     } catch (error) {
         console.error('AI Blog Generation Error:', error);
-        return { content: "Failed to generate content. Please try again." };
+        return {
+            title: "Error Generating",
+            content: "Failed to generate content. Please try again or check your API Key.",
+            imagePrompt: ""
+        };
     }
 }
 

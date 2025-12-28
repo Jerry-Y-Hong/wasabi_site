@@ -35,16 +35,70 @@ const APP_STATUS: Record<string, string> = {
 };
 
 const COUNTRIES = [
+    { value: '', label: 'Global (All) 🌍' },
     { value: 'KR', label: 'Korea 🇰🇷' },
     { value: 'JP', label: 'Japan 🇯🇵' },
     { value: 'US', label: 'USA 🇺🇸' },
-    { value: 'Global', label: 'Global 🌍' }
+    { value: 'CN', label: 'China 🇨🇳' },
+    { value: 'VN', label: 'Vietnam 🇻🇳' }
+];
+
+// Smart Targets Definition
+const TARGET_PRESETS = [
+    {
+        label: 'Wasabi Distributors',
+        icon: '🌱',
+        keywords: {
+            'KR': '와사비 유통 도매 업체',
+            'JP': '山葵 わさび 卸売業者 流通',
+            'US': 'Wasabi wholesale distributors',
+            'CN': '芥末 批发商',
+            'VN': 'Nhà phân phối Wasabi',
+            'Global': 'Wasabi distributors wholesale'
+        }
+    },
+    {
+        label: 'Smart Farm Research',
+        icon: '🔬',
+        keywords: {
+            'KR': '스마트팜 연구소 농업기술원',
+            'JP': 'スマートファーム 農業 研究所',
+            'US': 'Smart AgTech Research Institute',
+            'CN': '智慧农业 研究院',
+            'VN': 'Viện nghiên cứu nông nghiệp thông minh',
+            'Global': 'Smart Farming Research Institute'
+        }
+    },
+    {
+        label: 'Food Processing',
+        icon: '🍱',
+        keywords: {
+            'KR': '식품 가공 제조 업체 (소스, 양념)',
+            'JP': '食品加工 会社 調味料',
+            'US': 'Food processing companies ingredients',
+            'CN': '食品加工厂',
+            'VN': 'Công ty chế biến thực phẩm',
+            'Global': 'Food Processing Manufactures'
+        }
+    },
+    {
+        label: 'High-end Restaurants',
+        icon: '🍣',
+        keywords: {
+            'KR': '고급 일식 오마카세 식자재 납품',
+            'JP': '高級 寿司 料亭 仕入れ',
+            'US': 'High-end Japanese Restaurant Suppliers',
+            'CN': '高端 日本料理 供应商',
+            'VN': 'Nhà hàng Nhật Bản cao cấp',
+            'Global': 'Premium Japanese Restaurant Suppliers'
+        }
+    }
 ];
 
 export default function HunterPage() {
     // Search State
     const [keyword, setKeyword] = useState('');
-    const [country, setCountry] = useState<string | null>('KR'); // Default to Korea
+    const [country, setCountry] = useState<string | null>(''); // Default to Global (All)
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<HunterResult[]>([]);
     const [page, setPage] = useState(1);
@@ -75,39 +129,49 @@ export default function HunterPage() {
     }, []);
 
     const loadSavedPartners = async () => {
-        const data = await getHunterResults();
-        setSavedPartners(data);
+        try {
+            const data = await getHunterResults();
+
+            if (Array.isArray(data)) {
+                setSavedPartners(data);
+            } else {
+                notifications.show({ title: 'Error', message: 'Data sync invalid.', color: 'red' });
+            }
+        } catch (error) {
+            console.error('Failed to load partners:', error);
+            notifications.show({ title: 'Connection Error', message: 'Could not fetch data.', color: 'red' });
+        }
     };
 
-    const handleSearch = async () => {
-        // Allow empty keyword if just browsing by country (mock logic supports it)
+    const handlePresetClick = (preset: any) => {
+        // 1. Determine active country code (fallback to Global if empty)
+        const activeCountry = country || 'Global';
+
+        // 2. Select keyword for that country, or default to Global/English
+        const searchTerm = preset.keywords[activeCountry] || preset.keywords['Global'];
+
+        // 3. Update state and trigger search
+        setKeyword(searchTerm);
+
+        // We need to trigger search with the NEW keyword. 
+        // Since state update is async, we modify handleSearch to accept an optional override or just call logic directly.
+        // Let's call searchPartners directly here to be instant.
+        performSearch(searchTerm, country || 'KR');
+    };
+
+    const performSearch = async (term: string, countryCode: string) => {
         setLoading(true);
         setResults([]);
         setPage(1);
 
         try {
-            const data = await searchPartners(keyword, 1, country || 'KR');
+            const data = await searchPartners(term, 1, countryCode);
             setResults(data);
 
-            if (data.length > 0 && data[0].isMock) {
-                notifications.show({
-                    title: 'Demo Mode Active',
-                    message: 'API connection local/missing or limited. Showing simulation data.',
-                    color: 'orange',
-                    autoClose: 5000
-                });
-            } else if (data.length > 0) {
-                notifications.show({
-                    title: 'Hunt Successful',
-                    message: `Found ${data.length} potential partners in ${country}.`,
-                    color: 'teal'
-                });
+            if (data.length > 0) {
+                notifications.show({ title: 'Target Locked 🎯', message: `Found partners for: ${term}`, color: 'teal' });
             } else {
-                notifications.show({
-                    title: 'No Results',
-                    message: 'Try a different keyword or country.',
-                    color: 'gray'
-                });
+                notifications.show({ title: 'No Results', message: 'Try a different target.', color: 'gray' });
             }
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to search partners.', color: 'red' });
@@ -115,6 +179,8 @@ export default function HunterPage() {
             setLoading(false);
         }
     };
+
+    const handleSearch = () => performSearch(keyword, country || 'KR');
 
     const handleLoadMore = async () => {
         const nextPage = page + 1;
@@ -326,6 +392,28 @@ Web: www.k-farm.or.kr`;
                         </Group>
                     </Card>
 
+                    {/* Smart Target Chips */}
+                    <Stack gap="xs" mb="xl">
+                        <Text size="sm" fw={500} c="dimmed">Quick Target (Click to auto-search):</Text>
+                        <Group gap={8}>
+                            {TARGET_PRESETS.map((preset) => (
+                                <Badge
+                                    key={preset.label}
+                                    size="lg"
+                                    variant="outline"
+                                    color="gray"
+                                    style={{ cursor: 'pointer', textTransform: 'none' }}
+                                    onClick={() => handlePresetClick(preset)}
+                                    className="hover-badge" // Check globals.css for styling or add inline hover
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f1f3f5'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    {preset.icon} {preset.label}
+                                </Badge>
+                            ))}
+                        </Group>
+                    </Stack>
+
                     {results.length > 0 && (
                         <Stack>
                             <Group justify="space-between" mb={-10}>
@@ -400,8 +488,19 @@ Web: www.k-farm.or.kr`;
                 <Tabs.Panel value="pipeline">
                     <Stack>
                         <Group justify="space-between">
-                            <Title order={3}>My Pipeline</Title>
-                            <Button variant="outline" color="gray" size="xs" onClick={loadSavedPartners}>Refresh</Button>
+                            <Title order={3}>My Pipeline <Text span size="sm" c="dimmed">({savedPartners.length})</Text></Title>
+                            <Button
+                                variant="subtle"
+                                color="gray"
+                                size="sm"
+                                leftSection={<IconCheck size={14} />}
+                                onClick={() => {
+                                    notifications.show({ title: 'Syncing', message: 'Checking for updates...', color: 'blue', autoClose: 1000 });
+                                    loadSavedPartners();
+                                }}
+                            >
+                                Sync Data
+                            </Button>
                         </Group>
 
                         {savedPartners.length === 0 ? (
