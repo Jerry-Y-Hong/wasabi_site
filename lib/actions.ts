@@ -125,7 +125,6 @@ async function writeDb(filename: string, data: any[]) {
         try {
             await ensureDataDir();
             const filePath = pathLib.join(BUILD_DATA_PATH, filename);
-            console.log(`[Debug] Writing to file: ${filePath}`);
             await fsp.writeFile(filePath, JSON.stringify(data, null, 2));
 
             if (filename === 'hunter.json') {
