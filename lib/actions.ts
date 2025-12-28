@@ -8,66 +8,65 @@ import { put, list } from '@vercel/blob';
 
 // Use /tmp only on Vercel deployment
 // Use /tmp only on Vercel deployment, otherwise use strict absolute path for local
-const DB_PATH = process.env.VERCEL === '1'
-    ? pathLib.join('/tmp', 'data')
-    : 'c:\\Users\\car13\\.gemini\\antigravity\\scratch\\wasabi-smart-farm\\data';
-
-console.log('[Debug] DB_PATH Fixed:', DB_PATH);
+// Define paths for both read-only build files and writable tmp files
+const BUILD_DATA_PATH = pathLib.join(process.cwd(), 'data');
+const TMP_DATA_PATH = '/tmp/data';
 
 const IS_VERCEL = process.env.VERCEL === '1';
 
-console.log('[Debug] Env Check - VERCEL:', process.env.VERCEL);
-console.log('[Debug] Env Check - NODE_ENV:', process.env.NODE_ENV);
-console.log('[Debug] DB_PATH:', DB_PATH); // Not usually needed for Blob, but good for local
-
 async function ensureDataDir() {
-    if (IS_VERCEL) return; // Not usually needed for Blob, but good for local
-    try {
-        await fsp.access(DB_PATH);
-    } catch {
+    if (IS_VERCEL) {
         try {
-            console.log('[Debug] Creating data directory at:', DB_PATH);
-            await fsp.mkdir(DB_PATH, { recursive: true });
-        } catch (e) {
-            console.error('Failed to create data directory:', e);
+            await fsp.access(TMP_DATA_PATH);
+        } catch {
+            await fsp.mkdir(TMP_DATA_PATH, { recursive: true });
+        }
+    } else {
+        // Local
+        try {
+            await fsp.access(BUILD_DATA_PATH);
+        } catch {
+            await fsp.mkdir(BUILD_DATA_PATH, { recursive: true });
         }
     }
 }
 
-// --- Persistence Helpers ---
-
 async function readDb(filename: string): Promise<any[]> {
     if (IS_VERCEL) {
         try {
-            // Check for Blob Token
-            if (!process.env.BLOB_READ_WRITE_TOKEN) {
-                console.warn('[Blob] Missing BLOB_READ_WRITE_TOKEN. Returning empty data.');
-                return [];
+            await ensureDataDir();
+
+            // 1. Try reading from /tmp (writable, newest data)
+            const tmpPath = pathLib.join(TMP_DATA_PATH, filename);
+            try {
+                const data = await fsp.readFile(tmpPath, 'utf-8');
+                return JSON.parse(data);
+            } catch (e) {
+                // 2. Fallback: Try reading from build output (read-only seed data)
+                const buildPath = pathLib.join(BUILD_DATA_PATH, filename);
+                try {
+                    const data = await fsp.readFile(buildPath, 'utf-8');
+                    // Copy to /tmp for future writes
+                    await fsp.writeFile(tmpPath, data);
+                    return JSON.parse(data);
+                } catch (err) {
+                    console.log(`[ReadDb] Not found in build path either: ${filename}`);
+                    return [];
+                }
             }
-
-            // Find file in Blob
-            const { blobs } = await list({ prefix: filename, limit: 1 });
-            // Exact match check recommended
-            const blob = blobs.find(b => b.pathname === filename);
-
-            if (!blob) return [];
-
-            const res = await fetch(blob.url, { cache: 'no-store' });
-            if (!res.ok) throw new Error(`Fetch failed: ${res.status} `);
-            return await res.json();
         } catch (error) {
-            console.error(`[Blob] Read error for ${filename}: `, error);
+            console.error(`[ReadDb] Error:`, error);
             return [];
         }
     } else {
         // Local
         try {
             await ensureDataDir();
-            const filePath = pathLib.join(DB_PATH, filename);
+            const filePath = pathLib.join(BUILD_DATA_PATH, filename);
             const fileContent = await fsp.readFile(filePath, 'utf-8');
             return JSON.parse(fileContent);
         } catch (e) {
-            console.error('[Error] getHunterResults failed:', e);
+            console.error('[Error] readDb failed:', e);
             return [];
         }
     }
@@ -76,32 +75,23 @@ async function readDb(filename: string): Promise<any[]> {
 async function writeDb(filename: string, data: any[]) {
     if (IS_VERCEL) {
         try {
-            if (!process.env.BLOB_READ_WRITE_TOKEN) {
-                console.warn('[Blob] Missing BLOB_READ_WRITE_TOKEN. Data not saved.');
-                return { success: true, warning: 'Persistence disabled (No Token)' };
-            }
-
-            await put(filename, JSON.stringify(data, null, 2), {
-                access: 'public',
-                addRandomSuffix: false // Overwrite existing file
-            });
+            await ensureDataDir();
+            // Always write to /tmp as it is the only writable place
+            const tmpPath = pathLib.join(TMP_DATA_PATH, filename);
+            await fsp.writeFile(tmpPath, JSON.stringify(data, null, 2));
             return { success: true };
         } catch (error) {
-            console.error(`[Blob] Write error for ${filename}: `, error);
-            return { success: true, warning: 'Save failed (Blob Error)' };
+            console.error(`[WriteDb] Error:`, error);
+            return { success: false, warning: 'Save failed (FS Error)' };
         }
     } else {
         // Local
         try {
             await ensureDataDir();
-            const filePath = pathLib.join(DB_PATH, filename);
+            const filePath = pathLib.join(BUILD_DATA_PATH, filename);
             console.log(`[Debug] Writing to file: ${filePath}`);
-            console.log(`[Debug] Data count: ${data.length}`);
-
             await fsp.writeFile(filePath, JSON.stringify(data, null, 2));
-            console.log('[Debug] Write successful');
 
-            // Revalidate paths if hunter.json was updated
             if (filename === 'hunter.json') {
                 revalidatePath('/admin/hunter');
                 revalidatePath('/admin');
@@ -315,7 +305,7 @@ export async function saveAnimatorImage(base64Data: string, fileName: string) {
         // Local
         try {
             await ensureDataDir();
-            const uploadDir = pathLib.join(DB_PATH, 'uploads');
+            const uploadDir = pathLib.join(BUILD_DATA_PATH, 'uploads');
             try { await fsp.access(uploadDir); } catch { await fsp.mkdir(uploadDir, { recursive: true }); }
 
             const data = base64Data.replace(/^data:image\/\w+;base64,/, '');
