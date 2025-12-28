@@ -28,7 +28,7 @@ export function Footer() {
         <div className={classes.footer}>
             <Container className={classes.inner} size="xl">
                 <Group gap="md">
-                    <Image src="/images/logo.jpg?v=2" alt="Logo" h={60} w={60} className={classes.logo} />
+                    <Image src="/images/logo.jpg?v=3" alt="Logo" h={60} w={60} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white' }} />
                     <Stack gap={0}>
                         <Text size="lg" fw={700} c="wasabi">K-Farm International Co., Ltd</Text>
                         <Text size="xs" c="dimmed">745, Damok-ri, Sangseo-myeon, Hwacheon-gun, Gangwon-state, Republic of Korea</Text>
