@@ -207,19 +207,42 @@ export async function getDashboardStats() {
     }, {});
 
     // Recent 5 activities (combine contact and consulting)
-    const recentInquiries = [
-        ...contactData.map((d: any) => ({ ...d, type: 'General', title: d.subject })),
-        ...consultingData.map((d: any) => ({ ...d, type: 'Consulting', title: `${d.landSize} pyeong / ${d.consultingType}` }))
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-        .slice(0, 5);
+    const recentInquiries = [...contactData, ...consultingData]
+        .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, 5)
+        .map((item: any) => ({
+            ...item,
+            type: item.category || (item.companyName ? 'Consulting' : 'General'), // Use category if exists, else infer
+            subject: item.subject || 'Consulting Request'
+        }));
+
+    // Aggregate Categories
+    const categoryCounts: Record<string, number> = {
+        'Product Inquiry': 0,
+        'Partnership': 0,
+        'Farm Visit': 0,
+        'Investment': 0,
+        'Other': 0,
+        'Consulting': consultingData.length
+    };
+
+    contactData.forEach((item: any) => {
+        const cat = item.category || 'Other'; // Default to Other if missing (legacy data)
+        if (categoryCounts[cat] !== undefined) {
+            categoryCounts[cat]++;
+        } else {
+            categoryCounts['Other']++;
+        }
+    });
 
     return {
         pipeline: {
             total: hunterData.length,
-            statusCounts
+            statusCounts: statusCounts
         },
         inquiries: {
             total: contactData.length + consultingData.length,
+            categoryCounts: categoryCounts,
             recent: recentInquiries
         }
     };

@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Textarea, Button, Group, SimpleGrid, Paper } from '@mantine/core';
+import { Container, Title, Text, TextInput, Textarea, Button, Group, SimpleGrid, Paper, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { saveContactInquiry } from '@/lib/actions';
@@ -8,6 +8,7 @@ import { saveContactInquiry } from '@/lib/actions';
 export default function ContactPage() {
     const form = useForm({
         initialValues: {
+            category: 'Product Inquiry',
             name: '',
             email: '',
             subject: '',
@@ -48,12 +49,27 @@ export default function ContactPage() {
 
             <Paper p="md" withBorder mb="lg" bg="gray.0">
                 <Text fw={500} size="sm" ta="center">Direct Contact</Text>
-                <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>sbienv0633@gmail.com</Text></Text>
+                <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>kfarmjerry03@gmail.com</Text></Text>
                 <Text ta="center" size="sm" c="dimmed">Mobile: 82-10-4355-0633</Text>
             </Paper>
 
             <Paper p="xl" withBorder radius="md shadow-md">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
+                    <Select
+                        label="Inquiry Category"
+                        placeholder="Select category"
+                        data={[
+                            'Product Inquiry',
+                            'Partnership',
+                            'Farm Visit',
+                            'Investment',
+                            'Other'
+                        ]}
+                        mb="md"
+                        required
+                        {...form.getInputProps('category')}
+                    />
+
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
                         <TextInput
                             label="Name"

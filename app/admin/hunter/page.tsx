@@ -28,9 +28,9 @@ interface HunterResult {
 
 const APP_STATUS: Record<string, string> = {
     'New': 'gray',
-    'Contacted': 'blue',
-    'In Discussion': 'green',
-    'Partner': 'grape',
+    'Proposal Sent': 'blue',
+    'Proceeding': 'green',
+    'Contracted': 'grape',
     'Dropped': 'red'
 };
 
@@ -217,7 +217,7 @@ export default function HunterPage() {
             try {
                 // Save and update status first
                 await saveHunterResult(selectedPartner);
-                await updateHunterStatus(selectedPartner.id, 'Contacted');
+                await updateHunterStatus(selectedPartner.id, 'Proposal Sent');
                 loadSavedPartners();
 
                 // Generate AI Proposal
@@ -231,7 +231,7 @@ export default function HunterPage() {
 
                 // Update the view with AI content (Need state for this, or use the getter)
                 // Since getEmailContent was valid, we need to store the AI result in state
-                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: sbienv0633@gmail.com\nWeb: www.k-farm.or.kr`;
+                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: kfarmjerry03@gmail.com\nWeb: www.k-farm.or.kr`;
                 setDraftEmail({ subject: aiResponse.subject, body: aiResponse.body + signature });
 
             } catch (error) {
@@ -540,6 +540,23 @@ Web: www.k-farm.or.kr`;
                                 </Stack>
                             )}
                         </CopyButton>} />
+
+                        <Button
+                            component="a"
+                            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(editForm.email || selectedPartner.email || '')}&su=${encodeURIComponent(draftEmail.subject)}&body=${encodeURIComponent(draftEmail.body)}`}
+                            target="_blank"
+                            leftSection={<IconMail size={16} />}
+                            color="blue"
+                            size="md"
+                            fullWidth
+                            onClick={() => {
+                                notifications.show({ title: 'Opening Gmail', message: 'Check the new tab to send your proposal.', color: 'blue' });
+                                setOpened(false);
+                            }}
+                        >
+                            Send via Gmail
+                        </Button>
+
                     </Stack>
                 )}
             </Modal>
