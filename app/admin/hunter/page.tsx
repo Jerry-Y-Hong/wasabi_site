@@ -2,10 +2,10 @@
 
 import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld } from '@tabler/icons-react';
+import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
-import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo } from '@/lib/actions';
+import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult } from '@/lib/actions';
 import { generateProposalEmail } from '@/lib/ai';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
@@ -231,6 +231,23 @@ export default function HunterPage() {
         if (result.success) {
             notifications.show({ title: 'Status Updated', message: `Status changed to ${newStatus}`, color: APP_STATUS[newStatus] || 'blue' });
             loadSavedPartners();
+        }
+    };
+
+    const handleDismiss = (id: number) => {
+        setResults((prev) => prev.filter((item) => item.id !== id));
+        notifications.show({ title: 'Dismissed', message: 'Removed from search results.', color: 'gray', autoClose: 1500 });
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm('Are you sure you want to remove this partner from your pipeline?')) {
+            const result = await deleteHunterResult(id);
+            if (result.success) {
+                notifications.show({ title: 'Deleted', message: 'Partner removed from pipeline.', color: 'red' });
+                loadSavedPartners();
+            } else {
+                notifications.show({ title: 'Error', message: 'Failed to delete partner.', color: 'red' });
+            }
         }
     };
 
@@ -474,6 +491,11 @@ Web: www.k-farm.or.kr`;
                                                     <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element)}>
                                                         Proposal
                                                     </Button>
+                                                    <Tooltip label="Dismiss">
+                                                        <ActionIcon variant="subtle" color="gray" size="sm" onClick={() => handleDismiss(element.id)}>
+                                                            <IconX size={14} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
                                                 </Group>
                                             </Table.Td>
                                         </Table.Tr>
@@ -582,6 +604,11 @@ Web: www.k-farm.or.kr`;
                                                     <Tooltip label="Visit Website">
                                                         <ActionIcon component="a" href={element.url} target="_blank" variant="default" size="sm">
                                                             <IconWorld size={14} />
+                                                        </ActionIcon>
+                                                    </Tooltip>
+                                                    <Tooltip label="Delete">
+                                                        <ActionIcon variant="subtle" color="red" size="sm" onClick={() => handleDelete(element.id)}>
+                                                            <IconTrash size={14} />
                                                         </ActionIcon>
                                                     </Tooltip>
                                                 </Group>

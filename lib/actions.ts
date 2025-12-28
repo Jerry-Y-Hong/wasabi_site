@@ -217,10 +217,24 @@ export async function updateHunterInfo(id: number, data: any) {
         await writeDb('hunter.json', currentData);
         return { success: true };
     }
+    // ... existing code ...
     return { success: false };
 }
 
+export async function deleteHunterResult(id: number) {
+    const currentData = await readDb('hunter.json');
+    const newData = currentData.filter((item: any) => item.id !== id);
+    if (newData.length !== currentData.length) {
+        await writeDb('hunter.json', newData);
+        revalidatePath('/admin/hunter');
+        revalidatePath('/admin');
+        return { success: true };
+    }
+    return { success: false, message: 'Item not found' };
+}
+
 // Dashboard Stats (uses helpers)
+// ...
 export async function getDashboardStats() {
     const hunterData = await getHunterResults();
     const contactData = await getContactInquiries();
