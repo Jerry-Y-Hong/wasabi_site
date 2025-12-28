@@ -99,7 +99,7 @@ export default function Home() {
           <Grid align="center" gutter={60}>
             <Grid.Col span={{ base: 12, md: 4 }}>
               <Paper shadow="sm" p="xl" radius="lg" withBorder style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Image src="/images/logo.jpg" w="80%" style={{ maxWidth: '250px', border: '4px solid white', borderRadius: '50%' }} alt="Brand Logo" />
+                <Image src="/images/logo.jpg?v=2" w="80%" style={{ maxWidth: '250px', border: '4px solid white', borderRadius: '50%' }} alt="Brand Logo" />
               </Paper>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 8 }}>
