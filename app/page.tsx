@@ -106,7 +106,7 @@ export default function Home() {
               <Text c="wasabi" fw={700} mb="xs" size="sm" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>Brand Identity</Text>
               <Title order={2} mb="md">Harmony of Nature & Technology</Title>
               <Text size="lg" mb="md" c="dimmed">
-                The <span style={{ color: 'var(--mantine-color-wasabi-6)', fontWeight: 600 }}>Vibrant Green Leaf</span> represents the vitality of our premium Wasabi and the purity of nature we preserve.
+                The <span style={{ color: 'var(--mantine-color-wasabi-6)', fontWeight: 600 }}>Wasabi Leaf with Electronic Circuits</span> symbolizes the seamless fusion of nature and cutting-edge Smart Farm technology.
               </Text>
               <Text size="lg" mb="md" c="dimmed">
                 The <span style={{ color: 'var(--mantine-color-blue-6)', fontWeight: 600 }}>Circular Form</span> symbolizes our global network and the sustainable "Hyper-Cycle" ecosystem of our smart farms.
