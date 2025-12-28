@@ -33,7 +33,6 @@
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
-  aspect-ratio: 1 / 1;
-  width: 40px;
+  width: 50px;
   height: 40px;
 }
