@@ -234,6 +234,14 @@ export default function HunterPage() {
         }
     };
 
+    const handleChangeCountry = async (partnerId: number, newCountry: string) => {
+        const result = await updateHunterInfo(partnerId, { country: newCountry });
+        if (result.success) {
+            notifications.show({ title: 'Country Updated', message: `Region changed.`, color: 'teal' });
+            loadSavedPartners();
+        }
+    };
+
     const handleDismiss = (id: number) => {
         setResults((prev) => prev.filter((item) => item.id !== id));
         notifications.show({ title: 'Dismissed', message: 'Removed from search results.', color: 'gray', autoClose: 1500 });
@@ -585,7 +593,18 @@ Web: www.k-farm.or.kr`;
                                     {savedPartners.map((element) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.85rem' }}>
                                             <Table.Td>
-                                                <Badge variant="outline" color="gray" size="sm">{element.country || 'Global'}</Badge>
+                                                <Menu shadow="md" width={150}>
+                                                    <Menu.Target>
+                                                        <Badge variant="outline" color="gray" size="sm" style={{ cursor: 'pointer' }}>{element.country || 'Global'}</Badge>
+                                                    </Menu.Target>
+                                                    <Menu.Dropdown>
+                                                        {COUNTRIES.map((c) => (
+                                                            <Menu.Item key={c.value} onClick={() => handleChangeCountry(element.id, c.value || 'Global')}>
+                                                                {c.label}
+                                                            </Menu.Item>
+                                                        ))}
+                                                    </Menu.Dropdown>
+                                                </Menu>
                                             </Table.Td>
                                             <Table.Td>
                                                 <Menu shadow="md" width={150}>
