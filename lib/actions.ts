@@ -352,3 +352,125 @@ export async function searchPartners(keyword: string, page: number = 1, country:
     // Add isMock flag
     return paginatedResults.map(item => ({ ...item, isMock: true }));
 }
+
+// Blog Actions
+export async function saveBlogPost(data: any) {
+    try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'posts.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            // File doesn't exist yet
+        }
+
+        const slug = data.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)+/g, '');
+
+        const newEntry = {
+            ...data,
+            id: Date.now(),
+            slug: slug,
+            timestamp: new Date().toISOString(),
+        };
+
+        currentData.push(newEntry);
+        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+        return { success: true, slug };
+    } catch (error) {
+        console.error('File write failed:', error);
+        return { success: false, error: 'Failed to save post' };
+    }
+}
+
+export async function getBlogPosts() {
+    try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'posts.json');
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
+        return JSON.parse(fileContent).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    } catch (e) {
+        return [];
+    }
+}
+
+export async function getBlogPost(slug: string) {
+    try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'posts.json');
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
+        const posts = JSON.parse(fileContent);
+        return posts.find((p: any) => p.slug === slug) || null;
+    } catch (e) {
+        return null;
+    }
+}
+// Video Script Actions
+export async function saveVideoScript(data: any) {
+    try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'scripts.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            // File doesn't exist yet
+        }
+
+        const newEntry = {
+            ...data,
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+        };
+
+        currentData.push(newEntry);
+        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+        return { success: true, id: newEntry.id };
+    } catch (error) {
+        console.error('File write failed:', error);
+        return { success: false, error: 'Failed to save script' };
+    }
+}
+
+export async function getVideoScripts() {
+    try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'scripts.json');
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
+        return JSON.parse(fileContent).sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    } catch (e) {
+        return [];
+    }
+}
+
+export async function saveAnimatorImage(base64Data: string, fileName: string) {
+    try {
+        await ensureDataDir();
+        const uploadDir = pathLib.join(DB_PATH, 'uploads');
+        try {
+            await fsp.access(uploadDir);
+        } catch {
+            await fsp.mkdir(uploadDir, { recursive: true });
+        }
+
+        const data = base64Data.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(data, 'base64');
+        const finalFileName = `${Date.now()}-${fileName}`;
+        const filePath = pathLib.join(uploadDir, finalFileName);
+
+        await fsp.writeFile(filePath, buffer);
+
+        // Return a path that can be served (using /api/uploads workaround or similar if needed)
+        // For local dev, we might need a way to serve these. 
+        // But for now, returning the relative path or base64 as fallback.
+        return { success: true, path: `/api/uploads/${finalFileName}`, localPath: filePath };
+    } catch (error) {
+        console.error('Image save failed:', error);
+        return { success: false };
+    }
+}

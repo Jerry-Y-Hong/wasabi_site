@@ -117,7 +117,7 @@ export default function AdminDashboard() {
                         <Button component={Link} href="/admin/video" variant="light" color="orange" fullWidth leftSection={<IconMovie size={16} />}>
                             AI Video Producer
                         </Button>
-                        <Button component={Link} href="/admin/content" variant="light" color="pink" fullWidth leftSection={<IconPencil size={16} />}>
+                        <Button component={Link} href="/admin/blog" variant="light" color="wasabi" fullWidth leftSection={<IconPencil size={16} />}>
                             Write Blog (AI)
                         </Button>
                         <Button variant="light" color="cyan" fullWidth leftSection={<IconMail size={16} />} disabled>

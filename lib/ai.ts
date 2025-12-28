@@ -109,53 +109,104 @@ export async function generateProposalEmail(data: ProposalRequest) {
     }
 }
 
-export async function generateBlogContent(topic: string, tone: string, language: string = 'English') {
+export async function generateBlogContent(topic: string, tone: string, language: string = 'English', keywords: string = '') {
     if (!process.env.GEMINI_API_KEY) {
         // Fallback to mock if no key
         await new Promise(resolve => setTimeout(resolve, 2000));
         return {
-            title: `[Mock] Future of ${topic} `,
-            content: `Please set GEMINI_API_KEY in .env.local to generate real content about ${topic}.`
+            title: `[Mock] Future of ${topic}`,
+            content: `# Future of ${topic}\n\nThis is a mock post about **${topic}**.\n\n## Key Benefits\n1. Efficiency\n2. Sustainability\n\n*Please set GEMINI_API_KEY to generate real content.*`
         };
     }
 
     try {
         const prompt = `
-        Write a high - quality blog post about "${topic}".
+        Act as an Expert SEO Content Writer for "K-Farm International" (Smart Farm Technology).
+        Write a comprehensive, high-quality blog post about "${topic}".
+        
+        Parameters:
+        - Keywords to include: ${keywords}
         - Tone: ${tone}
         - Language: ${language}
-        - Role: Expert Agricultural Tech Consultant
-            - Format: JSON with "title" and "content".
+        
+        Format Requirements:
+        - Use standard Markdown formatting.
+        - Start with a Level 1 Header (# Title).
+        - Use Level 2 Headers (##) for main sections.
+        - include bullet points and bold text for readability.
+        - Length: Approximately 1000-1500 characters (rich content).
+        - Structure: Introduction -> Problem/State -> Solution (Smart Farm) -> Conclusion.
+        
+        Output only the markdown content.
         `;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
 
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
-
         return {
-            title: `Insights on ${topic} `,
             content: text
         };
 
     } catch (error) {
-        return { title: "Error", content: "Failed to generate content." };
+        console.error('AI Blog Generation Error:', error);
+        return { content: "Failed to generate content. Please try again." };
     }
 }
 
-export async function generateVideoScript(topic: string) {
+export async function generateVideoScript(topic: string, seriesType: string = 'process', specs: string = '') {
     if (!process.env.GEMINI_API_KEY) return { scenes: [], raw: "No API Key" };
 
+    let styleInstruction = "";
+    if (seriesType === 'process') {
+        styleInstruction = `
+        STYLE: "Series 1: The Code of Life" (Professional Documentation)
+        - Visuals: Grounded, realistic lab setting. Natural or neutral lighting (avoid heavy blue/neon tints). Focus on the precision of human hands and real laboratory equipment.
+        - Audio: Professional, calm, trustworthy narration.
+        - Focus: Step-by-step documentation of biotechnology in action.
+        - AVOID: Sci-fi robots, glowing blue holograms, or overly futuristic lab equipment.
+        `;
+    } else if (seriesType === 'facility') {
+        styleInstruction = `
+        STYLE: "Series 2: The Evolving Farm" (Industrial Scale)
+        - Visuals: Realistic drone shots of farms, functional automation (real robot arms or conveyors), macro growth of real plants. Natural green tones.
+        - Audio: Dynamic but grounded, rhythmic industrial feel.
+        - Focus: Scalability, efficiency, and the power of modern agriculture.
+        - AVOID: Cyberpunk aesthetics or unrealistic futuristic cityscapes.
+        `;
+    } else {
+        styleInstruction = `
+        STYLE: "Series 3: K-Farm Logic" (Global Business/Vision)
+        - Visuals: Professional R&D centers, interviews in real office/lab settings, clean and accurate global data overlays.
+        - Audio: Inspiring yet humble and confident.
+        - Focus: Philosophy, partnership, and R&D leadership.
+        - AVOID: Overly flashy digital effects or "Matrix-style" data streams.
+        `;
+    }
+
     const prompt = `
-    Create a 30 - second short - form video script for a marketing video about: "${topic}".
-    Target Audience: Potential B2B Partners for Wasabi Smart Farm.
-            Format: JSON array of objects, where each object has "scene"(number), "visual"(detailed description for AI video generator), "audio"(voiceover / sound).
-                Example: [{ "scene": 1, "visual": "Drone shot...", "audio": "Welcome to..." }]
-                    `;
+    Act as a Professional Video Director for K-Farm's Smart Farm Documentary Series.
+    Create a 60-second video script for the topic: "${topic}".
+    
+    ${styleInstruction}
+
+    Technical Specifics to Include (MUST USE THESE):
+    "${specs}"
+
+    Format Requirement:
+    - Output a strictly valid JSON array of objects.
+    - Fields per object:
+      - "scene_number" (integer)
+      - "visual_description" (detailed camera instruction)
+      - "voiceover" (the actual script to be spoken)
+      - "on_screen_text" (important data/KPIs to show as overlay)
+      - "technical_note" (director's note for lighting/props)
+    
+    Example JSON Structure:
+    [
+        { "scene_number": 1, "visual_description": "...", "voiceover": "...", "on_screen_text": "...", "technical_note": "..." }
+    ]
+    `;
 
     try {
         const result = await model.generateContent(prompt);

@@ -1,0 +1,118 @@
+[
+  {
+    "topic": "Wasabi Tissue Culture",
+    "seriesType": "process",
+    "specs": "121C Autoclave, 15 min, Clean Bench",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Close up shot of gloved hands carefully placing a petri dish containing a small, green wasabi plantlet into a metal basket.",
+        "voiceover": "Wasabi, prized for its unique flavor, is notoriously difficult to cultivate. But through tissue culture, we're unlocking its potential.",
+        "on_screen_text": "Wasabi: The Code of Life",
+        "technical_note": "Warm, diffused lighting. Emphasize the precision of the hand movements. Focus on the green of the wasabi."
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Medium shot of the metal basket being loaded into the chamber of a 121C Autoclave.",
+        "voiceover": "Sterilization is paramount. Every step must eliminate contamination.",
+        "on_screen_text": "Sterilization: 121C Autoclave",
+        "technical_note": "Show the steam rising from the autoclave after the process. Authentic sound of the autoclave closing."
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "Shot of the autoclave's display showing the temperature and timer counting down. Close up on the '15 min' mark.",
+        "voiceover": "We use a 121C Autoclave to ensure complete sterilization, running for 15 minutes.",
+        "on_screen_text": "Time: 15 min",
+        "technical_note": "Focus on the digital display. Steady shot to emphasize precision."
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "Wide shot of a scientist in lab coat and gloves working meticulously inside a Clean Bench. Petri dishes and sterile equipment are neatly arranged.",
+        "voiceover": "All work is conducted within a sterile Clean Bench, creating an environment free from unwanted microbes.",
+        "on_screen_text": "Clean Bench: Sterile Environment",
+        "technical_note": "Soft, even lighting within the clean bench. Focus on maintaining a sense of sterile order."
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "Close-up shot of a scientist carefully using sterile instruments to divide a single wasabi plantlet into multiple smaller pieces on a petri dish.",
+        "voiceover": "Here, explants – small pieces of the original plant – are carefully prepared for propagation.",
+        "on_screen_text": "Explants: New Beginnings",
+        "technical_note": "Extreme close-up. Highlight the delicate nature of the process. Stable camera."
+      },
+      {
+        "scene_number": 6,
+        "visual_description": "Time-lapse shot showing multiple petri dishes with small wasabi plantlets growing larger over time in a controlled environment chamber. Temperature and humidity readouts are briefly visible.",
+        "voiceover": "These explants, nurtured in controlled conditions, will eventually yield thousands of identical wasabi plants.",
+        "on_screen_text": "Tissue Culture: Scalable Production",
+        "technical_note": "Subtle shift in lighting to indicate the passage of time. Focus on the growth progression."
+      },
+      {
+        "scene_number": 7,
+        "visual_description": "Final shot: A wide shot of a wasabi farm with lush green plants growing in neat rows. The lab building is visible in the background.",
+        "voiceover": "From a single plant, to a thriving harvest. This is the power of smart farming and biotechnology.",
+        "on_screen_text": "K-Farm: Cultivating the Future",
+        "technical_note": "Bright, natural lighting. Show a sense of scale and connection between the lab and the farm."
+      }
+    ],
+    "id": 1766895204581,
+    "timestamp": "2025-12-28T04:13:24.581Z"
+  },
+  {
+    "topic": "Wasabi Tissue Culture",
+    "seriesType": "process",
+    "specs": "121C Autoclave, 15 min, Clean Bench",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Close up shot of gloved hands carefully placing a petri dish containing a small, green wasabi plantlet into a metal basket.",
+        "voiceover": "Wasabi, prized for its unique flavor, is notoriously difficult to cultivate. But through tissue culture, we're unlocking its potential.",
+        "on_screen_text": "Wasabi: The Code of Life",
+        "technical_note": "Warm, diffused lighting. Emphasize the precision of the hand movements. Focus on the green of the wasabi."
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Medium shot of the metal basket being loaded into the chamber of a 121C Autoclave.",
+        "voiceover": "Sterilization is paramount. Every step must eliminate contamination.",
+        "on_screen_text": "Sterilization: 121C Autoclave",
+        "technical_note": "Show the steam rising from the autoclave after the process. Authentic sound of the autoclave closing."
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "Shot of the autoclave's display showing the temperature and timer counting down. Close up on the '15 min' mark.",
+        "voiceover": "We use a 121C Autoclave to ensure complete sterilization, running for 15 minutes.",
+        "on_screen_text": "Time: 15 min",
+        "technical_note": "Focus on the digital display. Steady shot to emphasize precision."
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "Wide shot of a scientist in lab coat and gloves working meticulously inside a Clean Bench. Petri dishes and sterile equipment are neatly arranged.",
+        "voiceover": "All work is conducted within a sterile Clean Bench, creating an environment free from unwanted microbes.",
+        "on_screen_text": "Clean Bench: Sterile Environment",
+        "technical_note": "Soft, even lighting within the clean bench. Focus on maintaining a sense of sterile order."
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "Close-up shot of a scientist carefully using sterile instruments to divide a single wasabi plantlet into multiple smaller pieces on a petri dish.",
+        "voiceover": "Here, explants – small pieces of the original plant – are carefully prepared for propagation.",
+        "on_screen_text": "Explants: New Beginnings",
+        "technical_note": "Extreme close-up. Highlight the delicate nature of the process. Stable camera."
+      },
+      {
+        "scene_number": 6,
+        "visual_description": "Time-lapse shot showing multiple petri dishes with small wasabi plantlets growing larger over time in a controlled environment chamber. Temperature and humidity readouts are briefly visible.",
+        "voiceover": "These explants, nurtured in controlled conditions, will eventually yield thousands of identical wasabi plants.",
+        "on_screen_text": "Tissue Culture: Scalable Production",
+        "technical_note": "Subtle shift in lighting to indicate the passage of time. Focus on the growth progression."
+      },
+      {
+        "scene_number": 7,
+        "visual_description": "Final shot: A wide shot of a wasabi farm with lush green plants growing in neat rows. The lab building is visible in the background.",
+        "voiceover": "From a single plant, to a thriving harvest. This is the power of smart farming and biotechnology.",
+        "on_screen_text": "K-Farm: Cultivating the Future",
+        "technical_note": "Bright, natural lighting. Show a sense of scale and connection between the lab and the farm."
+      }
+    ],
+    "id": 1766900883617,
+    "timestamp": "2025-12-28T05:48:03.617Z"
+  }
+]
