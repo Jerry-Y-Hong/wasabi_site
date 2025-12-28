@@ -7,7 +7,8 @@ export function Hero() {
         <div className={classes.hero}>
             <Container size="md" className={classes.inner}>
                 <Title className={classes.title}>
-                    Leading the <span className={classes.highlight}>Global Wasabi Revolution</span>
+                    <span className={classes.highlight}>대한민국의 청정 와사비</span><br />
+                    <span style={{ fontSize: '0.7em', color: 'var(--mantine-color-gray-7)' }}>Global Wasabi Revolution</span>
                 </Title>
 
                 <Text className={classes.description} mt={30} size="xl">
