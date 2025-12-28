@@ -78,7 +78,7 @@ export default function Home() {
           <Grid gutter={50} align="center">
             <Grid.Col span={{ base: 12, md: 5 }}>
               <Paper shadow="xl" radius="lg" style={{ overflow: 'hidden' }}>
-                <Image src="/images/lifestyle-family.jpg" alt="Family enjoying wasabi" />
+                <Image src="/images/family-dinner-hd.png" alt="Family enjoying wasabi" />
               </Paper>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 7 }}>
