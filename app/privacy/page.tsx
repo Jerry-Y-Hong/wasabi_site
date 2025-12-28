@@ -1,3 +1,5 @@
+'use client';
+
 import { Container, Title, Text, List, ThemeIcon, Paper, Anchor, Divider } from '@mantine/core';
 
 export default function PrivacyPolicyPage() {
