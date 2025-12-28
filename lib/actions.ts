@@ -3,42 +3,55 @@
 import { promises as fsp } from 'fs';
 import pathLib from 'path';
 
-const DB_PATH = pathLib.join(process.cwd(), 'data');
+// Use /tmp for Vercel/Serverless environments (ephemeral storage)
+const DB_PATH = process.env.NODE_ENV === 'production'
+    ? pathLib.join('/tmp', 'data')
+    : pathLib.join(process.cwd(), 'data');
 
 async function ensureDataDir() {
     try {
         await fsp.access(DB_PATH);
     } catch {
-        await fsp.mkdir(DB_PATH, { recursive: true });
+        try {
+            await fsp.mkdir(DB_PATH, { recursive: true });
+        } catch (e) {
+            console.error('Failed to create data directory (likely read-only fs):', e);
+        }
     }
 }
 
 export async function saveContactInquiry(data: any) {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'contacts.json');
-    let currentData = [];
     try {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        currentData = JSON.parse(fileContent);
-    } catch (e) {
-        // File doesn't exist yet
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'contacts.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            // File doesn't exist yet
+        }
+
+        const newEntry = {
+            ...data,
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+        };
+
+        currentData.push(newEntry);
+        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+        return { success: true };
+    } catch (error) {
+        console.error('File write failed:', error);
+        // Fallback: Return success so UI doesn't break, even if data isn't saved persistently
+        return { success: true, warning: 'Data not saved (Read-only mode)' };
     }
-
-    const newEntry = {
-        ...data,
-        id: Date.now(),
-        timestamp: new Date().toISOString(),
-    };
-
-    currentData.push(newEntry);
-    await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-    return { success: true };
 }
 
 export async function getContactInquiries() {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'contacts.json');
     try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'contacts.json');
         const fileContent = await fsp.readFile(filePath, 'utf-8');
         return JSON.parse(fileContent);
     } catch (e) {
@@ -47,31 +60,36 @@ export async function getContactInquiries() {
 }
 
 export async function saveConsultingInquiry(data: any) {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'consulting.json');
-    let currentData = [];
     try {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        currentData = JSON.parse(fileContent);
-    } catch (e) {
-        // File doesn't exist yet
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'consulting.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            // File doesn't exist yet
+        }
+
+        const newEntry = {
+            ...data,
+            id: Date.now(),
+            timestamp: new Date().toISOString(),
+        };
+
+        currentData.push(newEntry);
+        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+        return { success: true };
+    } catch (error) {
+        console.error('File write failed:', error);
+        return { success: true, warning: 'Data not saved (Read-only mode)' };
     }
-
-    const newEntry = {
-        ...data,
-        id: Date.now(),
-        timestamp: new Date().toISOString(),
-    };
-
-    currentData.push(newEntry);
-    await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-    return { success: true };
 }
 
 export async function getConsultingInquiries() {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'consulting.json');
     try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'consulting.json');
         const fileContent = await fsp.readFile(filePath, 'utf-8');
         return JSON.parse(fileContent);
     } catch (e) {
@@ -80,37 +98,42 @@ export async function getConsultingInquiries() {
 }
 
 export async function saveHunterResult(data: any) {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'hunter.json');
-    let currentData = [];
     try {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        currentData = JSON.parse(fileContent);
-    } catch (e) {
-        // File doesn't exist yet
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'hunter.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            // File doesn't exist yet
+        }
+
+        // Check for duplicates based on name
+        const exists = currentData.some((item: any) => item.name === data.name);
+        if (exists) {
+            return { success: false, message: 'Already exists in your list.' };
+        }
+
+        const newEntry = {
+            ...data,
+            status: 'New', // Default status
+            addedAt: new Date().toISOString(),
+        };
+
+        currentData.push(newEntry);
+        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+        return { success: true };
+    } catch (error) {
+        console.error('File write failed:', error);
+        return { success: true, warning: 'Data not saved (Read-only mode)' };
     }
-
-    // Check for duplicates based on name
-    const exists = currentData.some((item: any) => item.name === data.name);
-    if (exists) {
-        return { success: false, message: 'Already exists in your list.' };
-    }
-
-    const newEntry = {
-        ...data,
-        status: 'New', // Default status
-        addedAt: new Date().toISOString(),
-    };
-
-    currentData.push(newEntry);
-    await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-    return { success: true };
 }
 
 export async function getHunterResults() {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'hunter.json');
     try {
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'hunter.json');
         const fileContent = await fsp.readFile(filePath, 'utf-8');
         return JSON.parse(fileContent);
     } catch (e) {
@@ -119,42 +142,50 @@ export async function getHunterResults() {
 }
 
 export async function updateHunterStatus(id: number, status: string) {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'hunter.json');
-    let currentData = [];
     try {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        currentData = JSON.parse(fileContent);
-    } catch (e) {
-        return { success: false };
-    }
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'hunter.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            return { success: false };
+        }
 
-    const index = currentData.findIndex((item: any) => item.id === id);
-    if (index !== -1) {
-        currentData[index].status = status;
-        currentData[index].lastContacted = new Date().toISOString();
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true };
+        const index = currentData.findIndex((item: any) => item.id === id);
+        if (index !== -1) {
+            currentData[index].status = status;
+            currentData[index].lastContacted = new Date().toISOString();
+            await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+            return { success: true };
+        }
+    } catch (error) {
+        // Ignore write error
     }
     return { success: false };
 }
 
 export async function updateHunterInfo(id: number, data: any) {
-    await ensureDataDir();
-    const filePath = pathLib.join(DB_PATH, 'hunter.json');
-    let currentData = [];
     try {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        currentData = JSON.parse(fileContent);
-    } catch (e) {
-        return { success: false };
-    }
+        await ensureDataDir();
+        const filePath = pathLib.join(DB_PATH, 'hunter.json');
+        let currentData = [];
+        try {
+            const fileContent = await fsp.readFile(filePath, 'utf-8');
+            currentData = JSON.parse(fileContent);
+        } catch (e) {
+            return { success: false };
+        }
 
-    const index = currentData.findIndex((item: any) => item.id === id);
-    if (index !== -1) {
-        currentData[index] = { ...currentData[index], ...data };
-        await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
-        return { success: true };
+        const index = currentData.findIndex((item: any) => item.id === id);
+        if (index !== -1) {
+            currentData[index] = { ...currentData[index], ...data };
+            await fsp.writeFile(filePath, JSON.stringify(currentData, null, 2));
+            return { success: true };
+        }
+    } catch (error) {
+        // Ignore write error
     }
     return { success: false };
 }
