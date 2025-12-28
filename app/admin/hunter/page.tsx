@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, List, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader } from '@mantine/core';
+import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
@@ -23,6 +23,7 @@ interface HunterResult {
     status?: string;
     lastContacted?: string;
     isMock?: boolean;
+    country?: string; // Added Country
 }
 
 const APP_STATUS: Record<string, string> = {
@@ -33,9 +34,17 @@ const APP_STATUS: Record<string, string> = {
     'Dropped': 'red'
 };
 
+const COUNTRIES = [
+    { value: 'KR', label: 'Korea 🇰🇷' },
+    { value: 'JP', label: 'Japan 🇯🇵' },
+    { value: 'US', label: 'USA 🇺🇸' },
+    { value: 'Global', label: 'Global 🌍' }
+];
+
 export default function HunterPage() {
     // Search State
     const [keyword, setKeyword] = useState('');
+    const [country, setCountry] = useState<string | null>('KR'); // Default to Korea
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<HunterResult[]>([]);
     const [page, setPage] = useState(1);
@@ -71,27 +80,33 @@ export default function HunterPage() {
     };
 
     const handleSearch = async () => {
-        if (!keyword.trim()) return;
+        // Allow empty keyword if just browsing by country (mock logic supports it)
         setLoading(true);
         setResults([]);
         setPage(1);
 
         try {
-            const data = await searchPartners(keyword, 1);
+            const data = await searchPartners(keyword, 1, country || 'KR');
             setResults(data);
 
             if (data.length > 0 && data[0].isMock) {
                 notifications.show({
                     title: 'Demo Mode Active',
-                    message: 'API connection failed or key missing. Showing simulation data.',
+                    message: 'API connection local/missing or limited. Showing simulation data.',
                     color: 'orange',
                     autoClose: 5000
                 });
             } else if (data.length > 0) {
                 notifications.show({
                     title: 'Hunt Successful',
-                    message: `Found ${data.length} potential partners.`,
+                    message: `Found ${data.length} potential partners in ${country}.`,
                     color: 'teal'
+                });
+            } else {
+                notifications.show({
+                    title: 'No Results',
+                    message: 'Try a different keyword or country.',
+                    color: 'gray'
                 });
             }
         } catch (error) {
@@ -107,7 +122,7 @@ export default function HunterPage() {
         setLoading(true);
 
         try {
-            const data = await searchPartners(keyword, nextPage);
+            const data = await searchPartners(keyword, nextPage, country || 'KR');
             setResults(prev => [...prev, ...data]);
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to load more.', color: 'red' });
@@ -210,7 +225,8 @@ export default function HunterPage() {
                     partnerName: selectedPartner.name,
                     partnerType: selectedPartner.type,
                     relevance: selectedPartner.relevance,
-                    contactPerson: selectedPartner.contact
+                    contactPerson: selectedPartner.contact,
+                    country: selectedPartner.country
                 });
 
                 // Update the view with AI content (Need state for this, or use the getter)
@@ -286,6 +302,14 @@ Web: www.k-farm.or.kr`;
                 <Tabs.Panel value="search">
                     <Card shadow="sm" radius="md" p="xl" withBorder mb={40}>
                         <Group align="flex-end">
+                            <Select
+                                label="Target Country"
+                                data={COUNTRIES}
+                                value={country}
+                                onChange={setCountry}
+                                style={{ width: 150 }}
+                                allowDeselect={false}
+                            />
                             <TextInput
                                 label="Target Keyword"
                                 placeholder="Search partners..."
@@ -311,6 +335,7 @@ Web: www.k-farm.or.kr`;
                             <Table striped highlightOnHover withTableBorder withColumnBorders>
                                 <Table.Thead>
                                     <Table.Tr>
+                                        <Table.Th w={60}>Cntry</Table.Th>
                                         <Table.Th>Organization</Table.Th>
                                         <Table.Th>Type</Table.Th>
                                         <Table.Th>Relevance Analysis</Table.Th>
@@ -321,6 +346,9 @@ Web: www.k-farm.or.kr`;
                                 <Table.Tbody>
                                     {results.map((element) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.9rem' }}>
+                                            <Table.Td>
+                                                <Badge variant="outline" color="gray" size="sm">{element.country || 'Global'}</Badge>
+                                            </Table.Td>
                                             <Table.Td fw={500}>
                                                 <Group gap={8}>
                                                     <a href={element.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -338,7 +366,14 @@ Web: www.k-farm.or.kr`;
                                                 <Text size="xs" lineClamp={2}>{element.relevance}</Text>
                                             </Table.Td>
                                             <Table.Td>
-                                                <Text size="xs" fw={500}>{element.contact}</Text>
+                                                {element.contact && element.contact.includes('@') ? (
+                                                    <Group gap={4} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `mailto:${element.contact}`}>
+                                                        <IconMail size={12} color="gray" />
+                                                        <Text size="xs" fw={500} c="blue" style={{ textDecoration: 'underline' }}>{element.contact}</Text>
+                                                    </Group>
+                                                ) : (
+                                                    <Text size="xs" fw={500}>{element.contact?.startsWith('http') ? '-' : element.contact}</Text>
+                                                )}
                                                 <Text size="xs" c="dimmed">{element.phone}</Text>
                                             </Table.Td>
                                             <Table.Td>
@@ -375,6 +410,7 @@ Web: www.k-farm.or.kr`;
                             <Table striped highlightOnHover withTableBorder withColumnBorders>
                                 <Table.Thead>
                                     <Table.Tr>
+                                        <Table.Th w={60}>Cntry</Table.Th>
                                         <Table.Th>Status</Table.Th>
                                         <Table.Th>Organization</Table.Th>
                                         <Table.Th>Contact</Table.Th> {/* Header Updated */}
@@ -385,6 +421,9 @@ Web: www.k-farm.or.kr`;
                                 <Table.Tbody>
                                     {savedPartners.map((element) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.85rem' }}>
+                                            <Table.Td>
+                                                <Badge variant="outline" color="gray" size="sm">{element.country || 'Global'}</Badge>
+                                            </Table.Td>
                                             <Table.Td>
                                                 <Menu shadow="md" width={150}>
                                                     <Menu.Target>
@@ -508,6 +547,12 @@ Web: www.k-farm.or.kr`;
             <Modal opened={editOpened} onClose={() => setEditOpened(false)} title="Edit Partner Info" centered>
                 <Stack>
                     <TextInput label="Organization Name" value={editForm.name || ''} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+                    <Select
+                        label="Country"
+                        data={COUNTRIES}
+                        value={editForm.country || 'Global'}
+                        onChange={(val) => setEditForm({ ...editForm, country: val || 'Global' })}
+                    />
                     <TextInput label="Type" value={editForm.type || ''} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} />
                     <TextInput label="Contact Person" placeholder="Name of person" value={editForm.contact || ''} onChange={(e) => setEditForm({ ...editForm, contact: e.target.value })} />
                     <TextInput label="Email Address" placeholder="email@address.com" value={editForm.email || ''} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} />

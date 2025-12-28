@@ -227,24 +227,27 @@ export async function getDashboardStats() {
 
 // Mock Data based on real research
 const MOCK_DATA = [
-    { id: 101, name: 'Korea Smart Farm R&D Foundation', type: 'Foundation', relevance: 'High (Core Technology R&D)', contact: 'Office', phone: '044-559-5623', url: 'http://www.kosfarm.re.kr' },
-    { id: 102, name: 'Gyeongsang National University - Smart Farm Research Center', type: 'University', relevance: 'High (Livestock & Horticulture)', contact: 'Admin', phone: '055-772-1807', url: 'https://www.gnu.ac.kr' },
-    { id: 103, name: 'KIST Gangneung Natural Products Institute', type: 'Research Institute', relevance: 'High (Functional Plant Production)', contact: 'Admin', phone: '02-958-5114', url: 'https://gn.kist.re.kr' },
-    { id: 104, name: 'Daedong Seoul R&D Center', type: 'Company (R&D)', relevance: 'Medium (Agri-Machinery)', contact: 'Office', phone: '02-3486-9600', url: 'https://www.daedong-kioti.com' },
-    { id: 105, name: 'Green Plus Co., Ltd.', type: 'Company', relevance: 'High (Greenhouse Construction)', contact: 'HQ', phone: '041-332-6421', url: 'http://www.greenplus.co.kr' },
-    { id: 106, name: 'Woodeumji Farm (WDG)', type: 'Company', relevance: 'High (Semi-closed Greenhouse)', contact: 'Sales', phone: '041-835-3006', url: 'http://www.wdgfarm.com' },
-    { id: 107, name: 'N.THING', type: 'Startup', relevance: 'High (Modular Vertical Farm)', contact: 'Biz Dev', phone: '-', url: 'https://nthing.net' },
-    { id: 108, name: 'Green Labs', type: 'Startup', relevance: 'Medium (Farm Management Cloud)', contact: 'Support', phone: '1644-7901', url: 'https://greenlabs.co.kr' },
-    { id: 109, name: 'ioCrops Inc.', type: 'Startup', relevance: 'High (AI Crop Management)', contact: 'Team', phone: '-', url: 'https://iocrops.com' },
-    { id: 110, name: 'Farmbot Co.', type: 'Company', relevance: 'Medium (ICT Agriculture)', contact: 'Office', phone: '02-6203-2692', url: 'http://www.farm-bot.co.kr' },
-    { id: 111, name: 'Hankyong National University - AI Smart Farm', type: 'University', relevance: 'Medium (Education)', contact: 'Admin', phone: '031-670-5114', url: 'https://www.hknu.ac.kr' },
-    { id: 112, name: 'Yeonam University', type: 'University', relevance: 'Medium (Professional Training)', contact: 'Office', phone: '041-580-1114', url: 'https://www.yonam.ac.kr' },
-    { id: 113, name: 'Rural Development Administration (RDA)', type: 'Government', relevance: 'High (Policy & Funding)', contact: 'Public Relations', phone: '063-238-1000', url: 'https://www.rda.go.kr' },
-    { id: 114, name: 'Smart Farm Korea (Agency)', type: 'Government Agency', relevance: 'High (Information Hub)', contact: 'Helpdesk', phone: '1522-2911', url: 'https://www.smartfarmkorea.net' },
-    { id: 115, name: 'GSF SYSTEM', type: 'Company', relevance: 'Medium (Hydroponic Solutions)', contact: 'Sales', phone: '-', url: 'http://gsfsystem.com' }
+    { id: 101, name: 'Korea Smart Farm R&D Foundation', type: 'Foundation', relevance: 'High (Core Technology R&D)', contact: 'Office', phone: '044-559-5623', url: 'http://www.kosfarm.re.kr', country: 'KR' },
+    { id: 102, name: 'Gyeongsang National University - Smart Farm Research Center', type: 'University', relevance: 'High (Livestock & Horticulture)', contact: 'Admin', phone: '055-772-1807', url: 'https://www.gnu.ac.kr', country: 'KR' },
+    { id: 103, name: 'KIST Gangneung Natural Products Institute', type: 'Research Institute', relevance: 'High (Functional Plant Production)', contact: 'Admin', phone: '02-958-5114', url: 'https://gn.kist.re.kr', country: 'KR' },
+    { id: 104, name: 'Daedong Seoul R&D Center', type: 'Company (R&D)', relevance: 'Medium (Agri-Machinery)', contact: 'Office', phone: '02-3486-9600', url: 'https://www.daedong-kioti.com', country: 'KR' },
+    { id: 105, name: 'Green Plus Co., Ltd.', type: 'Company', relevance: 'High (Greenhouse Construction)', contact: 'HQ', phone: '041-332-6421', url: 'http://www.greenplus.co.kr', country: 'KR' },
+    { id: 106, name: 'Woodeumji Farm (WDG)', type: 'Company', relevance: 'High (Semi-closed Greenhouse)', contact: 'Sales', phone: '041-835-3006', url: 'http://www.wdgfarm.com', country: 'KR' },
+    { id: 107, name: 'N.THING', type: 'Startup', relevance: 'High (Modular Vertical Farm)', contact: 'Biz Dev', phone: '-', url: 'https://nthing.net', country: 'KR' },
+    { id: 108, name: 'Green Labs', type: 'Startup', relevance: 'Medium (Farm Management Cloud)', contact: 'Support', phone: '1644-7901', url: 'https://greenlabs.co.kr', country: 'KR' },
+    { id: 109, name: 'ioCrops Inc.', type: 'Startup', relevance: 'High (AI Crop Management)', contact: 'Team', phone: '-', url: 'https://iocrops.com', country: 'KR' },
+    { id: 110, name: 'Farmbot Co.', type: 'Company', relevance: 'Medium (ICT Agriculture)', contact: 'Office', phone: '02-6203-2692', url: 'http://www.farm-bot.co.kr', country: 'KR' },
+    { id: 111, name: 'Hankyong National University - AI Smart Farm', type: 'University', relevance: 'Medium (Education)', contact: 'Admin', phone: '031-670-5114', url: 'https://www.hknu.ac.kr', country: 'KR' },
+    { id: 112, name: 'Yeonam University', type: 'University', relevance: 'Medium (Professional Training)', contact: 'Office', phone: '041-580-1114', url: 'https://www.yonam.ac.kr', country: 'KR' },
+    { id: 113, name: 'Rural Development Administration (RDA)', type: 'Government', relevance: 'High (Policy & Funding)', contact: 'Public Relations', phone: '063-238-1000', url: 'https://www.rda.go.kr', country: 'KR' },
+    { id: 114, name: 'Smart Farm Korea (Agency)', type: 'Government Agency', relevance: 'High (Information Hub)', contact: 'Helpdesk', phone: '1522-2911', url: 'https://www.smartfarmkorea.net', country: 'KR' },
+    { id: 115, name: 'GSF SYSTEM', type: 'Company', relevance: 'Medium (Hydroponic Solutions)', contact: 'Sales', phone: '-', url: 'http://gsfsystem.com', country: 'KR' },
+    { id: 201, name: 'Kubota Corporation', type: 'Company', relevance: 'High (Global Machinery)', contact: 'Global Sales', phone: '+81-6-6648-2111', url: 'https://www.kubota.com', country: 'JP' },
+    { id: 202, name: 'Plenty', type: 'Startup', relevance: 'High (Vertical Farming)', contact: 'Partnerships', phone: '-', url: 'https://www.plenty.ag', country: 'US' },
+    { id: 203, name: 'AeroFarms', type: 'Startup', relevance: 'High (Aeroponics)', contact: 'Biz Dev', phone: '+1-973-242-2495', url: 'https://www.aerofarms.com', country: 'US' }
 ];
 
-export async function searchPartners(keyword: string, page: number = 1) {
+export async function searchPartners(keyword: string, page: number = 1, country: string = 'KR') {
     // 1. Check for Real API Key
     const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
     const cx = process.env.GOOGLE_CX;
@@ -254,12 +257,15 @@ export async function searchPartners(keyword: string, page: number = 1) {
 
     if (apiKey && cx) {
         try {
-            const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(keyword)}&start=${start}`);
+            // Add 'gl' (geolocation) parameter for country restriction
+            const glParam = country ? `&gl=${country}` : '';
+            const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(keyword)}&start=${start}${glParam}`);
             const data = await res.json();
 
             if (data.items) {
                 // Regex for extracting simple info from snippets
-                const phoneRegex = /(\+82|0)(\d{1,2})[- ]?(\d{3,4})[- ]?(\d{4})/g;
+                // Updated Phone Regex: Supports +82, +1, +81, (0xx), etc.
+                const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
                 const emailRegex = /[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/;
 
                 return data.items.map((item: any, index: number) => {
@@ -271,7 +277,7 @@ export async function searchPartners(keyword: string, page: number = 1) {
 
                     // Extract Email or Contact
                     const emailMatch = snippet.match(emailRegex);
-                    const contact = emailMatch ? emailMatch[0] : (item.displayLink || 'Visit Website');
+                    const contact = emailMatch ? emailMatch[0] : '-';
 
                     return {
                         id: Date.now() + index, // Ensure unique key
@@ -280,7 +286,8 @@ export async function searchPartners(keyword: string, page: number = 1) {
                         relevance: snippet.length > 50 ? snippet.substring(0, 60) + '...' : 'Relevant Search Result',
                         contact: contact,
                         phone: phone,
-                        url: item.link
+                        url: item.link,
+                        country: country // Pass through the country
                     };
                 });
             } else {
@@ -296,20 +303,29 @@ export async function searchPartners(keyword: string, page: number = 1) {
 
     // 2. Simulation Mode (Mock Data)
     const lowerKeyword = keyword.toLowerCase();
-    const filtered = MOCK_DATA.filter(item =>
-        item.name.toLowerCase().includes(lowerKeyword) ||
-        item.type.toLowerCase().includes(lowerKeyword) ||
-        item.relevance.toLowerCase().includes(lowerKeyword)
-    );
 
-    // If no match/empty keyword, return random subset
+    // Filter by Country then Keyword
+    const filtered = MOCK_DATA.filter(item => {
+        const countryMatch = country === 'Global' || item.country === country;
+        const keywordMatch = item.name.toLowerCase().includes(lowerKeyword) ||
+            item.type.toLowerCase().includes(lowerKeyword) ||
+            item.relevance.toLowerCase().includes(lowerKeyword);
+        return countryMatch && keywordMatch;
+    });
+
+    // If no match/empty keyword but country matches, return random subset from that country
     let results = filtered;
-    if (filtered.length === 0) {
-        // Return random 5 items, simulating different pages
-        const shuffled = [...MOCK_DATA].sort(() => 0.5 - Math.random());
-        results = shuffled.slice(0, 5);
+    if (filtered.length === 0 && keyword.trim() === '') {
+        results = MOCK_DATA.filter(item => country === 'Global' || item.country === country);
+    } else if (filtered.length === 0) {
+        // Return nothing if keyword specifically didn't match
+        results = [];
     }
 
+    // Pagination for Mock Data (Simple Slice)
+    const startIndex = (page - 1) * 5;
+    const paginatedResults = results.slice(startIndex, startIndex + 5);
+
     // Add isMock flag
-    return results.map(item => ({ ...item, isMock: true }));
+    return paginatedResults.map(item => ({ ...item, isMock: true }));
 }

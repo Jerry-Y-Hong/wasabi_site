@@ -9,7 +9,8 @@
     "url": "https://www.smartfarmkorea.net/board/list.do?menuId=M011202",
     "status": "Contacted",
     "addedAt": "2025-12-27T01:19:38.623Z",
-    "lastContacted": "2025-12-27T04:59:00.145Z"
+    "lastContacted": "2025-12-28T01:47:47.956Z",
+    "country": "KR"
   },
   {
     "id": 1766798370002,
@@ -19,8 +20,9 @@
     "contact": "gn.kist.re.kr",
     "phone": "-",
     "url": "https://gn.kist.re.kr/portal/bbs/B0000006/view.do;jsessionid=D9308A85732E53CB3565DD73CE1F20A5.tomcat2?nttId=7601&searchCnd=&searchWrd=&gubun=&deleteCode=&delCode=0&useAt=&replyAt=&menuNo=200051&sdate=&edate=&viewType=&listType=&type=&siteId=&deptId=&option1=&option2=&option5=&option11=&option12=&category=&searchYear=2025&searchMonth=&pageIndex=18",
-    "status": "New",
-    "addedAt": "2025-12-27T01:19:48.540Z"
+    "status": "Contacted",
+    "addedAt": "2025-12-27T01:19:48.540Z",
+    "lastContacted": "2025-12-28T01:47:15.825Z"
   },
   {
     "id": 1766798370001,
@@ -614,8 +616,10 @@
     "contact": "www.isse.co.jp",
     "phone": "-",
     "url": "https://www.isse.co.jp/fresh-wasabi",
-    "status": "New",
-    "addedAt": "2025-12-27T04:28:13.952Z"
+    "status": "Contacted",
+    "addedAt": "2025-12-27T04:28:13.952Z",
+    "country": "JP",
+    "lastContacted": "2025-12-28T01:49:19.526Z"
   },
   {
     "id": 1766809686943,
