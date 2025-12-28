@@ -95,7 +95,29 @@ export default function Home() {
             </Grid.Col>
           </Grid>
         </Box>
-      </Container>
+        <Box mt={100} mb={60} py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+          <Grid align="center" gutter={60}>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <Paper shadow="sm" p="xl" radius="lg" withBorder style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <Image src="/images/logo.jpg" w="80%" style={{ maxWidth: '250px' }} alt="Brand Logo" />
+              </Paper>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 8 }}>
+              <Text c="wasabi" fw={700} mb="xs" size="sm" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>Brand Identity</Text>
+              <Title order={2} mb="md">Harmony of Nature & Technology</Title>
+              <Text size="lg" mb="md" c="dimmed">
+                The <span style={{ color: 'var(--mantine-color-wasabi-6)', fontWeight: 600 }}>Vibrant Green Leaf</span> represents the vitality of our premium Wasabi and the purity of nature we preserve.
+              </Text>
+              <Text size="lg" mb="md" c="dimmed">
+                The <span style={{ color: 'var(--mantine-color-blue-6)', fontWeight: 600 }}>Circular Form</span> symbolizes our global network and the sustainable "Hyper-Cycle" ecosystem of our smart farms.
+              </Text>
+              <Text size="lg">
+                Together, distinctively K-Farm, they embody our mission to deliver the healthiest, purest gifts of nature through cutting-edge innovation.
+              </Text>
+            </Grid.Col>
+          </Grid>
+        </Box>
+      </Container >
     </>
   );
 }
