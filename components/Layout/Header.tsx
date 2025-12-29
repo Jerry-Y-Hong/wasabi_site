@@ -13,6 +13,7 @@ const links = [
     { link: '/products/seedlings', label: 'Seedlings' },
     { link: '/cultivation', label: 'Cultivation' },
     { link: '/products/fresh', label: 'Products' },
+    { link: '/video', label: 'Video' }, // Added Video Link
     { link: '/innovation', label: 'Innovation' },
     { link: '/news', label: 'News' },
     { link: '/partnership', label: 'Partnership' },
