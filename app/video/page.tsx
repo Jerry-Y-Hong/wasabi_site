@@ -42,8 +42,8 @@ export default function VideoPage() {
                     </Text>
                 </Box>
 
-                {/* 4x4 Blue Metal Cabinet */}
-                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v5.0 Blue Metal</Text>
+                {/* 4x4 Blue Metal Cabinet with Digital Lock */}
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v6.0 Digital Security</Text>
                 <Box
                     style={{
                         display: 'grid',
@@ -205,6 +205,33 @@ function LockerBox({ item }: { item: any }) {
                                 boxShadow: '2px 2px 5px rgba(0,0,0,0.3)'
                             }}
                         />
+
+                        {/* DIGITAL LOCK PANEL */}
+                        <Box
+                            style={{
+                                position: 'absolute',
+                                right: 12,
+                                top: '65%', // Below handle
+                                width: 18,
+                                height: 24,
+                                borderRadius: '2px',
+                                background: 'black', // Touch Panel
+                                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.5)',
+                                border: '1px solid #495057',
+                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', padding: 2
+                            }}
+                        >
+                            {/* Keypad Dots */}
+                            <Box w="100%" h={2} bg="#868e96" style={{ boxShadow: '0 0 2px #339af0' }} /> {/* Screen/Status */}
+                            <Box display="flex" style={{ gap: 1 }}>
+                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
+                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
+                            </Box>
+                            <Box display="flex" style={{ gap: 1 }}>
+                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
+                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
+                            </Box>
+                        </Box>
                     </Box>
 
                     {/* DOOR BACK */}
