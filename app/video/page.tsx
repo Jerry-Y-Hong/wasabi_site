@@ -42,8 +42,8 @@ export default function VideoPage() {
                     </Text>
                 </Box>
 
-                {/* 4x4 Blue Metal Cabinet with Digital Lock */}
-                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v6.0 Digital Security</Text>
+                {/* 4x4 Blue Metal Cabinet with Integrated Smart Lock */}
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v6.1 Integrated Lock</Text>
                 <Box
                     style={{
                         display: 'grid',
@@ -151,42 +151,68 @@ function LockerBox({ item }: { item: any }) {
                         <Box style={{ position: 'absolute', bottom: 10, left: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
                         <Box style={{ position: 'absolute', bottom: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
 
-                        {/* Inset Label Area */}
+                        {/* Inset Label Area WITH INTEGRATED SMART LOCK */}
                         <Box
                             w="85%" h="55%"
                             bg="#e9ecef"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 20,
+                                justifyContent: 'space-between',
+                                gap: 10,
                                 padding: '10px 20px',
                                 border: '1px solid #adb5bd',
                                 boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.5)',
                                 borderRadius: '2px'
                             }}
                         >
+                            <Box display="flex" style={{ alignItems: 'center', gap: 15 }}>
+                                <Box
+                                    w={56} h={56}
+                                    bg="#1864ab"
+                                    style={{
+                                        borderRadius: '50%',
+                                        color: 'white',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        boxShadow: '0 3px 6px rgba(0,0,0,0.3)',
+                                        backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent)'
+                                    }}
+                                >
+                                    <Icon size={28} stroke={2} />
+                                </Box>
+                                <Box ta="left">
+                                    <Text fw={900} size="1.8rem" c="dark.5" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px' }}>
+                                        {item.title}
+                                    </Text>
+                                    <Text size="sm" c="dimmed" tt="uppercase" mt={0} fw={700} style={{ letterSpacing: '1px' }}>
+                                        {item.category.title}
+                                    </Text>
+                                </Box>
+                            </Box>
+
+                            {/* SMART TOUCH LOCK (Integrated) */}
                             <Box
-                                w={56} h={56}
-                                bg="#1864ab"
                                 style={{
-                                    borderRadius: '50%',
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    boxShadow: '0 3px 6px rgba(0,0,0,0.3)',
-                                    backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent)'
+                                    width: 36,
+                                    height: 50,
+                                    borderRadius: '4px',
+                                    background: 'linear-gradient(135deg, #212529, #000)', // Glossy Black
+                                    boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                    border: '1px solid #dee2e6',
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4
                                 }}
                             >
-                                <Icon size={28} stroke={2} />
-                            </Box>
-                            <Box ta="left">
-                                <Text fw={900} size="1.8rem" c="dark.5" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px' }}>
-                                    {item.title}
-                                </Text>
-                                <Text size="sm" c="dimmed" tt="uppercase" mt={0} fw={700} style={{ letterSpacing: '1px' }}>
-                                    {item.category.title}
-                                </Text>
+                                {/* Status LED */}
+                                <Box w={20} h={3} bg="#ced4da" style={{ borderRadius: 1, boxShadow: '0 0 3px #1864ab' }} />
+
+                                {/* Touch Buttons */}
+                                <Box display="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 3 }}>
+                                    {[...Array(6)].map((_, k) => (
+                                        <Box key={k} w={3} h={3} bg="#868e96" style={{ borderRadius: '50%' }} />
+                                    ))}
+                                </Box>
                             </Box>
                         </Box>
 
@@ -205,33 +231,6 @@ function LockerBox({ item }: { item: any }) {
                                 boxShadow: '2px 2px 5px rgba(0,0,0,0.3)'
                             }}
                         />
-
-                        {/* DIGITAL LOCK PANEL */}
-                        <Box
-                            style={{
-                                position: 'absolute',
-                                right: 12,
-                                top: '65%', // Below handle
-                                width: 18,
-                                height: 24,
-                                borderRadius: '2px',
-                                background: 'black', // Touch Panel
-                                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.5)',
-                                border: '1px solid #495057',
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', padding: 2
-                            }}
-                        >
-                            {/* Keypad Dots */}
-                            <Box w="100%" h={2} bg="#868e96" style={{ boxShadow: '0 0 2px #339af0' }} /> {/* Screen/Status */}
-                            <Box display="flex" style={{ gap: 1 }}>
-                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
-                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
-                            </Box>
-                            <Box display="flex" style={{ gap: 1 }}>
-                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
-                                <Box w={2} h={2} bg="#495057" style={{ borderRadius: '50%' }} />
-                            </Box>
-                        </Box>
                     </Box>
 
                     {/* DOOR BACK */}
