@@ -12,7 +12,7 @@ export const metadata = {
   description: 'Premium Wasabi, Tissue Culture Seedlings, and Smart Farm Consulting',
 };
 
-import AIConcierge from '@/components/ui/AIConcierge';
+
 
 export default function RootLayout({
   children,
@@ -29,7 +29,7 @@ export default function RootLayout({
           <Notifications />
           <Header />
           {children}
-          <AIConcierge />
+          {/* AIConcierge is resting per user request */}
           <Footer />
         </MantineProvider>
       </body>

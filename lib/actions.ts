@@ -485,13 +485,16 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                     const emailMatch = snippet.match(emailRegex);
                     const contact = emailMatch ? emailMatch[0] : '-';
 
-                    // Heuristic Quality Check (Simple version, later can use AI)
                     let type = 'Web Result';
                     const lowerUrl = item.link.toLowerCase();
+                    const lowerSnippet = snippet.toLowerCase();
+                    const lowerTitle = item.title.toLowerCase();
+
                     if (lowerUrl.includes('.edu') || lowerUrl.includes('.ac.kr')) type = 'University/Research';
                     else if (lowerUrl.includes('.gov') || lowerUrl.includes('.go.kr')) type = 'Government';
                     else if (lowerUrl.includes('.org')) type = 'Organization';
-                    else if (snippet.includes('invest') || snippet.includes('VC')) type = 'Investor/Corporate';
+                    else if (lowerSnippet.includes('invest') || lowerSnippet.includes('vc ')) type = 'Investor/Corporate';
+                    else if (lowerSnippet.includes('wholesale') || lowerSnippet.includes('distributor') || lowerSnippet.includes('supplier') || lowerSnippet.includes('유통') || lowerSnippet.includes('도매')) type = 'Distributor/Wholesaler';
 
                     return {
                         id: Date.now() + index, // Ensure unique key

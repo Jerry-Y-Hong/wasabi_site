@@ -106,6 +106,18 @@ const TARGET_PRESETS = [
         }
     },
     {
+        label: 'Mass Leads (Flies)',
+        icon: '🪰',
+        keywords: {
+            'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
+            'JP': '山葵 卸売業者 販売店 リスト',
+            'US': 'wasabi supply chain distributors wholesalers list',
+            'CN': '芥末 批发 零售 列表',
+            'VN': 'Danh sách nhà bán lẻ Wasabi',
+            'Global': 'wasabi food service suppliers wholesalers directory'
+        }
+    },
+    {
         label: 'Investors / VC',
         icon: '💰',
         keywords: {
