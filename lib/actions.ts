@@ -451,15 +451,16 @@ export async function searchPartners(keyword: string, page: number = 1, country:
     const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
     const cx = process.env.GOOGLE_CX;
 
+    // 0. Search Optimization for 'Big Fish'
+    let finalQuery = keyword;
+
     // Pagination: Google API uses 'start' (1, 11, 21...)
     const start = (page - 1) * 10 + 1;
 
     if (apiKey && cx) {
         try {
-            // Add 'gl' (geolocation) parameter for country restriction ONLY if specific country selected
-            // If country is empty string (Global), we do NOT send gl param
             const glParam = country ? `&gl=${country}` : '';
-            const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(keyword)}&start=${start}${glParam}`);
+            const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(finalQuery)}&start=${start}${glParam}`);
             const data = await res.json();
 
             if (data.items) {
@@ -479,10 +480,18 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                     const emailMatch = snippet.match(emailRegex);
                     const contact = emailMatch ? emailMatch[0] : '-';
 
+                    // Heuristic Quality Check (Simple version, later can use AI)
+                    let type = 'Web Result';
+                    const lowerUrl = item.link.toLowerCase();
+                    if (lowerUrl.includes('.edu') || lowerUrl.includes('.ac.kr')) type = 'University/Research';
+                    else if (lowerUrl.includes('.gov') || lowerUrl.includes('.go.kr')) type = 'Government';
+                    else if (lowerUrl.includes('.org')) type = 'Organization';
+                    else if (snippet.includes('invest') || snippet.includes('VC')) type = 'Investor/Corporate';
+
                     return {
                         id: Date.now() + index, // Ensure unique key
                         name: item.title,
-                        type: 'Web Result',
+                        type: type,
                         relevance: snippet.length > 50 ? snippet.substring(0, 60) + '...' : 'Relevant Search Result',
                         contact: contact,
                         phone: phone,
@@ -492,15 +501,19 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                 });
             } else {
                 console.log('Google Search API returned no items:', data);
+                return [];
             }
         } catch (error) {
             console.error("Google Search API Error:", error);
-            // Fallback to mock data on error handled below
+            return [];
         }
     } else {
-        console.log('Google Search API keys missing or incomplete');
+        // Fallback to mock data with a bit of variety based on keyword
+        return MOCK_DATA.filter(p =>
+            p.name.toLowerCase().includes(keyword.toLowerCase()) ||
+            p.relevance.toLowerCase().includes(keyword.toLowerCase())
+        );
     }
-
     // 2. Simulation Mode (Mock Data)
     const lowerKeyword = keyword.toLowerCase();
 

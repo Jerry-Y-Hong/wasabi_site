@@ -92,6 +92,42 @@ const TARGET_PRESETS = [
             'VN': 'Nhà hàng Nhật Bản cao cấp',
             'Global': 'Premium Japanese Restaurant Suppliers'
         }
+    },
+    {
+        label: 'Big Fish (Prestige)',
+        icon: '🐋',
+        keywords: {
+            'KR': 'site:.ac.kr 스마트팜 연구원 교수 생명공학',
+            'JP': 'site:.ac.jp スマートファーム 教授 研究所',
+            'US': 'site:.edu plant science vertical farming research lab director',
+            'CN': '智慧农业 教授 研究院',
+            'VN': 'Nghiên cứu nông nghiệp đại học',
+            'Global': 'site:.edu agricultural biotech research institute director'
+        }
+    },
+    {
+        label: 'Investors / VC',
+        icon: '💰',
+        keywords: {
+            'KR': '스마트팜 스타트업 투자 벤처캐피털 AC VC',
+            'JP': 'アグリテック スタートアップ 投資 VC',
+            'US': 'AgTech venture capital indoor farming investment corp',
+            'CN': '农业科技 投资 风险投资',
+            'VN': 'Đầu tư nông nghiệp thông minh',
+            'Global': 'Agricultural technology venture capital firms'
+        }
+    },
+    {
+        label: 'Gov / Tenders',
+        icon: '🏛️',
+        keywords: {
+            'KR': '스마트팜 정부 국책 사업 입찰 공고',
+            'JP': 'スマートファーム 政府 補助金 公募',
+            'US': 'smart farm government grants USDA tender opportunities',
+            'CN': '农业部 智慧农业 招标',
+            'VN': 'Thầu nông nghiệp chính phủ',
+            'Global': 'Government smart farming grant and tender opportunities'
+        }
     }
 ];
 
