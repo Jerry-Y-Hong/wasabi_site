@@ -357,13 +357,18 @@ export default function HunterPage() {
                     country: selectedPartner.country
                 });
 
-                // Update the view with AI content (Need state for this, or use the getter)
-                // Since getEmailContent was valid, we need to store the AI result in state
+                if (aiResponse.body && (aiResponse.body.includes("error") || aiResponse.body.includes("Unavailable"))) {
+                    notifications.show({ title: 'AI Notice', message: 'AI is momentarily busy or restricted. Using standard template.', color: 'orange' });
+                }
+
                 const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: kfarmjerry03@gmail.com\nWeb: www.k-farm.or.kr`;
-                setDraftEmail({ subject: aiResponse.subject, body: aiResponse.body + signature });
+                setDraftEmail({
+                    subject: aiResponse.subject,
+                    body: (aiResponse.body || getEmailContent(selectedPartner).body) + signature
+                });
 
             } catch (error) {
-                notifications.show({ title: 'AI Error', message: 'Failed to generate proposal.', color: 'red' });
+                notifications.show({ title: 'System Error', message: 'Failed to generate proposal. Please check connection.', color: 'red' });
             } finally {
                 setLoading(false);
             }
@@ -422,14 +427,19 @@ Web: www.k-farm.or.kr`;
                     mt="md"
                     leftSection={<IconDownload size={16} />}
                     onClick={() => {
-                        // Export Function
-                        const csvContent = "data:text/csv;charset=utf-8,"
-                            + "Name,Type,Relevance,Contact,Phone,Email,URL,Status\n"
-                            + savedPartners.map(e => `"${e.name}","${e.type}","${e.relevance}","${e.contact || ''}","${e.phone || ''}","${e.email || ''}","${e.url}","${e.status}"`).join("\n");
+                        // Helper to escape CSV values
+                        const escapeCsv = (val: string) => `"${(val || '').toString().replace(/"/g, '""')}"`;
+
+                        const headers = ["Name", "Type", "Relevance", "Contact", "Phone", "Email", "URL", "Status"];
+                        const rows = savedPartners.map(e => [
+                            e.name, e.type, e.relevance, e.contact || "", e.phone || "", e.email || "", e.url, e.status || "New"
+                        ].map(val => escapeCsv(val)).join(","));
+
+                        const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
                         const encodedUri = encodeURI(csvContent);
                         const link = document.createElement("a");
                         link.setAttribute("href", encodedUri);
-                        link.setAttribute("download", "k_farm_partners.csv");
+                        link.setAttribute("download", `k_farm_partners_${new Date().toISOString().split('T')[0]}.csv`);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);

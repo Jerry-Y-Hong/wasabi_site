@@ -6,15 +6,25 @@ import { IconMessageChatbot, IconX, IconArrowRight, IconRobot, IconShoppingCart,
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function AIConcierge() {
+    const [mounted, setMounted] = useState(false);
     const [opened, setOpened] = useState(false);
-    const [lang, setLang] = useState<'ko' | 'en'>('en'); // Default to English
+    const [lang, setLang] = useState<'ko' | 'en'>('en');
+
     const router = useRouter();
     const pathname = usePathname();
     const isAdminPath = pathname?.startsWith('/admin');
 
     const [messages, setMessages] = useState<{ sender: 'ai' | 'user', text: string, actions?: any[] }[]>([]);
 
+    // 1. Mark as mounted to prevent hydration errors
     useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // 2. Set initial message ONLY after mounting and whenever path/lang changes
+    useEffect(() => {
+        if (!mounted) return;
+
         const content = {
             en: {
                 admin: {
@@ -32,8 +42,7 @@ export default function AIConcierge() {
                         { label: 'Digital Vault', link: '/video', icon: IconArchive, color: 'violet' },
                         { label: '1:1 Business Inquiry', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
                     ]
-                },
-                navigating: 'Understood. Navigating to'
+                }
             },
             ko: {
                 admin: {
@@ -51,24 +60,29 @@ export default function AIConcierge() {
                         { label: '디지털 금고 구경', link: '/video', icon: IconArchive, color: 'violet' },
                         { label: '1:1 비즈니스 문의', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
                     ]
-                },
-                navigating: '알겠습니다. 다음 페이지로 안내합니다:'
+                }
             }
         };
 
         const current = content[lang][isAdminPath ? 'admin' : 'customer'];
+
+        // Only reset to greeting if messages are currently empty or it's a path change
         setMessages([{
             sender: 'ai',
             text: current.text,
             actions: current.actions
         }]);
-    }, [isAdminPath, lang]);
+    }, [isAdminPath, lang, mounted]);
 
-    // Auto-open greeting after 2 seconds
+    // 3. Auto-open greeting after 2 seconds (only once per session or on first mount)
     useEffect(() => {
-        const timer = setTimeout(() => setOpened(true), 2000);
+        if (!mounted) return;
+        const timer = setTimeout(() => {
+            // Only auto-open if the user hasn't opened it yet
+            setOpened(prev => prev || true);
+        }, 2500);
         return () => clearTimeout(timer);
-    }, []);
+    }, [mounted]);
 
     const handleAction = (link: string, label: string) => {
         const navText = lang === 'ko' ? '알겠습니다. 안내해 드릴게요:' : 'Understood. Navigating to:';
@@ -84,6 +98,8 @@ export default function AIConcierge() {
             }
         }, 800);
     };
+
+    if (!mounted) return null;
 
     return (
         <Affix position={{ bottom: 20, right: 20 }} zIndex={1000}>
