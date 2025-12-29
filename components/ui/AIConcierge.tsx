@@ -18,20 +18,20 @@ export default function AIConcierge() {
         const greeting = isAdminPath
             ? {
                 sender: 'ai' as const,
-                text: '회장님, [ADMIN] 관리 모드입니다. 파트너 발굴 및 실적 관리를 진행하시겠습니까?',
+                text: 'Welcome back, Chairman. [ADMIN] Management Mode active. How shall we proceed with the pipeline today?',
                 actions: [
-                    { label: '파트너 헌터 (DB 검색)', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
-                    { label: '실적 대시보드', link: '/admin', icon: IconArchive, color: 'teal' },
-                    { label: '서비스 메인으로', link: '/', icon: IconArrowRight, color: 'gray' },
+                    { label: 'Run Partner Hunter (DB)', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
+                    { label: 'Performance Dashboard', link: '/admin', icon: IconArchive, color: 'teal' },
+                    { label: 'Go to Public Site', link: '/', icon: IconArrowRight, color: 'gray' },
                 ]
             }
             : {
                 sender: 'ai' as const,
-                text: '반갑습니다. K-Farm 프리미엄 고객 센터입니다. 무엇을 도와드릴까요?',
+                text: 'Welcome to K-Farm Premium Concierge. How can I assist your business today?',
                 actions: [
-                    { label: '프리미엄 와사비 구매', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
-                    { label: '디지털 금고(Archive) 가이드', link: '/video', icon: IconArchive, color: 'violet' },
-                    { label: '1:1 빠른 상담', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
+                    { label: 'Shop Premium Wasabi', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
+                    { label: 'Digital Vault (Archive)', link: '/video', icon: IconArchive, color: 'violet' },
+                    { label: '1:1 Business Inquiry', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
                 ]
             };
 
@@ -47,7 +47,7 @@ export default function AIConcierge() {
     const handleAction = (link: string, label: string) => {
         setMessages(prev => [...prev,
         { sender: 'user', text: label },
-        { sender: 'ai', text: `${label} 페이지로 안내하겠습니다. 잠시만 기다려 주십시오...` }
+        { sender: 'ai', text: `Understood. Navigating to ${label}. Please hold a moment...` }
         ]);
 
         setTimeout(() => {
