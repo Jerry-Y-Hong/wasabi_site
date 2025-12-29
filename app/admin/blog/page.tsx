@@ -130,7 +130,8 @@ export default function BlogAdminPage() {
                                 label="Post Category"
                                 data={[
                                     { value: 'Company Blog', label: 'Company Blog (K-Farm News)' },
-                                    { value: 'Global News', label: 'Global Tech & Trends' }
+                                    { value: 'Global News', label: 'Global Tech & Trends' },
+                                    { value: 'Innovation', label: 'Innovation & Tech Data (Technical Materials)' }
                                 ]}
                                 {...form.getInputProps('category')}
                             />

@@ -3,9 +3,12 @@
 import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image, Grid, Button } from '@mantine/core';
 import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles, IconShieldCheck } from '@tabler/icons-react';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
-import newsData from '@/data/news.json';
+import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
+import { getBlogPosts } from '@/lib/actions';
 
-export default function InsightsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function InsightsPage() {
     return (
         <Container size="xl" py={80}>
             <Stack align="center" mb={60} gap="xs">
@@ -238,19 +241,26 @@ export default function InsightsPage() {
                 </Group>
 
                 <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-                    {newsData.filter(n => n.category === 'Innovation').slice(0, 2).map((item) => (
-                        <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder component="a" href={`/news/${item.id}`}>
-                            <Group>
-                                <Image src={item.image} w={120} h={120} radius="md" alt={item.title} />
-                                <Box flex={1}>
-                                    <Text size="xs" c="dimmed" mb={4}>{item.date}</Text>
-                                    <Title order={4} mb={8} lineClamp={2}>{item.title}</Title>
-                                    <Text size="sm" c="dimmed" lineClamp={2}>{item.summary}</Text>
-                                </Box>
-                            </Group>
-                        </Card>
-                    ))}
-                </SimpleGrid>
+                    <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
+                        {(await getBlogPosts())
+                            .filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data')
+                            .slice(0, 4) // Show up to 4 items
+                            .map((item: any) => (
+                                <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder component="a" href={`/blog/${item.slug}`}>
+                                    <Group>
+                                        <Image src={item.image || '/images/blog/stock_lab.png'} w={120} h={120} radius="md" alt={item.title} style={{ objectFit: 'cover' }} />
+                                        <Box flex={1}>
+                                            <Text size="xs" c="dimmed" mb={4}>{new Date(item.timestamp).toLocaleDateString()}</Text>
+                                            <Title order={4} mb={8} lineClamp={2}>{item.title}</Title>
+                                            <Text size="sm" c="dimmed" lineClamp={2}>{item.content.replace(/[#*`]/g, '').substring(0, 100)}...</Text>
+                                        </Box>
+                                    </Group>
+                                </Card>
+                            ))}
+                        {(await getBlogPosts()).filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data').length === 0 && (
+                            <Text c="dimmed" ta="center" w="100%" py="xl">No technical materials uploaded yet.</Text>
+                        )}
+                    </SimpleGrid>
             </Box>
         </Container >
     );

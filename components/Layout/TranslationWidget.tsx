@@ -48,6 +48,18 @@ export function TranslationWidget() {
         }
     }, []);
 
+    useEffect(() => {
+        // Check for existing Google Translate cookie
+        const cookies = document.cookie.split(';');
+        const googtrans = cookies.find(c => c.trim().startsWith('googtrans='));
+        if (googtrans) {
+            const lang = googtrans.split('/').pop();
+            if (lang && LANGUAGES.some(l => l.value === lang)) {
+                setSelected(lang);
+            }
+        }
+    }, []);
+
     const handleChange = (value: string | null) => {
         if (!value) return;
         setSelected(value);
@@ -58,6 +70,10 @@ export function TranslationWidget() {
             combo.value = value;
             combo.dispatchEvent(new Event('change'));
         }
+
+        // Force cookie update for persistence
+        document.cookie = `googtrans=/auto/${value}; path=/; domain=${window.location.hostname}`;
+        document.cookie = `googtrans=/auto/${value}; path=/;`;
     };
 
     return (
