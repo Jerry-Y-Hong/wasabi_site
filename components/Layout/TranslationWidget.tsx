@@ -20,7 +20,6 @@ const LANGUAGES = [
     { value: 'es', label: 'Español' },
     { value: 'ar', label: 'Arabic (العربية)' },
     { value: 'zh-CN', label: '中文 (简体)' },
-    { value: 'zh-TW', label: '中文 (繁體)' },
 ];
 
 export function TranslationWidget() {
