@@ -12,22 +12,24 @@ export const metadata = {
   description: 'Premium Wasabi, Tissue Culture Seedlings, and Smart Farm Consulting',
 };
 
+import AIConcierge from '@/components/ui/AIConcierge';
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <ColorSchemeScript />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body suppressHydrationWarning={true}>
+      <body>
         <MantineProvider theme={theme}>
           <Notifications />
           <Header />
           {children}
+          <AIConcierge />
           <Footer />
         </MantineProvider>
       </body>
