@@ -106,8 +106,8 @@ const TARGET_PRESETS = [
         }
     },
     {
-        label: '파리채',
-        icon: '🪰',
+        label: '테니스 라켓',
+        icon: '🎾',
         keywords: {
             'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
             'JP': '山葵 卸売業者 販売店 リスト',
