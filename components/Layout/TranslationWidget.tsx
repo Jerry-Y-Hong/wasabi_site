@@ -18,8 +18,8 @@ export function TranslationWidget() {
             new window.google.translate.TranslateElement(
                 {
                     pageLanguage: 'en', // Main site language
-                    // includedLanguages: 'en,ja,ko,zh-CN,zh-TW,fr,de,es,ru,ar,vi,th,id', // Optional: Limit to specific languages if needed
-                    layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL, // Change layout to standard dropdown
+                    includedLanguages: 'en,ko,ja,zh-CN,zh-TW,de,fr,es,ar', // Major languages only
+                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE, // Return to simple layout for cleaner look with fewer options
                     autoDisplay: false,
                 },
                 'google_translate_element'
