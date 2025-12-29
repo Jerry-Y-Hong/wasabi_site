@@ -38,9 +38,29 @@ export function TranslationWidget() {
     }, []);
 
     return (
-        <Group gap="xs" align="center" style={{ marginRight: 10 }}>
-            {/* Provide a container for the Google Translate widget */}
+        <Group gap={5} align="center" style={{ marginRight: 10 }}>
+            <IconLanguage size={18} />
+            <Text size="sm" fw={700}>Language</Text>
+            {/* Google Translate Container */}
             <div id="google_translate_element" style={{ minHeight: '20px' }}></div>
+
+            {/* Force hide the 'Select Language' text from Google using Global Styles */}
+            <style jsx global>{`
+                .goog-te-gadget {
+                    font-family: 'Roboto', sans-serif !important;
+                    font-size: 0 !important; /* Hide text */
+                }
+                .goog-te-gadget span {
+                    display: none !important; /* Hide 'Select Language' label */
+                }
+                .goog-te-combo {
+                    margin: 0 !important;
+                    padding: 4px !important;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 4px;
+                    font-size: 14px !important; /* Restore font size for dropdown items */
+                }
+            `}</style>
         </Group>
     );
 }
