@@ -23,7 +23,7 @@ export default function RootLayout({
         <ColorSchemeScript />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body>
+      <body suppressHydrationWarning={true}>
         <MantineProvider theme={theme}>
           <Notifications />
           <Header />

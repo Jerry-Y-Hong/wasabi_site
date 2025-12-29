@@ -416,6 +416,28 @@ Web: www.k-farm.or.kr`;
                     I will scour the web to find the best potential partners for K-Farm.
                     Save them to your pipeline and manage your outreach.
                 </Text>
+                <Button
+                    variant="outline"
+                    color="green"
+                    mt="md"
+                    leftSection={<IconDownload size={16} />}
+                    onClick={() => {
+                        // Export Function
+                        const csvContent = "data:text/csv;charset=utf-8,"
+                            + "Name,Type,Relevance,Contact,Phone,Email,URL,Status\n"
+                            + savedPartners.map(e => `"${e.name}","${e.type}","${e.relevance}","${e.contact || ''}","${e.phone || ''}","${e.email || ''}","${e.url}","${e.status}"`).join("\n");
+                        const encodedUri = encodeURI(csvContent);
+                        const link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "k_farm_partners.csv");
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        notifications.show({ title: 'Exported', message: 'Partner list downloaded as CSV.', color: 'green' });
+                    }}
+                >
+                    Export Pipeline to Google Sheets (CSV)
+                </Button>
             </Stack>
 
             <Tabs value={activeTab} onChange={setActiveTab} color="grape" variant="pills" radius="md">
