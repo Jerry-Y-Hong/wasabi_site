@@ -5,7 +5,7 @@ import { Container, Box, Text, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlayerPlay, IconFileText, IconChartBar, IconWorld, IconLock } from '@tabler/icons-react';
 
-// Define Categories per Row (5 Columns x 4 Rows = 20 items)
+// Define Categories per Row (4 Columns x 4 Rows = 16 items)
 const ROW_CATEGORIES = [
     { title: 'MEDIA', icon: IconPlayerPlay, color: '#37b24d', desc: 'Promotional Videos' }, // Row 1
     { title: 'SPECS', icon: IconFileText, color: '#228be6', desc: 'Technical Catalogs' },    // Row 2
@@ -13,17 +13,20 @@ const ROW_CATEGORIES = [
     { title: 'GLOBAL', icon: IconWorld, color: '#f08c00', desc: 'Global Partners' },         // Row 4
 ];
 
-const LOCKER_DATA = Array.from({ length: 20 }, (_, i) => {
-    const rowIndex = Math.floor(i / 5);
+// Generate 16 Items (4x4)
+const LOCKER_DATA = Array.from({ length: 16 }, (_, i) => {
+    const ROW_SIZE = 4;
+    const rowIndex = Math.floor(i / ROW_SIZE);
     const category = ROW_CATEGORIES[rowIndex];
     return {
         id: i + 1,
         rowId: rowIndex,
-        colId: i % 5,
+        colId: i % ROW_SIZE,
         title: `${String(i + 1).padStart(2, '0')}`,
-        subtitle: `${category.title} 0${(i % 5) + 1}`,
+        subtitle: `${category.title} 0${(i % ROW_SIZE) + 1}`,
         category: category,
-        hasContent: (i % 5) < 3,
+        hasContent: (i % ROW_SIZE) < 3, // Enable first 3 items per row
+        // Add random slight rotation for realism? No, keep clean.
     };
 });
 
@@ -40,16 +43,16 @@ export default function VideoPage() {
                     </Text>
                 </Box>
 
-                {/* 5x4 3D Cabinet Wall */}
-                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v2.2 Aspect Ratio Fix</Text>
+                {/* 4x4 3D Cabinet Wall - Wide Edition (Larger Items) */}
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v3.0 (4x4 Large)</Text>
                 <Box
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(5, 1fr)',
-                        gap: '12px',
-                        padding: '20px',
+                        gridTemplateColumns: 'repeat(4, 1fr)', // 4 COLUMNS -> 25% width each (Bigger)
+                        gap: '15px',
+                        padding: '25px',
                         backgroundColor: '#adb5bd',
-                        borderRadius: '12px',
+                        borderRadius: '16px',
                         backgroundImage: 'linear-gradient(45deg, #adb5bd 25%, #868e96 25%, #868e96 50%, #adb5bd 50%, #adb5bd 75%, #868e96 75%, #868e96 100%)',
                         backgroundSize: '40px 40px',
                         boxShadow: 'inset 0 0 50px rgba(0,0,0,0.2), 0 30px 60px rgba(0,0,0,0.4)'
@@ -87,9 +90,8 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                // Removed fixed height, used aspect-ratio
                 style={{
-                    aspectRatio: '16/9', // FORCE WIDE SCREEN RATIO
+                    aspectRatio: '16/9', // WIDE SCREEN RATIO (But bigger because width is bigger)
                     perspective: '1200px',
                     cursor: item.hasContent ? 'pointer' : 'default',
                     position: 'relative',
@@ -123,42 +125,39 @@ function LockerBox({ item }: { item: any }) {
                             boxShadow: `
                                 inset 1px 1px 0px rgba(255,255,255,0.8),
                                 inset -1px -1px 0px rgba(0,0,0,0.1),
-                                3px 3px 6px rgba(0,0,0,0.15)
+                                4px 4px 8px rgba(0,0,0,0.15)
                             `,
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                             border: `2px solid ${item.category.color}`,
                         }}
                     >
-                        {/* Compact Layout for Wide Ratio */}
-                        <Box style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                            <Box p={4} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Icon size={16} stroke={2.5} />
+                        {/* WIDER LAYOUT CONTENT - Bigger Text */}
+                        <Box display="flex" style={{ gap: 12, alignItems: 'center' }}>
+                            <Box p={8} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon size={24} stroke={2.5} />
                             </Box>
-                            <Text fw={900} size="md" c="dark.3" style={{ lineHeight: 1 }}>
-                                {item.title}
-                            </Text>
+                            <Box ta="left">
+                                <Text fw={900} size="1.2rem" c="dark.3" style={{ lineHeight: 1 }}>
+                                    {item.title}
+                                </Text>
+                                <Text size="xs" c="dimmed" tt="uppercase" mt={2} fw={700}>
+                                    {item.category.title}
+                                </Text>
+                            </Box>
                         </Box>
-
-                        <Text
-                            mt={4}
-                            size="xs"
-                            c="dimmed"
-                            style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}
-                        >
-                            {item.category.title}
-                        </Text>
 
                         {/* Handle */}
                         <Box
                             style={{
                                 position: 'absolute',
-                                right: 6,
+                                right: 10,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                width: 4,
-                                height: 16,
-                                borderRadius: '2px',
+                                width: 6,
+                                height: 26,
+                                borderRadius: '3px',
                                 background: '#adb5bd',
+                                border: '1px solid #868e96'
                             }}
                         />
                     </Box>
@@ -172,7 +171,7 @@ function LockerBox({ item }: { item: any }) {
                             backfaceVisibility: 'hidden',
                             transform: 'rotateY(180deg)',
                             background: '#e9ecef',
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                             border: '1px solid #dee2e6'
                         }}
                     >
@@ -189,14 +188,14 @@ function LockerBox({ item }: { item: any }) {
                         width: '100%',
                         height: '100%',
                         zIndex: -1,
-                        borderRadius: '6px',
-                        boxShadow: 'inset 1px 1px 3px rgba(0,0,0,0.2)',
+                        borderRadius: '8px',
+                        boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.2)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}
                 >
-                    {item.hasContent && <IconPlayerPlay color="white" size={24} fill="#212529" />}
+                    {item.hasContent && <IconPlayerPlay color="white" size={36} fill="#212529" />}
                 </Box>
             </Box>
 
