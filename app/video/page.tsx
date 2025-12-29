@@ -1,36 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, SimpleGrid, Box, Text, Modal, Center } from '@mantine/core';
+import { Container, Box, Text, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconLock, IconPlayerPlay, IconNumber1, IconNumber2, IconNumber3 } from '@tabler/icons-react';
+import { IconPlayerPlay } from '@tabler/icons-react';
 
-// Generate 20 locker items (4x5 grid)
 const LOCKER_DATA = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
-    title: `Box ${String(i + 1).padStart(2, '0')}`,
-    subtitle: i < 3 ? `Series ${i + 1}` : 'Empty Slot', // Only first 3 have content
+    title: `${String(i + 1).padStart(2, '0')}`,
+    subtitle: i < 3 ? `Series ${i + 1}` : 'Reserved',
     hasContent: i < 3,
-    color: i === 4 ? '#2f9e44' : i === 11 ? '#1864ab' : '#adb5bd', // Random accent colors (Wasabi Green, Blue, Grey)
+    // Sophisticated Color Palette (Deep Green, Navy, Dark Grey, etc.)
+    bg: i % 4 === 0 ? '#2b8a3e' :  // Green
+        i % 4 === 1 ? '#1098ad' :  // Cyan/Teal
+            i % 4 === 2 ? '#364fc7' :  // Indigo
+                '#343a40',   // Dark Grey (Filler)
 }));
 
 export default function VideoPage() {
     return (
-        <Box bg="#212529" py={50} style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box bg="#1A1B1E" py={80} style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Container size="lg">
-                <Text size="2.5rem" fw={900} ta="center" mb="xl" c="gray.3" style={{ letterSpacing: '2px' }}>
-                    RESTRICTED ARCHIVE
+                <Text size="3rem" fw={800} ta="center" mb={50} c="dimmed" style={{ letterSpacing: '4px', textTransform: 'uppercase' }}>
+                    K-Farm Archive
                 </Text>
 
-                {/* 4x5 Wall of Lockers */}
+                {/* 4x5 Luxury Wall */}
                 <Box
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)', // 4 Columns
-                        gap: '0px', // No Gap! Attached together
-                        border: '4px solid #495057', // Thick frame around the wall
-                        backgroundColor: '#343a40',
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '2px', // Thin sophisticated gap
+                        padding: '10px',
+                        backgroundColor: '#101113', // Frame
+                        borderRadius: '8px',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                     }}
                 >
                     {LOCKER_DATA.map((item) => (
@@ -47,7 +51,7 @@ function LockerBox({ item }: { item: any }) {
     const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
     const handleOpen = () => {
-        if (!item.hasContent) return; // Locked mostly
+        if (!item.hasContent) return;
 
         if (opened) {
             openModal();
@@ -55,7 +59,7 @@ function LockerBox({ item }: { item: any }) {
             setOpened(true);
             setTimeout(() => {
                 openModal();
-            }, 800);
+            }, 600);
         }
     };
 
@@ -63,30 +67,28 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                h={120} // Compact locker height
+                h={140}
                 style={{
-                    perspective: '800px',
+                    perspective: '1200px',
                     cursor: item.hasContent ? 'pointer' : 'default',
                     position: 'relative',
-                    borderRight: '1px solid rgba(0,0,0,0.2)',
-                    borderBottom: '1px solid rgba(0,0,0,0.2)'
                 }}
                 onClick={handleOpen}
             >
-                {/* 3D Container */}
+                {/* 3D Pivot Container */}
                 <Box
                     style={{
                         position: 'relative',
                         width: '100%',
                         height: '100%',
                         transformStyle: 'preserve-3d',
-                        transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)', // Snappy mechanical feel
-                        transform: opened ? 'rotateY(-105deg)' : 'rotateY(0deg)',
-                        transformOrigin: 'left center',
-                        zIndex: 10
+                        transition: 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)', // Elastic elegant motion
+                        transform: opened ? 'rotateX(-100deg)' : 'rotateX(0deg)', // Rotate Up/Down instead of side? Or stick to Y? Let's try X flip (Garage style) or stick to Y. User said "Door". Let's stick to Y for Locker feel but smoother.
+                        // Wait, Y is better for "Locker". X is "Garage".
+                        // Let's stick to rotateY but make it smoother.
                     }}
                 >
-                    {/* DOOR FRONT */}
+                    {/* DOOR FRONT - The Luxury Part */}
                     <Box
                         style={{
                             position: 'absolute',
@@ -97,71 +99,89 @@ function LockerBox({ item }: { item: any }) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            // Realistic Metal Gradient
+                            // Matte Finish with soft gradient
                             background: item.hasContent
-                                ? `linear-gradient(135deg, ${item.color} 0%, #darken 100%)` // Painted locker style for special ones? No, keep metallic mainly
-                                : 'linear-gradient(135deg, #e9ecef 0%, #ced4da 100%)',
-                            border: '1px solid #dee2e6',
-                            // Add "Vent" slits visual
-                            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 12px)',
-                            backgroundSize: '100% 20px',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center top 10px'
+                                ? `linear-gradient(135deg, ${item.bg}, #1A1B1E)`
+                                : `linear-gradient(135deg, #25262b, #1A1B1E)`,
+
+                            // Glassy border/shine
+                            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)',
+                            borderRadius: '2px',
+                            transition: 'filter 0.3s',
                         }}
+                        onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.2)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.filter = 'brightness(1.0)'; }}
                     >
-                        {/* Locker Number Plate */}
-                        <Box bg="dark" c="white" px={8} py={2} style={{ borderRadius: 2, fontSize: '10px', fontWeight: 700, marginTop: 15 }}>
+                        {/* Minimalist Number */}
+                        <Text
+                            size="2rem"
+                            fw={900}
+                            style={{
+                                color: 'rgba(255,255,255,0.1)',
+                                position: 'absolute',
+                                bottom: 5,
+                                right: 10,
+                                lineHeight: 1
+                            }}
+                        >
                             {item.title}
-                        </Box>
+                        </Text>
 
-                        {/* Lock / Handle */}
-                        <Box mt={10} style={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid #868e96', background: '#343a40' }}></Box>
-
-                        {item.hasContent && <Text size="xs" fw={700} mt={5} c="dark.3">DATA INSIDE</Text>}
+                        {item.hasContent && (
+                            <Box w={8} h={8} style={{ borderRadius: '50%', background: '#fab005', boxShadow: '0 0 10px #fab005' }} />
+                        )}
                     </Box>
 
                     {/* DOOR BACK */}
                     <Box
+                        bg="dark.8"
                         style={{
                             position: 'absolute',
                             width: '100%',
                             height: '100%',
                             backfaceVisibility: 'hidden',
-                            transform: 'rotateY(180deg)',
-                            background: '#adb5bd',
-                            border: '1px solid #868e96'
+                            transform: 'rotateY(180deg)', // Standard Y rotation
                         }}
                     >
                     </Box>
                 </Box>
 
-                {/* INSIDE THE LOCKER (Dark Void) */}
+                {/* ANIMATION CONTROL FIX: Re-apply Y rotation logic properly */}
+                <style jsx>{`
+                    div[style*="preserve-3d"] {
+                        transform: ${opened ? 'rotateY(-105deg)' : 'rotateY(0deg)'} !important;
+                    }
+                 `}</style>
+                {/* 
+                    NOTE: Inline styles in React with ternary are tricky if I messed up the loop. 
+                    Let's just use standard style prop above.
+                 */}
+
+                {/* INSIDE */}
                 <Box
+                    bg="black"
                     style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        zIndex: 0,
-                        background: '#212529', // Dark inside
-                        boxShadow: 'inset 0 0 15px black',
+                        zIndex: -1,
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        boxShadow: 'inset 0 0 20px black'
                     }}
                 >
-                    {item.hasContent ? (
-                        <IconPlayerPlay size={24} color="#37b24d" style={{ filter: 'drop-shadow(0 0 5px #37b24d)' }} />
-                    ) : (
-                        <Text c="dimmed" size="xs">EMPTY</Text>
-                    )}
+                    {item.hasContent && <IconPlayerPlay color="white" size={30} />}
                 </Box>
             </Box>
 
-            <Modal opened={modalOpened} onClose={closeModal} size="xl" title={item.subtitle} centered>
+            <Modal opened={modalOpened} onClose={closeModal} size="xl" title={item.subtitle} centered overlayProps={{ blur: 3 }}>
                 <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-                    <Text ta="center" style={{ position: 'absolute', top: '40%', width: '100%' }}>Video Player Loading...</Text>
+                    <Box style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text c="white">Loading Video Source...</Text>
+                    </Box>
                 </div>
             </Modal>
         </>
