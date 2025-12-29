@@ -87,7 +87,7 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                h={140}
+                h={110} // CHANGED: 140 -> 110 for Landscape/Wide aspect
                 style={{
                     perspective: '1200px',
                     cursor: item.hasContent ? 'pointer' : 'default',
@@ -131,25 +131,25 @@ function LockerBox({ item }: { item: any }) {
                         }}
                     >
                         {/* Upper: Icon Sticker */}
-                        <Box p={8} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
-                            <Icon size={24} stroke={2} />
+                        <Box p={6} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
+                            <Icon size={20} stroke={2} />
                         </Box>
 
                         {/* Middle: Text Label */}
-                        <Text fw={800} size="xl" mt={10} c="dark.3" style={{ textShadow: '1px 1px 0 white' }}>
+                        <Text fw={800} size="lg" mt={5} c="dark.3" style={{ textShadow: '1px 1px 0 white' }}>
                             {item.title}
                         </Text>
 
                         {/* Bottom: Paper Tag Visual */}
                         <Box
-                            mt={10}
+                            mt={5}
                             bg="white"
-                            px={10}
-                            py={2}
+                            px={8}
+                            py={1}
                             style={{
                                 border: '1px solid #ced4da',
                                 borderRadius: '4px',
-                                fontSize: '10px',
+                                fontSize: '9px',
                                 color: '#868e96',
                                 boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)'
                             }}
@@ -164,8 +164,8 @@ function LockerBox({ item }: { item: any }) {
                                 right: 10,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                width: 12,
-                                height: 24,
+                                width: 10,
+                                height: 20,
                                 borderRadius: '4px',
                                 background: '#dee2e6',
                                 border: '1px solid #adb5bd',
@@ -229,7 +229,7 @@ function LockerBox({ item }: { item: any }) {
             <Modal opened={modalOpened} onClose={closeModal} size="lg" title={item.subtitle} centered>
                 <div style={{ position: 'relative', paddingTop: '56.25%', background: '#000' }}>
                     <Box style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text c="white">Content Loading...</Text>
+                        <Text c="white">Loading Content...</Text>
                     </Box>
                 </div>
             </Modal>
