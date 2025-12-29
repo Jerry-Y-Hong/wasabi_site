@@ -71,7 +71,7 @@ const TARGET_PRESETS = [
     },
     {
         label: 'Food Processing',
-        icon: '🍱',
+        icon: ' Bento',
         keywords: {
             'KR': '식품 가공 제조 업체 (소스, 양념)',
             'JP': '食品加工 会社 調味料',
@@ -122,7 +122,7 @@ const TARGET_PRESETS = [
         icon: '🏛️',
         keywords: {
             'KR': '스마트팜 정부 국책 사업 입찰 공고',
-            'JP': 'スマートファーム 政府 補助金 公募',
+            'JP': 'スマートファーム 政府 補助금 公募',
             'US': 'smart farm government grants USDA tender opportunities',
             'CN': '农业部 智慧农业 招标',
             'VN': 'Thầu nông nghiệp chính phủ',
@@ -180,28 +180,19 @@ export default function HunterPage() {
     };
 
     const handlePresetClick = (preset: any) => {
-        // 1. Determine active country code (fallback to Global if empty)
         const activeCountry = country || 'Global';
-
-        // 2. Select keyword for that country, or default to Global/English
         const searchTerm = preset.keywords[activeCountry] || preset.keywords['Global'];
-
-        // 3. Update state and trigger search
         setKeyword(searchTerm);
-
-        // We need to trigger search with the NEW keyword. 
-        // Since state update is async, we modify handleSearch to accept an optional override or just call logic directly.
-        // Let's call searchPartners directly here to be instant.
-        performSearch(searchTerm, country || 'KR');
+        performSearch(searchTerm, country);
     };
 
-    const performSearch = async (term: string, countryCode: string) => {
+    const performSearch = async (term: string, countryCode: string | null) => {
         setLoading(true);
         setResults([]);
         setPage(1);
 
         try {
-            const data = await searchPartners(term, 1, countryCode);
+            const data = await searchPartners(term, 1, countryCode || '');
             setResults(data);
 
             if (data.length > 0) {
@@ -216,7 +207,7 @@ export default function HunterPage() {
         }
     };
 
-    const handleSearch = () => performSearch(keyword, country || 'KR');
+    const handleSearch = () => performSearch(keyword, country);
 
     const handleLoadMore = async () => {
         const nextPage = page + 1;
@@ -224,7 +215,7 @@ export default function HunterPage() {
         setLoading(true);
 
         try {
-            const data = await searchPartners(keyword, nextPage, country || 'KR');
+            const data = await searchPartners(keyword, nextPage, country || '');
             setResults(prev => [...prev, ...data]);
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to load more.', color: 'red' });
@@ -315,12 +306,10 @@ export default function HunterPage() {
             }
 
             if (Object.keys(updates).length > 0) {
-                // Determine if we should update DB (only if saved) or just UI (if search result)
                 if (savedPartners.some(p => p.id === partner.id)) {
                     await updateHunterInfo(partner.id, updates);
-                    loadSavedPartners(); // Refresh UI from DB
+                    loadSavedPartners();
                 } else {
-                    // Just update local results state for now
                     setResults(prev => prev.map(p => p.id === partner.id ? { ...p, ...updates } : p));
                 }
                 notifications.show({ title: 'Scan Complete', message: updateMsg || 'Found contact info!', color: 'green' });
@@ -335,7 +324,7 @@ export default function HunterPage() {
     const handlePreview = (partner: HunterResult) => {
         setSelectedPartner(partner);
         setEmailMode(false);
-        setDraftEmail({ subject: '', body: '' }); // Reset draft
+        setDraftEmail({ subject: '', body: '' });
         setOpened(true);
     };
 
@@ -376,15 +365,13 @@ export default function HunterPage() {
     const handleDraftEmail = async () => {
         setEmailMode(true);
         if (selectedPartner) {
-            setLoading(true); // Reuse loading state for AI generation
+            setLoading(true);
 
             try {
-                // Save and update status first
                 await saveHunterResult(selectedPartner);
                 await updateHunterStatus(selectedPartner.id, 'Proposal Sent');
                 loadSavedPartners();
 
-                // Generate AI Proposal
                 const aiResponse = await generateProposalEmail({
                     partnerName: selectedPartner.name,
                     partnerType: selectedPartner.type,
@@ -394,17 +381,17 @@ export default function HunterPage() {
                 });
 
                 if (aiResponse.body && (aiResponse.body.includes("error") || aiResponse.body.includes("Unavailable"))) {
-                    notifications.show({ title: 'AI Notice', message: 'AI is momentarily busy or restricted. Using standard template.', color: 'orange' });
+                    notifications.show({ title: 'AI Notice', message: 'AI is momentarily busy. Using standard template.', color: 'orange' });
                 }
 
-                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: kfarmjerry03@gmail.com\nWeb: www.k-farm.or.kr`;
+                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: sbienv0633@gmail.com\nWeb: www.ksmart-farm.com`;
                 setDraftEmail({
-                    subject: aiResponse.subject,
+                    subject: aiResponse.subject || `[Proposal] Partnership with K-Farm International`,
                     body: (aiResponse.body || getEmailContent(selectedPartner).body) + signature
                 });
 
             } catch (error) {
-                notifications.show({ title: 'System Error', message: 'Failed to generate proposal. Please check connection.', color: 'red' });
+                notifications.show({ title: 'System Error', message: 'Failed to generate proposal.', color: 'red' });
             } finally {
                 setLoading(false);
             }
@@ -413,25 +400,7 @@ export default function HunterPage() {
 
     const getEmailContent = (partner: HunterResult) => {
         const subject = `[Proposal] Strategic Partnership: K-Farm x ${partner.name}`;
-        const body = `Dear ${partner.contact || 'Partner'},
-
-I hope this email finds you well.
-
-My name is [Your Name], representing K-Farm International. We have been following the work of ${partner.name} with great interest, particularly your achievements in ${partner.relevance}.
-
-We believe there is a strong potential for synergy between our organizations, specifically in the area of Smart Farm R&D and sustainable agriculture.
-
-We have prepared a brief proposal outlining how we might collaborate. Please find the attached presentation for your review.
-
-We would welcome the opportunity to discuss this further at your earliest convenience.
-
-Best regards,
-
-洪泳喜 (Jerry Y. Hong)
-K-Farm International
-Mobile: +82-10-4355-0633
-Email: sbienv0633@gmail.com
-Web: www.k-farm.or.kr`;
+        const body = `Dear ${partner.contact || 'Partner'},\n\nI hope this email finds you well.\n\nMy name is Jerry Y. Hong, representing K-Farm International. We have been following the work of ${partner.name} with great interest.\n\nWe believe there is a strong potential for synergy between our organizations.\n\nBest regards,`;
         return { subject, body };
     };
 
@@ -439,10 +408,10 @@ Web: www.k-farm.or.kr`;
         <Container size="xl" py={40}>
             <Stack align="center" mb={40}>
                 <Group justify="space-between" w="100%">
-                    <div /> {/* Spacer for centering */}
+                    <div />
                     <Stack align="center" gap="xs">
                         <Badge variant="filled" color="grape" size="lg">Sales Agent Beta</Badge>
-                        <Title order={1}>Hunter <Badge color="red" variant="light" size="sm">SECURE v2.0</Badge></Title>
+                        <Title order={1}>Hunter <Badge color="red" variant="light" size="sm">SECURE v2.1</Badge></Title>
                     </Stack>
                     <Group>
                         <Button component={Link} href="/admin" variant="subtle" color="gray">
@@ -463,9 +432,7 @@ Web: www.k-farm.or.kr`;
                     mt="md"
                     leftSection={<IconDownload size={16} />}
                     onClick={() => {
-                        // Helper to escape CSV values
                         const escapeCsv = (val: string) => `"${(val || '').toString().replace(/"/g, '""')}"`;
-
                         const headers = ["Name", "Type", "Relevance", "Contact", "Phone", "Email", "URL", "Status"];
                         const rows = savedPartners.map(e => [
                             e.name, e.type, e.relevance, e.contact || "", e.phone || "", e.email || "", e.url, e.status || "New"
@@ -522,7 +489,6 @@ Web: www.k-farm.or.kr`;
                         </Group>
                     </Card>
 
-                    {/* Smart Target Chips */}
                     <Stack gap="xs" mb="xl">
                         <Text size="sm" fw={500} c="dimmed">Quick Target (Click to auto-search):</Text>
                         <Group gap={8}>
@@ -534,7 +500,6 @@ Web: www.k-farm.or.kr`;
                                     color="gray"
                                     style={{ cursor: 'pointer', textTransform: 'none' }}
                                     onClick={() => handlePresetClick(preset)}
-                                    className="hover-badge" // Check globals.css for styling or add inline hover
                                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f1f3f5'}
                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                 >
@@ -652,7 +617,7 @@ Web: www.k-farm.or.kr`;
                                         <Table.Th w={60}>Cntry</Table.Th>
                                         <Table.Th>Status</Table.Th>
                                         <Table.Th>Organization</Table.Th>
-                                        <Table.Th>Contact</Table.Th> {/* Header Updated */}
+                                        <Table.Th>Contact</Table.Th>
                                         <Table.Th>Last Contact</Table.Th>
                                         <Table.Th>Action</Table.Th>
                                     </Table.Tr>
@@ -756,7 +721,6 @@ Web: www.k-farm.or.kr`;
                 </Tabs.Panel>
             </Tabs>
 
-            {/* ... (Modals remain same) ... */}
             <Modal
                 opened={opened}
                 onClose={() => setOpened(false)}
@@ -764,7 +728,6 @@ Web: www.k-farm.or.kr`;
                 size="xl"
                 centered
             >
-                {/* ... existing modal content ... */}
                 {selectedPartner && !emailMode && (
                     <Stack>
                         <Card withBorder shadow="sm" bg="gray.1" padding="xl">
@@ -789,10 +752,10 @@ Web: www.k-farm.or.kr`;
                         <Button variant="subtle" color="gray" size="xs" leftSection={<IconArrowLeft size={12} />} onClick={() => setEmailMode(false)}>
                             Back to Proposal
                         </Button>
-                        <TextInput label="Subject" value={draftEmail.subject || getEmailContent(selectedPartner).subject} onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })} rightSection={<CopyButton value={draftEmail.subject || getEmailContent(selectedPartner).subject}>
+                        <TextInput label="Subject" value={draftEmail.subject || ''} onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })} rightSection={<CopyButton value={draftEmail.subject || ''}>
                             {({ copied, copy }) => (<ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>)}
                         </CopyButton>} />
-                        <Textarea label="Body" value={draftEmail.body || getEmailContent(selectedPartner).body} onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })} autosize minRows={10} rightSection={<CopyButton value={draftEmail.body || getEmailContent(selectedPartner).body}>
+                        <Textarea label="Body" value={draftEmail.body || ''} onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })} autosize minRows={10} rightSection={<CopyButton value={draftEmail.body || ''}>
                             {({ copied, copy }) => (
                                 <Stack>
                                     <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>
@@ -816,7 +779,6 @@ Web: www.k-farm.or.kr`;
                         >
                             Send via Gmail
                         </Button>
-
                     </Stack>
                 )}
             </Modal>
