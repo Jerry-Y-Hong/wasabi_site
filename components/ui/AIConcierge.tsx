@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 
 export default function AIConcierge() {
     const [opened, setOpened] = useState(false);
+    const [lang, setLang] = useState<'ko' | 'en'>('en'); // Default to English
     const router = useRouter();
     const pathname = usePathname();
     const isAdminPath = pathname?.startsWith('/admin');
@@ -14,29 +15,54 @@ export default function AIConcierge() {
     const [messages, setMessages] = useState<{ sender: 'ai' | 'user', text: string, actions?: any[] }[]>([]);
 
     useEffect(() => {
-        // RESET messages when path type changes to prevent mixing
-        const greeting = isAdminPath
-            ? {
-                sender: 'ai' as const,
-                text: 'Welcome back, Chairman. [ADMIN] Management Mode active. How shall we proceed with the pipeline today?',
-                actions: [
-                    { label: 'Run Partner Hunter (DB)', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
-                    { label: 'Performance Dashboard', link: '/admin', icon: IconArchive, color: 'teal' },
-                    { label: 'Go to Public Site', link: '/', icon: IconArrowRight, color: 'gray' },
-                ]
+        const content = {
+            en: {
+                admin: {
+                    text: 'Welcome back, Chairman. [ADMIN] Mode active. How shall we proceed today?',
+                    actions: [
+                        { label: 'Run Partner Hunter (DB)', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
+                        { label: 'Performance Dashboard', link: '/admin', icon: IconArchive, color: 'teal' },
+                        { label: 'Go to Site', link: '/', icon: IconArrowRight, color: 'gray' },
+                    ]
+                },
+                customer: {
+                    text: 'Welcome to K-Farm Premium Concierge. How can I assist you today?',
+                    actions: [
+                        { label: 'Shop Wasabi', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
+                        { label: 'Digital Vault', link: '/video', icon: IconArchive, color: 'violet' },
+                        { label: '1:1 Business Inquiry', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
+                    ]
+                },
+                navigating: 'Understood. Navigating to'
+            },
+            ko: {
+                admin: {
+                    text: '회장님, 관리자 모드입니다. 어떤 작업을 진행할까요?',
+                    actions: [
+                        { label: '파트너 헌터 실행', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
+                        { label: '실적 대시보드', link: '/admin', icon: IconArchive, color: 'teal' },
+                        { label: '메인으로 이동', link: '/', icon: IconArrowRight, color: 'gray' },
+                    ]
+                },
+                customer: {
+                    text: 'K-Farm 프리미엄 컨시어지입니다. 무엇을 도와드릴까요?',
+                    actions: [
+                        { label: '와사비 구매하기', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
+                        { label: '디지털 금고 구경', link: '/video', icon: IconArchive, color: 'violet' },
+                        { label: '1:1 비즈니스 문의', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
+                    ]
+                },
+                navigating: '알겠습니다. 다음 페이지로 안내합니다:'
             }
-            : {
-                sender: 'ai' as const,
-                text: 'Welcome to K-Farm Premium Concierge. How can I assist your business today?',
-                actions: [
-                    { label: 'Shop Premium Wasabi', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
-                    { label: 'Digital Vault (Archive)', link: '/video', icon: IconArchive, color: 'violet' },
-                    { label: '1:1 Business Inquiry', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
-                ]
-            };
+        };
 
-        setMessages([greeting]);
-    }, [isAdminPath]);
+        const current = content[lang][isAdminPath ? 'admin' : 'customer'];
+        setMessages([{
+            sender: 'ai',
+            text: current.text,
+            actions: current.actions
+        }]);
+    }, [isAdminPath, lang]);
 
     // Auto-open greeting after 2 seconds
     useEffect(() => {
@@ -45,9 +71,10 @@ export default function AIConcierge() {
     }, []);
 
     const handleAction = (link: string, label: string) => {
+        const navText = lang === 'ko' ? '알겠습니다. 안내해 드릴게요:' : 'Understood. Navigating to:';
         setMessages(prev => [...prev,
         { sender: 'user', text: label },
-        { sender: 'ai', text: `Understood. Navigating to ${label}. Please hold a moment...` }
+        { sender: 'ai', text: `${navText} ${label}` }
         ]);
 
         setTimeout(() => {
@@ -105,12 +132,32 @@ export default function AIConcierge() {
                                             <IconRobot size={18} />
                                         </ThemeIcon>
                                         <Text fw={700} size="sm" c={isAdminPath ? 'white' : 'dark'}>
-                                            {isAdminPath ? '[관리자] AI 메신저' : 'K-Farm AI 컨시어지'}
+                                            {isAdminPath ? (lang === 'ko' ? '[관리자] AI 메신저' : 'Admin AI') : (lang === 'ko' ? 'K-Farm AI 비서' : 'K-Farm AI')}
                                         </Text>
                                     </Group>
-                                    <ActionIcon variant="subtle" color="gray" onClick={() => setOpened(false)}>
-                                        <IconX size={16} />
-                                    </ActionIcon>
+                                    <Group gap={5}>
+                                        <Button.Group>
+                                            <Button
+                                                variant={lang === 'ko' ? 'filled' : 'light'}
+                                                color="gray"
+                                                size="compact-xs"
+                                                onClick={() => setLang('ko')}
+                                            >
+                                                KO
+                                            </Button>
+                                            <Button
+                                                variant={lang === 'en' ? 'filled' : 'light'}
+                                                color="gray"
+                                                size="compact-xs"
+                                                onClick={() => setLang('en')}
+                                            >
+                                                EN
+                                            </Button>
+                                        </Button.Group>
+                                        <ActionIcon variant="subtle" color="gray" onClick={() => setOpened(false)}>
+                                            <IconX size={16} />
+                                        </ActionIcon>
+                                    </Group>
                                 </Group>
 
                                 <ScrollArea h={300} mb="md" offsetScrollbars>
