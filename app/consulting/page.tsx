@@ -25,64 +25,99 @@ export default function ConsultingPage() {
             </Box>
 
             <Container size="lg" py={80}>
-                {/* 4 Pillars Grid */}
-                <SimpleGrid cols={{ base: 1, md: 2 }} spacing={40} mb={100}>
+                <Title order={2} ta="center" mb={50}>Technical Equipment Inventory</Title>
+
+                <Stack gap={40}>
                     {/* Pillar 1: Infrastructure */}
-                    <SolutionCard
+                    <DetailedSolutionSection
                         icon={IconBuildingSkyscraper}
-                        title="1. 인프라 및 기반 시설"
-                        items={[
-                            "내재해형 비닐하우스/온실 건축",
-                            "고정식/이동식 배지 프레임 설비",
-                            "수직농장용 적층형 구조물 제작",
-                            "인공토양/고형 배지 시스템 구축"
-                        ]}
+                        title="01. 하드웨어 및 기반 설비 (Infrastructure)"
                         color="blue"
+                        groups={[
+                            {
+                                label: "건축 및 구조물",
+                                items: ["내재해형 연동 비닐하우스", "정밀 유리온실 (Venlo type)", "수직농장용 고강도 알루미늄 프로파일", "내부 단열 및 암막 스크린"]
+                            },
+                            {
+                                label: "재배 시스템",
+                                items: ["다단식 고정 베드 시스템", "공간 절약형 슬라이딩 베드", "벤치형 그로우 테이블", "수직 적층형 식물공장 모듈"]
+                            },
+                            {
+                                label: "배지 솔루션",
+                                items: ["친환경 인공토양 (바이오차)", "코코피트/피트모스 혼합 배지", "무균 암면 배지 (Rockwool)", "에어로포닉 전용 뿌리 고지대"]
+                            }
+                        ]}
                     />
 
                     {/* Pillar 2: Climate Control */}
-                    <SolutionCard
+                    <DetailedSolutionSection
                         icon={IconWind}
-                        title="2. 환경제어 & 공조 시스템"
-                        items={[
-                            "고효율 히트펌프 냉난방 시스템",
-                            "대류 및 공기 조화(HVAC) 설비",
-                            "초정밀 온도/습도 조절 센싱",
-                            "공기 순환 및 유동휀 최적화"
-                        ]}
+                        title="02. 환경제어 및 공조 시스템 (Climate)"
                         color="teal"
+                        groups={[
+                            {
+                                label: "냉난방 장치",
+                                items: ["공기열/지열 히트펌프", "전기 온수 보일러 시스템", "팬코일 유닛 (FCU)", "축열조 에너지 세이빙 솔루션"]
+                            },
+                            {
+                                label: "공기 조화 (HVAC)",
+                                items: ["대용량 공기조화기 (AHU)", "제습 및 가습 통합 컨트롤러", "바이러스 살균 덕트 시스템", "미세먼지 필터링 환기 설비"]
+                            },
+                            {
+                                label: "대류 제어",
+                                items: ["BLDC 고효율 유동휀", "에어 커튼 시스템", "수직 기류 제어 장치", "온실 전용 천창/측창 자동 개폐"]
+                            }
+                        ]}
                     />
 
                     {/* Pillar 3: Life Support */}
-                    <SolutionCard
+                    <DetailedSolutionSection
                         icon={IconDroplet}
-                        title="3. 양액 및 광원 시스템"
-                        items={[
-                            "원격 제어 용수 및 양액 공급 장치",
-                            "담수식(DWC) / 분무식(Aeroponics) 시스템",
-                            "식물 생장 전용 LED 광학 시스템",
-                            "자연광 연동 태양광 투사 솔루션"
-                        ]}
+                        title="03. 양액 및 광원 솔루션 (Life Support)"
                         color="cyan"
+                        groups={[
+                            {
+                                label: "수경/분무 양액기",
+                                items: ["다채널 자동 양액 공급기", "EC/pH 정밀 보정 탱크", "원수 여과 및 연수 시스템", "폐양액 UV 살균 재활용"]
+                            },
+                            {
+                                label: "관수 및 분무",
+                                items: ["고압 포그 미스트 노즐", "에어로포닉 하이퍼-미스트", "점적 관수 드립퍼 라인", "뿌리 온도 최적화 공급기"]
+                            },
+                            {
+                                label: "조명 및 에너지",
+                                items: ["식물 생장 전용 LED (Full Spectrum)", "PPFD 조절 디밍 시스템", "자연광 연동 광센서 제어", "태양광 하이브리드 발전 설비"]
+                            }
+                        ]}
                     />
 
                     {/* Pillar 4: Intelligence */}
-                    <SolutionCard
+                    <DetailedSolutionSection
                         icon={IconRobot}
-                        title="4. 자동화 & 지능형 기술"
-                        items={[
-                            "자체 개발 소프트웨어(SaaS) 제어",
-                            "스마트폰/PC 원격 모니터링 및 제어",
-                            "방제/수확용 로봇 및 드론 시스템",
-                            "빅데이터 기반 생육 리포트 제공"
-                        ]}
+                        title="04. AI 자동화 및 지능형 기술 (Intelligence)"
                         color="grape"
+                        groups={[
+                            {
+                                label: "소프트웨어 및 제어",
+                                items: ["K-Farm OS 중앙 제어 서버", "클라우드 기반 데이터 로깅", "실시간 모바일 관제 앱", "이상 징후 AI 알림 엔진"]
+                            },
+                            {
+                                label: "IoT 하드웨어",
+                                items: ["통합 센서 노드 (온/습/CO2/광)", "5G/LTE 산업용 게이트웨이", "무선 통신 중계기", "정밀 모터 드라이버 박스"]
+                            },
+                            {
+                                label: "로봇 및 무인화",
+                                items: ["AI 이미지 처리 수확 로봇", "자율주행 약제 방제 드론", "무인 반송 로봇 (AGV)", "고해상도 실시간 모니터링 CCTV"]
+                            }
+                        ]}
                     />
-                </SimpleGrid>
+                </Stack>
+            </Container>
 
-                <Divider my={60} label="컨설팅 진행 프로세스" labelPosition="center" />
+            <Divider my={60} label="컨설팅 진행 프로세스" labelPosition="center" />
 
-                {/* Additional Detail - Process Section */}
+            {/* Additional Detail - Process Section */}
+            <Container size="lg" py={80}>
                 <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
                     <ProcessStep
                         step="01"
@@ -115,33 +150,43 @@ export default function ConsultingPage() {
                     </Group>
                 </Container>
             </Box>
-        </Box>
+        </Box >
     );
 }
 
-function SolutionCard({ icon: Icon, title, items, color }: { icon: any, title: string, items: string[], color: string }) {
+function DetailedSolutionSection({ icon: Icon, title, groups, color }: { icon: any, title: string, groups: { label: string, items: string[] }[], color: string }) {
     return (
         <Paper withBorder p="xl" radius="lg" shadow="sm">
-            <Group mb="lg">
-                <ThemeIcon size={50} radius="md" color={color} variant="light">
-                    <Icon size={30} />
+            <Group mb="xl">
+                <ThemeIcon size={52} radius="md" color={color} variant="filled">
+                    <Icon size={32} />
                 </ThemeIcon>
                 <Title order={3}>{title}</Title>
             </Group>
-            <List
-                spacing="sm"
-                size="md"
-                center
-                icon={
-                    <ThemeIcon color={color} size={20} radius="xl">
-                        <IconCheck size={12} />
-                    </ThemeIcon>
-                }
-            >
-                {items.map((item, i) => (
-                    <List.Item key={i}><Text fw={500}>{item}</Text></List.Item>
+
+            <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
+                {groups.map((group, idx) => (
+                    <Stack key={idx} gap="xs">
+                        <Text fw={700} size="sm" c={color} style={{ letterSpacing: 1 }}>{group.label.toUpperCase()}</Text>
+                        <Divider color={color} size="xs" opacity={0.3} mb="xs" />
+                        <List
+                            spacing={8}
+                            size="sm"
+                            icon={
+                                <ThemeIcon color={color} size={18} radius="xl" variant="light">
+                                    <IconCheck size={12} />
+                                </ThemeIcon>
+                            }
+                        >
+                            {group.items.map((item, i) => (
+                                <List.Item key={i}>
+                                    <Text size="sm" fw={500}>{item}</Text>
+                                </List.Item>
+                            ))}
+                        </List>
+                    </Stack>
                 ))}
-            </List>
+            </SimpleGrid>
         </Paper>
     );
 }
