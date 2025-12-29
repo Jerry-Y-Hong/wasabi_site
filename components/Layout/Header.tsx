@@ -5,6 +5,7 @@ import { Container, Group, Burger, Drawer, Stack, Button, Text, Box, Image, Them
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
 import { IconPlant } from '@tabler/icons-react';
+import { TranslationWidget } from './TranslationWidget';
 import classes from './Header.module.css';
 
 const links = [
@@ -51,6 +52,7 @@ export function Header() {
                 </Link>
                 <Group gap={5} visibleFrom="xs">
                     {items}
+                    <TranslationWidget />
                 </Group>
 
                 <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
