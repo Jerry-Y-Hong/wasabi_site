@@ -1,30 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, SimpleGrid, Card, Text, Center, Box, Modal } from '@mantine/core';
+import { Container, SimpleGrid, Box, Text, Modal, Center } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconLock, IconPlayerPlay } from '@tabler/icons-react';
+import { IconLock, IconPlayerPlay, IconNumber1, IconNumber2, IconNumber3 } from '@tabler/icons-react';
 
-const SERIES_DATA = [
-    { id: 1, title: 'Series 01', subtitle: 'The Beginning', color: 'blue' },
-    { id: 2, title: 'Series 02', subtitle: 'Technology', color: 'teal' },
-    { id: 3, title: 'Series 03', subtitle: 'Global Vision', color: 'grape' },
-    { id: 4, title: 'Series 04', subtitle: 'Harvest', color: 'orange' },
-];
+// Generate 20 locker items (4x5 grid)
+const LOCKER_DATA = Array.from({ length: 20 }, (_, i) => ({
+    id: i + 1,
+    title: `Box ${String(i + 1).padStart(2, '0')}`,
+    subtitle: i < 3 ? `Series ${i + 1}` : 'Empty Slot', // Only first 3 have content
+    hasContent: i < 3,
+    color: i === 4 ? '#2f9e44' : i === 11 ? '#1864ab' : '#adb5bd', // Random accent colors (Wasabi Green, Blue, Grey)
+}));
 
 export default function VideoPage() {
     return (
-        <Box bg="#f8f9fa" py={100} style={{ minHeight: '100vh' }}>
+        <Box bg="#212529" py={50} style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Container size="lg">
-                <Text size="3rem" fw={900} ta="center" mb="xl" variant="gradient" gradient={{ from: 'dark', to: 'gray', deg: 45 }}>
-                    K-Farm Archives
+                <Text size="2.5rem" fw={900} ta="center" mb="xl" c="gray.3" style={{ letterSpacing: '2px' }}>
+                    RESTRICTED ARCHIVE
                 </Text>
 
-                <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
-                    {SERIES_DATA.map((item) => (
+                {/* 4x5 Wall of Lockers */}
+                <Box
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)', // 4 Columns
+                        gap: '0px', // No Gap! Attached together
+                        border: '4px solid #495057', // Thick frame around the wall
+                        backgroundColor: '#343a40',
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+                    }}
+                >
+                    {LOCKER_DATA.map((item) => (
                         <LockerBox key={item.id} item={item} />
                     ))}
-                </SimpleGrid>
+                </Box>
             </Container>
         </Box>
     );
@@ -35,13 +47,15 @@ function LockerBox({ item }: { item: any }) {
     const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
     const handleOpen = () => {
+        if (!item.hasContent) return; // Locked mostly
+
         if (opened) {
             openModal();
         } else {
             setOpened(true);
             setTimeout(() => {
                 openModal();
-            }, 800); // Wait for animation
+            }, 800);
         }
     };
 
@@ -49,30 +63,31 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                h={300}
+                h={120} // Compact locker height
                 style={{
-                    perspective: '1000px',
-                    cursor: 'pointer'
+                    perspective: '800px',
+                    cursor: item.hasContent ? 'pointer' : 'default',
+                    position: 'relative',
+                    borderRight: '1px solid rgba(0,0,0,0.2)',
+                    borderBottom: '1px solid rgba(0,0,0,0.2)'
                 }}
                 onClick={handleOpen}
             >
+                {/* 3D Container */}
                 <Box
                     style={{
                         position: 'relative',
                         width: '100%',
                         height: '100%',
                         transformStyle: 'preserve-3d',
-                        transition: 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
-                        transform: opened ? 'rotateY(-110deg)' : 'rotateY(0deg)',
-                        transformOrigin: 'left center'
+                        transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)', // Snappy mechanical feel
+                        transform: opened ? 'rotateY(-105deg)' : 'rotateY(0deg)',
+                        transformOrigin: 'left center',
+                        zIndex: 10
                     }}
                 >
-                    {/* FRONT DOOR */}
-                    <Card
-                        padding="xl"
-                        radius="md"
-                        withBorder
-                        bg="white"
+                    {/* DOOR FRONT */}
+                    <Box
                         style={{
                             position: 'absolute',
                             width: '100%',
@@ -82,75 +97,71 @@ function LockerBox({ item }: { item: any }) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            background: 'linear-gradient(145deg, #ffffff, #e6e6e6)',
-                            boxShadow: 'inset 2px 2px 5px rgba(255,255,255,1), 5px 5px 10px rgba(0,0,0,0.1)',
-                            border: '1px solid #dcdcdc'
+                            // Realistic Metal Gradient
+                            background: item.hasContent
+                                ? `linear-gradient(135deg, ${item.color} 0%, #darken 100%)` // Painted locker style for special ones? No, keep metallic mainly
+                                : 'linear-gradient(135deg, #e9ecef 0%, #ced4da 100%)',
+                            border: '1px solid #dee2e6',
+                            // Add "Vent" slits visual
+                            backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 12px)',
+                            backgroundSize: '100% 20px',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'center top 10px'
                         }}
                     >
-                        <IconLock size={40} color="#adb5bd" style={{ marginBottom: 20 }} />
-                        <Text fw={900} size="xl" c="dark">{item.title}</Text>
-                        <Text size="sm" c="dimmed" mt={5}>CLASSIFIED</Text>
+                        {/* Locker Number Plate */}
+                        <Box bg="dark" c="white" px={8} py={2} style={{ borderRadius: 2, fontSize: '10px', fontWeight: 700, marginTop: 15 }}>
+                            {item.title}
+                        </Box>
 
-                        {/* Screws/Details */}
-                        <Box style={{ position: 'absolute', top: 10, left: 10, width: 8, height: 8, borderRadius: '50%', background: '#ced4da', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.2)' }} />
-                        <Box style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#ced4da', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.2)' }} />
-                        <Box style={{ position: 'absolute', bottom: 10, left: 10, width: 8, height: 8, borderRadius: '50%', background: '#ced4da', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.2)' }} />
-                        <Box style={{ position: 'absolute', bottom: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#ced4da', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.2)' }} />
-                    </Card>
+                        {/* Lock / Handle */}
+                        <Box mt={10} style={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid #868e96', background: '#343a40' }}></Box>
 
-                    {/* BACK OF DOOR (When opened) */}
-                    <Card
-                        padding="xl"
-                        radius="md"
-                        bg="gray.1"
-                        withBorder
+                        {item.hasContent && <Text size="xs" fw={700} mt={5} c="dark.3">DATA INSIDE</Text>}
+                    </Box>
+
+                    {/* DOOR BACK */}
+                    <Box
                         style={{
                             position: 'absolute',
                             width: '100%',
                             height: '100%',
                             backfaceVisibility: 'hidden',
-                            transform: 'rotateY(180deg)'
+                            transform: 'rotateY(180deg)',
+                            background: '#adb5bd',
+                            border: '1px solid #868e96'
                         }}
                     >
-                        {/* Just metal texture */}
-                    </Card>
+                    </Box>
                 </Box>
 
-                {/* INSIDE CONTENT (Behind the door) */}
-                <Card
-                    padding="xl"
-                    radius="md"
-                    bg="dark.8"
+                {/* INSIDE THE LOCKER (Dark Void) */}
+                <Box
                     style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        zIndex: -1,
+                        zIndex: 0,
+                        background: '#212529', // Dark inside
+                        boxShadow: 'inset 0 0 15px black',
                         display: 'flex',
-                        flexDirection: 'column',
                         justifyContent: 'center',
-                        alignItems: 'center',
-                        boxShadow: 'inset 0 0 20px black'
+                        alignItems: 'center'
                     }}
                 >
-                    <IconPlayerPlay size={50} color="white" style={{ opacity: 0.8 }} />
-                    <Text c="white" fw={700} mt="md">{item.subtitle}</Text>
-                    <Text c="dimmed" size="xs">Click to Watch</Text>
-                </Card>
+                    {item.hasContent ? (
+                        <IconPlayerPlay size={24} color="#37b24d" style={{ filter: 'drop-shadow(0 0 5px #37b24d)' }} />
+                    ) : (
+                        <Text c="dimmed" size="xs">EMPTY</Text>
+                    )}
+                </Box>
             </Box>
 
-            <Modal opened={modalOpened} onClose={closeModal} size="xl" title={item.title} centered>
+            <Modal opened={modalOpened} onClose={closeModal} size="xl" title={item.subtitle} centered>
                 <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-                    <iframe
-                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                        title="YouTube video player"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
+                    <Text ta="center" style={{ position: 'absolute', top: '40%', width: '100%' }}>Video Player Loading...</Text>
                 </div>
             </Modal>
         </>
