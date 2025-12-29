@@ -15,12 +15,12 @@ const LANGUAGES = [
     { value: 'en', label: 'English' },
     { value: 'ko', label: '한국어' },
     { value: 'ja', label: '日本語' },
-    { value: 'zh-CN', label: '中文 (简体)' },
-    { value: 'zh-TW', label: '中文 (繁體)' },
     { value: 'de', label: 'Deutsch' },
     { value: 'fr', label: 'Français' },
     { value: 'es', label: 'Español' },
     { value: 'ar', label: 'Arabic (العربية)' },
+    { value: 'zh-CN', label: '中文 (简体)' },
+    { value: 'zh-TW', label: '中文 (繁體)' },
 ];
 
 export function TranslationWidget() {
