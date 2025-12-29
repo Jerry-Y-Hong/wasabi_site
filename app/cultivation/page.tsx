@@ -1,9 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Container, Title, Text, SimpleGrid, ThemeIcon, Paper, Image, Stack, Box, Tabs, List, Badge, Group, Divider } from '@mantine/core';
 import { IconFlask, IconMist, IconCpu, IconBox, IconCheck } from '@tabler/icons-react';
 
 export default function CultivationPage() {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
     return (
         <Box>
             {/* Hero Section */}
