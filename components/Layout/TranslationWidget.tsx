@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Group, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Group, Select } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
 
 declare global {
@@ -11,22 +11,34 @@ declare global {
     }
 }
 
+const LANGUAGES = [
+    { value: 'en', label: 'English' },
+    { value: 'ko', label: '한국어' },
+    { value: 'ja', label: '日本語' },
+    { value: 'zh-CN', label: '中文 (简体)' },
+    { value: 'zh-TW', label: '中文 (繁體)' },
+    { value: 'de', label: 'Deutsch' },
+    { value: 'fr', label: 'Français' },
+    { value: 'es', label: 'Español' },
+    { value: 'ar', label: 'العربية' },
+];
+
 export function TranslationWidget() {
+    // Default to English if no preference
+    const [selected, setSelected] = useState<string | null>('en');
+
     useEffect(() => {
-        // Define the initialization function globally
         window.googleTranslateElementInit = () => {
             new window.google.translate.TranslateElement(
                 {
-                    pageLanguage: 'en', // Main site language
-                    includedLanguages: 'en,ko,ja,zh-CN,zh-TW,de,fr,es,ar', // Major languages only
-                    layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL, // Force dropdown for language selection
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,ko,ja,zh-CN,zh-TW,de,fr,es,ar',
                     autoDisplay: false,
                 },
                 'google_translate_element'
             );
         };
 
-        // Inject the Google Translate script if not already present
         const scriptId = 'google-translate-script';
         if (!document.getElementById(scriptId)) {
             const script = document.createElement('script');
@@ -37,30 +49,43 @@ export function TranslationWidget() {
         }
     }, []);
 
+    const handleChange = (value: string | null) => {
+        if (!value) return;
+        setSelected(value);
+
+        // Magic: Control the hidden Google Widget
+        const combo = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+        if (combo) {
+            combo.value = value;
+            combo.dispatchEvent(new Event('change'));
+        }
+    };
+
     return (
         <Group gap={5} align="center" style={{ marginRight: 10 }}>
-            <IconLanguage size={18} />
-            <Text size="sm" fw={700}>Language</Text>
-            {/* Google Translate Container */}
-            <div id="google_translate_element" style={{ minHeight: '20px' }}></div>
+            {/* Custom Native Language Selector */}
+            <Select
+                placeholder="Language"
+                data={LANGUAGES}
+                value={selected}
+                onChange={handleChange}
+                size="xs"
+                w={110}
+                variant="filled"
+                leftSection={<IconLanguage size={14} />}
+                allowDeselect={false}
+                styles={{
+                    input: {
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        backgroundColor: '#f1f3f5',
+                        border: 'none'
+                    }
+                }}
+            />
 
-            {/* Force hide the 'Select Language' text from Google using Global Styles */}
-            <style jsx global>{`
-                .goog-te-gadget {
-                    font-family: 'Roboto', sans-serif !important;
-                    font-size: 0 !important; /* Hide text */
-                }
-                .goog-te-gadget span {
-                    display: none !important; /* Hide 'Select Language' label */
-                }
-                .goog-te-combo {
-                    margin: 0 !important;
-                    padding: 4px !important;
-                    border: 1px solid #e0e0e0;
-                    border-radius: 4px;
-                    font-size: 14px !important; /* Restore font size for dropdown items */
-                }
-            `}</style>
+            {/* Completely Hidden Google Translate Widget */}
+            <div id="google_translate_element" style={{ display: 'none' }}></div>
         </Group>
     );
 }
