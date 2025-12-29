@@ -438,12 +438,17 @@ const MOCK_DATA = [
     { id: 123, name: 'Green Labs', type: 'Startup', relevance: 'Medium (Agtech Platform)', contact: 'Support', phone: '1644-7901', url: 'https://greenlabs.co.kr', country: 'KR' },
     { id: 124, name: 'KIST Gangneung Institute', type: 'Research', relevance: 'High (Natural Products)', contact: 'Admin', phone: '033-650-3400', url: 'https://gn.kist.re.kr', country: 'KR' },
 
-    // --- GLOBAL TARGETS (JP/US) ---
+    // --- GLOBAL TARGETS (JP/US/EU) ---
     { id: 201, name: 'Kubota Corporation', type: 'Company', relevance: 'High (Agri-Machinery)', contact: 'Global Sales', phone: '+81-6-6648-2111', url: 'https://www.kubota.com', country: 'JP' },
     { id: 202, name: 'Kameya Foods', type: 'Manufacturer', relevance: 'High (Premium Wasabi JP)', contact: 'Export', phone: '+81-55-975-0233', url: 'https://kameya-foods.co.jp', country: 'JP' },
     { id: 203, name: 'Kinjirushi Wasabi', type: 'Manufacturer', relevance: 'High (Market Leader)', contact: 'Biz Dev', phone: '+81-52-123-4567', url: 'https://www.kinjirushi.co.jp', country: 'JP' },
     { id: 301, name: 'Plenty', type: 'Startup', relevance: 'High (Vertical Farming US)', contact: 'Partnerships', phone: '+1-650-123-4567', url: 'https://www.plenty.ag', country: 'US' },
-    { id: 302, name: 'AeroFarms', type: 'Startup', relevance: 'High (Aeroponics US)', contact: 'Sales', phone: '+1-973-242-2495', url: 'https://www.aerofarms.com', country: 'US' }
+    { id: 302, name: 'AeroFarms', type: 'Startup', relevance: 'High (Aeroponics US)', contact: 'Sales', phone: '+1-973-242-2495', url: 'https://www.aerofarms.com', country: 'US' },
+    { id: 401, name: 'Wageningen University & Research', type: 'University/Research', relevance: 'Extreme (World #1 Ag-Tech)', contact: 'Plant Science Dept', phone: '+31-317-480100', url: 'https://www.wur.nl', country: 'NL' },
+    { id: 402, name: 'UC Davis (Plant Sciences)', type: 'University/Research', relevance: 'High (Top Tier Ag-Science)', contact: 'Director', phone: '+1-530-752-1011', url: 'https://www.ucdavis.edu', country: 'US' },
+    { id: 403, name: 'Infarm', type: 'Startup', relevance: 'High (European Vertical Farm)', contact: 'Retail Partners', phone: '+49-30-1234567', url: 'https://www.infarm.com', country: 'DE' },
+    { id: 404, name: 'Suntory Flowers', type: 'Manufacturer', relevance: 'Medium (Plant Bio-Tech)', contact: 'Inquiry', phone: '+81-3-1234-5678', url: 'https://suntoryflowers.com', country: 'JP' },
+    { id: 405, name: 'Global AgInvesting', type: 'Investor/Corporate', relevance: 'High (Ag-Tech Venture)', contact: 'Event Team', phone: '+1-212-123-4567', url: 'https://www.globalaginvesting.com', country: 'US' }
 ];
 
 export async function searchPartners(keyword: string, page: number = 1, country: string = 'KR') {
@@ -519,7 +524,8 @@ export async function searchPartners(keyword: string, page: number = 1, country:
 
     // Filter by Country then Keyword
     const filtered = MOCK_DATA.filter(item => {
-        const countryMatch = country === 'Global' || item.country === country;
+        const isGlobal = !country || country === 'Global';
+        const countryMatch = isGlobal || item.country === country;
         const keywordMatch = item.name.toLowerCase().includes(lowerKeyword) ||
             item.type.toLowerCase().includes(lowerKeyword) ||
             item.relevance.toLowerCase().includes(lowerKeyword);
@@ -529,7 +535,8 @@ export async function searchPartners(keyword: string, page: number = 1, country:
     // If no match/empty keyword but country matches, return random subset from that country
     let results = filtered;
     if (filtered.length === 0 && keyword.trim() === '') {
-        results = MOCK_DATA.filter(item => country === 'Global' || item.country === country);
+        const isGlobal = !country || country === 'Global';
+        results = MOCK_DATA.filter(item => isGlobal || item.country === country);
     } else if (filtered.length === 0) {
         // Return nothing if keyword specifically didn't match
         results = [];
