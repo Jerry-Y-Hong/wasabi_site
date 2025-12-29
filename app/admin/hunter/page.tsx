@@ -106,7 +106,7 @@ const TARGET_PRESETS = [
         }
     },
     {
-        label: 'Mass Leads (Flies)',
+        label: '파리채',
         icon: '🪰',
         keywords: {
             'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
