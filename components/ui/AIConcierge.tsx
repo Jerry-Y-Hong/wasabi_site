@@ -2,23 +2,41 @@
 
 import { useState, useEffect } from 'react';
 import { Affix, Button, Transition, Card, Text, Group, Stack, ActionIcon, ScrollArea, Avatar, ThemeIcon, Box } from '@mantine/core';
-import { IconMessageChatbot, IconX, IconArrowRight, IconRobot, IconShoppingCart, IconArchive, IconTarget } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { IconMessageChatbot, IconX, IconArrowRight, IconRobot, IconShoppingCart, IconArchive, IconTarget, IconHeadset } from '@tabler/icons-react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function AIConcierge() {
     const [opened, setOpened] = useState(false);
-    const [messages, setMessages] = useState<{ sender: 'ai' | 'user', text: string, actions?: any[] }[]>([
-        {
-            sender: 'ai',
-            text: '안녕하십니까, 회장님. K-Farm AI 비서입니다. 무엇을 도와드릴까요? 🤖',
-            actions: [
-                { label: '와사비 구매', link: '/products/fresh', icon: IconShoppingCart },
-                { label: '디지털 금고 가기', link: '/video', icon: IconArchive },
-                { label: '파트너 헌터 실행', link: '/admin/hunter', icon: IconTarget },
-            ]
-        }
-    ]);
     const router = useRouter();
+    const pathname = usePathname();
+    const isAdminPath = pathname?.startsWith('/admin');
+
+    const [messages, setMessages] = useState<{ sender: 'ai' | 'user', text: string, actions?: any[] }[]>([]);
+
+    useEffect(() => {
+        // Dynamic greeting based on path
+        const greeting = isAdminPath
+            ? {
+                sender: 'ai' as const,
+                text: '회장님, 관리자 모드로 접속하셨습니다. 어떤 작업을 진행할까요? 🛠️',
+                actions: [
+                    { label: '파트너 헌터 실행', link: '/admin/hunter', icon: IconTarget },
+                    { label: '실적 대시보드', link: '/admin', icon: IconArchive },
+                    { label: '메인 페이지로', link: '/', icon: IconArrowRight },
+                ]
+            }
+            : {
+                sender: 'ai' as const,
+                text: '반갑습니다! K-Farm 스마트 비서입니다. 무엇을 도와드릴까요? 🌱',
+                actions: [
+                    { label: '프리미엄 와사비 구매', link: '/products/fresh', icon: IconShoppingCart },
+                    { label: '디지털 보관소 투어', link: '/video', icon: IconArchive },
+                    { label: '1:1 컨설팅 문의', link: '/consulting/inquiry', icon: IconHeadset },
+                ]
+            };
+
+        setMessages([greeting]);
+    }, [isAdminPath]);
 
     // Auto-open greeting after 2 seconds
     useEffect(() => {
