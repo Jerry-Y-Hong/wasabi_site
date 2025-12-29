@@ -29,18 +29,19 @@ const LOCKER_DATA = Array.from({ length: 20 }, (_, i) => {
 
 export default function VideoPage() {
     return (
-        <Box bg="#e9ecef" py={80} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box bg="#e9ecef" py={60} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Container size="xl">
-                <Box mb={50} ta="center">
+                <Box mb={40} ta="center">
                     <Text size="3.5rem" fw={900} c="dark.4" style={{ letterSpacing: '2px', textShadow: '2px 2px 0px rgba(0,0,0,0.1)' }}>
                         K-FARM LIBRARY
                     </Text>
-                    <Text c="dimmed" size="lg" mt={10}>
+                    <Text c="dimmed" size="lg" mt={5}>
                         Digital Innovation Archive
                     </Text>
                 </Box>
 
                 {/* 5x4 3D Cabinet Wall */}
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v2.1 Wide Edition</Text>
                 <Box
                     style={{
                         display: 'grid',
@@ -77,7 +78,7 @@ function LockerBox({ item }: { item: any }) {
             setOpened(true);
             setTimeout(() => {
                 openModal();
-            }, 500); // Faster snap
+            }, 500);
         }
     };
 
@@ -87,7 +88,7 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                h={110} // CHANGED: 140 -> 110 for Landscape/Wide aspect
+                h={110} // Wide Aspect Ratio
                 style={{
                     perspective: '1200px',
                     cursor: item.hasContent ? 'pointer' : 'default',
@@ -102,7 +103,7 @@ function LockerBox({ item }: { item: any }) {
                         width: '100%',
                         height: '100%',
                         transformStyle: 'preserve-3d',
-                        transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // Bouncy pop effect
+                        transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         transform: opened ? 'rotateY(-110deg)' : 'rotateY(0deg)',
                         zIndex: 10
                     }}
@@ -127,7 +128,7 @@ function LockerBox({ item }: { item: any }) {
                                 5px 5px 10px rgba(0,0,0,0.15)
                             `,
                             borderRadius: '8px',
-                            border: `2px solid ${item.category.color}`, // Color coded rim
+                            border: `2px solid ${item.category.color}`,
                         }}
                     >
                         {/* Upper: Icon Sticker */}
