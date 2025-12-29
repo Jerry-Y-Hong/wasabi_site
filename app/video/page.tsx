@@ -7,13 +7,12 @@ import { IconPlayerPlay, IconFileText, IconChartBar, IconWorld, IconLock } from 
 
 // Define Categories per Row (4 Columns x 4 Rows = 16 items)
 const ROW_CATEGORIES = [
-    { title: 'MEDIA', icon: IconPlayerPlay, color: '#2b8a3e', desc: 'Promotional Videos' }, // Darker Green
-    { title: 'SPECS', icon: IconFileText, color: '#1864ab', desc: 'Technical Catalogs' },    // Darker Blue
-    { title: 'R&D', icon: IconChartBar, color: '#5f3dc4', desc: 'Research Data' },           // Darker Purple
-    { title: 'GLOBAL', icon: IconWorld, color: '#d9480f', desc: 'Global Partners' },         // Darker Orange
+    { title: 'MEDIA', icon: IconPlayerPlay, color: '#e9ecef', desc: 'Promotional Videos' }, // Icons turn White/Grey on Blue
+    { title: 'SPECS', icon: IconFileText, color: '#e9ecef', desc: 'Technical Catalogs' },
+    { title: 'R&D', icon: IconChartBar, color: '#e9ecef', desc: 'Research Data' },
+    { title: 'GLOBAL', icon: IconWorld, color: '#e9ecef', desc: 'Global Partners' },
 ];
 
-// Generate 16 Items (4x4)
 const LOCKER_DATA = Array.from({ length: 16 }, (_, i) => {
     const ROW_SIZE = 4;
     const rowIndex = Math.floor(i / ROW_SIZE);
@@ -25,40 +24,39 @@ const LOCKER_DATA = Array.from({ length: 16 }, (_, i) => {
         title: `${String(i + 1).padStart(2, '0')}`,
         subtitle: `${category.title} 0${(i % ROW_SIZE) + 1}`,
         category: category,
-        hasContent: (i % ROW_SIZE) < 3, // Enable first 3 items per row
+        hasContent: (i % ROW_SIZE) < 3,
     };
 });
 
 export default function VideoPage() {
     return (
-        <Box bg="#ced4da" py={40} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {/* Fluid Container for Maximum Width */}
+        <Box bg="#212529" py={40} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* Fluid Container */}
             <Container fluid w="95%" maw="1800px">
                 <Box mb={30} ta="center">
-                    <Text size="3rem" fw={900} c="dark.5" style={{ letterSpacing: '2px', textShadow: '1px 1px 0px white' }}>
-                        K-FARM STORAGE
+                    <Text size="3rem" fw={900} c="white" style={{ letterSpacing: '2px', textShadow: '0 0 10px rgba(51, 154, 240, 0.5)' }}>
+                        K-FARM BLUE ARCHIVE
                     </Text>
                     <Text c="dimmed" size="md" mt={5} fw={500}>
                         Digital Assets Vault
                     </Text>
                 </Box>
 
-                {/* 4x4 Photorealistic Cabinet Wall */}
-                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v4.0 Realism</Text>
+                {/* 4x4 Blue Metal Cabinet */}
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v5.0 Blue Metal</Text>
                 <Box
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)', // 4 COLUMNS
+                        gridTemplateColumns: 'repeat(4, 1fr)',
                         gap: '15px',
                         padding: '25px',
-                        backgroundColor: '#868e96', // Darker frame
-                        borderRadius: '4px', // Less rounded for industrial feel
-                        // Industrial Metal Texture Background
+                        backgroundColor: '#1864ab', // Deep Blue Frame
+                        borderRadius: '4px',
                         backgroundImage: `
-                            repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 4px),
-                            linear-gradient(to bottom, #868e96, #495057)
+                            repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px),
+                            linear-gradient(to bottom, #1971c2, #1864ab)
                         `,
-                        boxShadow: 'inset 0 0 80px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.4), 0 0 0 10px #495057' // Heavy frame
+                        boxShadow: 'inset 0 0 80px rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.6), 0 0 0 10px #1864ab'
                     }}
                 >
                     {LOCKER_DATA.map((item) => (
@@ -83,8 +81,15 @@ function LockerBox({ item }: { item: any }) {
             setOpened(true);
             setTimeout(() => {
                 openModal();
-            }, 500);
+            }, 600); // Wait a bit longer for door
         }
+    };
+
+    const handleModalClose = () => {
+        closeModal();
+        setTimeout(() => {
+            setOpened(false); // Close the door when modal closes!
+        }, 200);
     };
 
     const Icon = item.category.icon;
@@ -94,8 +99,8 @@ function LockerBox({ item }: { item: any }) {
             <Box
                 w="100%"
                 style={{
-                    aspectRatio: '16/9', // WIDE SCREEN RATIO
-                    perspective: '1500px', // More depth
+                    aspectRatio: '16/9',
+                    perspective: '1500px',
                     cursor: item.hasContent ? 'pointer' : 'default',
                     position: 'relative',
                 }}
@@ -108,12 +113,12 @@ function LockerBox({ item }: { item: any }) {
                         width: '100%',
                         height: '100%',
                         transformStyle: 'preserve-3d',
-                        transition: 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)', // Heavier transition
+                        transition: 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)',
                         transform: opened ? 'rotateY(-105deg)' : 'rotateY(0deg)',
                         zIndex: 10
                     }}
                 >
-                    {/* DOOR FRONT - Photorealistic Metal */}
+                    {/* DOOR FRONT - BLUE METAL */}
                     <Box
                         style={{
                             position: 'absolute',
@@ -125,81 +130,79 @@ function LockerBox({ item }: { item: any }) {
                             justifyContent: 'center',
                             alignItems: 'center',
 
-                            // Brushed Metal Simulation
-                            backgroundColor: '#e9ecef',
+                            // Blue Metal Gradient
+                            backgroundColor: '#339af0',
                             backgroundImage: `
-                                linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0) 50%),
-                                repeating-linear-gradient(90deg, transparent 0, transparent 1px, rgba(0,0,0,0.06) 1px, rgba(0,0,0,0.06) 2px)
+                                linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.2) 100%),
+                                repeating-linear-gradient(90deg, transparent 0, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 3px)
                             `,
-                            backgroundSize: '200% 100%, 4px 4px',
-
-                            // Physicality
-                            borderRadius: '2px', // Sharp
-                            borderTop: '1px solid #f8f9fa',
-                            borderLeft: '1px solid #f8f9fa',
-                            borderRight: '1px solid #adb5bd',
-                            borderBottom: '1px solid #adb5bd',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.2)'
+                            // Thicker Borders for 3D depth
+                            borderTop: '1px solid #74c0fc',
+                            borderLeft: '1px solid #74c0fc',
+                            borderRight: '4px solid #1864ab', // Right side shadow/thickness
+                            borderBottom: '4px solid #1864ab', // Bottom side shadow/thickness
+                            borderRadius: '2px',
+                            boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
                         }}
                     >
-                        {/* Rivets (Screws) */}
-                        <Box style={{ position: 'absolute', top: 8, left: 8, width: 6, height: 6, borderRadius: '50%', background: '#adb5bd', boxShadow: 'inset 1px 1px 1px rgba(0,0,0,0.4), 1px 1px 0 white' }} />
-                        <Box style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: '50%', background: '#adb5bd', boxShadow: 'inset 1px 1px 1px rgba(0,0,0,0.4), 1px 1px 0 white' }} />
-                        <Box style={{ position: 'absolute', bottom: 8, left: 8, width: 6, height: 6, borderRadius: '50%', background: '#adb5bd', boxShadow: 'inset 1px 1px 1px rgba(0,0,0,0.4), 1px 1px 0 white' }} />
-                        <Box style={{ position: 'absolute', bottom: 8, right: 8, width: 6, height: 6, borderRadius: '50%', background: '#adb5bd', boxShadow: 'inset 1px 1px 1px rgba(0,0,0,0.4), 1px 1px 0 white' }} />
+                        {/* Rivets */}
+                        <Box style={{ position: 'absolute', top: 10, left: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
+                        <Box style={{ position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
+                        <Box style={{ position: 'absolute', bottom: 10, left: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
+                        <Box style={{ position: 'absolute', bottom: 10, right: 10, width: 8, height: 8, borderRadius: '50%', background: '#1864ab', boxShadow: 'inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,0.2)' }} />
 
-                        {/* Name Plate Area (Inset) */}
+                        {/* Inset Label Area */}
                         <Box
-                            w="85%" h="50%"
-                            bg="#f1f3f5"
+                            w="85%" h="55%"
+                            bg="#e9ecef"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 15,
+                                gap: 20,
                                 padding: '10px 20px',
-                                border: '1px solid #dee2e6',
-                                boxShadow: 'inset 1px 1px 4px rgba(0,0,0,0.1), 0 1px 0 white', // Inset look
+                                border: '1px solid #adb5bd',
+                                boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.5)',
                                 borderRadius: '2px'
                             }}
                         >
                             <Box
-                                w={48} h={48}
-                                bg={item.category.color}
+                                w={56} h={56}
+                                bg="#1864ab"
                                 style={{
                                     borderRadius: '50%',
                                     color: 'white',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                    boxShadow: '0 3px 6px rgba(0,0,0,0.3)',
                                     backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent)'
                                 }}
                             >
-                                <Icon size={26} stroke={2} />
+                                <Icon size={28} stroke={2} />
                             </Box>
                             <Box ta="left">
-                                <Text fw={800} size="1.5rem" c="dark.4" style={{ fontFamily: 'sans-serif', letterSpacing: '-0.5px' }}>
+                                <Text fw={900} size="1.8rem" c="dark.5" style={{ fontFamily: 'sans-serif', letterSpacing: '-1px' }}>
                                     {item.title}
                                 </Text>
-                                <Text size="xs" c="dimmed" tt="uppercase" mt={0} fw={700} style={{ letterSpacing: '1px' }}>
+                                <Text size="sm" c="dimmed" tt="uppercase" mt={0} fw={700} style={{ letterSpacing: '1px' }}>
                                     {item.category.title}
                                 </Text>
                             </Box>
                         </Box>
 
-                        {/* Heavy Metal Handle */}
+                        {/* Chrome Handle */}
                         <Box
                             style={{
                                 position: 'absolute',
                                 right: 15,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                width: 10,
-                                height: 50,
-                                borderRadius: '2px',
-                                background: 'linear-gradient(to right, #ced4da, #e9ecef, #adb5bd)',
+                                width: 12,
+                                height: 60,
+                                borderRadius: '6px',
+                                background: 'linear-gradient(to right, #e9ecef, #f8f9fa, #adb5bd)', // Shiny Chrome
                                 border: '1px solid #868e96',
-                                boxShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+                                boxShadow: '2px 2px 5px rgba(0,0,0,0.3)'
                             }}
                         />
                     </Box>
@@ -212,9 +215,9 @@ function LockerBox({ item }: { item: any }) {
                             height: '100%',
                             backfaceVisibility: 'hidden',
                             transform: 'rotateY(180deg)',
-                            background: '#dee2e6',
+                            background: '#1864ab', // Blue back
                             borderRadius: '2px',
-                            border: '1px solid #adb5bd'
+                            border: '1px solid #154c85'
                         }}
                     >
                     </Box>
@@ -222,7 +225,7 @@ function LockerBox({ item }: { item: any }) {
 
                 {/* INSIDE CABBY */}
                 <Box
-                    bg="#343a40" // Dark interior
+                    bg="#212529" // Very Dark interior
                     style={{
                         position: 'absolute',
                         top: 0,
@@ -231,20 +234,32 @@ function LockerBox({ item }: { item: any }) {
                         height: '100%',
                         zIndex: -1,
                         borderRadius: '2px',
-                        boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)', // Deep shadow
+                        boxShadow: 'inset 0 0 30px rgba(0,0,0,0.8)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}
                 >
-                    {item.hasContent && <IconPlayerPlay color="#adb5bd" size={40} />}
+                    {item.hasContent && (
+                        // Floating Content Inside
+                        <Box style={{ animation: opened ? 'floatIn 0.8s ease-out' : 'none' }}>
+                            <IconPlayerPlay color="#339af0" size={50} style={{ filter: 'drop-shadow(0 0 10px rgba(51, 154, 240, 0.5))' }} />
+                        </Box>
+                    )}
                 </Box>
             </Box>
 
-            <Modal opened={modalOpened} onClose={closeModal} size="lg" title={item.subtitle} centered>
+            <style jsx global>{`
+                @keyframes floatIn {
+                    0% { transform: translateZ(-50px) scale(0.8); opacity: 0; }
+                    100% { transform: translateZ(0) scale(1); opacity: 1; }
+                }
+            `}</style>
+
+            <Modal opened={modalOpened} onClose={handleModalClose} size="lg" title={item.subtitle} centered>
                 <div style={{ position: 'relative', paddingTop: '56.25%', background: '#000' }}>
                     <Box style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text c="white">Content Loading...</Text>
+                        <Text c="white">Video Player Placeholder</Text>
                     </Box>
                 </div>
             </Modal>
