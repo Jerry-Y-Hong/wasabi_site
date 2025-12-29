@@ -19,7 +19,7 @@ export function TranslationWidget() {
                 {
                     pageLanguage: 'en', // Main site language
                     includedLanguages: 'en,ko,ja,zh-CN,zh-TW,de,fr,es,ar', // Major languages only
-                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE, // Return to simple layout for cleaner look with fewer options
+                    layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL, // Force dropdown for language selection
                     autoDisplay: false,
                 },
                 'google_translate_element'
