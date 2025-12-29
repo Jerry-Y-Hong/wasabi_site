@@ -29,28 +29,27 @@ const LOCKER_DATA = Array.from({ length: 20 }, (_, i) => {
 
 export default function VideoPage() {
     return (
-        <Box bg="#e9ecef" py={60} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box bg="#e9ecef" py={40} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Container size="xl">
-                <Box mb={40} ta="center">
-                    <Text size="3.5rem" fw={900} c="dark.4" style={{ letterSpacing: '2px', textShadow: '2px 2px 0px rgba(0,0,0,0.1)' }}>
-                        K-FARM LIBRARY
+                <Box mb={30} ta="center">
+                    <Text size="3rem" fw={900} c="dark.4" style={{ letterSpacing: '2px', textShadow: '2px 2px 0px rgba(0,0,0,0.1)' }}>
+                        K-FARM ARCHIVE
                     </Text>
-                    <Text c="dimmed" size="lg" mt={5}>
-                        Digital Innovation Archive
+                    <Text c="dimmed" size="md" mt={5}>
+                        Digital Innovation Library
                     </Text>
                 </Box>
 
                 {/* 5x4 3D Cabinet Wall */}
-                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v2.1 Wide Edition</Text>
+                <Text size="xs" c="dimmed" ta="right" mb={5} style={{ fontFamily: 'monospace' }}>System v2.2 Aspect Ratio Fix</Text>
                 <Box
                     style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(5, 1fr)',
-                        gap: '15px', // Gaps to show depth
-                        padding: '30px',
-                        backgroundColor: '#adb5bd', // Cabinet Frame Color
-                        borderRadius: '16px',
-                        // Wood/Cabinet Texture effect
+                        gap: '12px',
+                        padding: '20px',
+                        backgroundColor: '#adb5bd',
+                        borderRadius: '12px',
                         backgroundImage: 'linear-gradient(45deg, #adb5bd 25%, #868e96 25%, #868e96 50%, #adb5bd 50%, #adb5bd 75%, #868e96 75%, #868e96 100%)',
                         backgroundSize: '40px 40px',
                         boxShadow: 'inset 0 0 50px rgba(0,0,0,0.2), 0 30px 60px rgba(0,0,0,0.4)'
@@ -88,8 +87,9 @@ function LockerBox({ item }: { item: any }) {
         <>
             <Box
                 w="100%"
-                h={110} // Wide Aspect Ratio
+                // Removed fixed height, used aspect-ratio
                 style={{
+                    aspectRatio: '16/9', // FORCE WIDE SCREEN RATIO
                     perspective: '1200px',
                     cursor: item.hasContent ? 'pointer' : 'default',
                     position: 'relative',
@@ -108,7 +108,7 @@ function LockerBox({ item }: { item: any }) {
                         zIndex: 10
                     }}
                 >
-                    {/* DOOR FRONT - 3D Object Look */}
+                    {/* DOOR FRONT */}
                     <Box
                         style={{
                             position: 'absolute',
@@ -119,58 +119,46 @@ function LockerBox({ item }: { item: any }) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-
-                            // 3D Bevel Effect
                             backgroundColor: '#f8f9fa',
                             boxShadow: `
-                                inset 2px 2px 0px rgba(255,255,255,0.8),
-                                inset -2px -2px 0px rgba(0,0,0,0.1),
-                                5px 5px 10px rgba(0,0,0,0.15)
+                                inset 1px 1px 0px rgba(255,255,255,0.8),
+                                inset -1px -1px 0px rgba(0,0,0,0.1),
+                                3px 3px 6px rgba(0,0,0,0.15)
                             `,
-                            borderRadius: '8px',
+                            borderRadius: '6px',
                             border: `2px solid ${item.category.color}`,
                         }}
                     >
-                        {/* Upper: Icon Sticker */}
-                        <Box p={6} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
-                            <Icon size={20} stroke={2} />
+                        {/* Compact Layout for Wide Ratio */}
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <Box p={4} bg={item.category.color} style={{ borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon size={16} stroke={2.5} />
+                            </Box>
+                            <Text fw={900} size="md" c="dark.3" style={{ lineHeight: 1 }}>
+                                {item.title}
+                            </Text>
                         </Box>
 
-                        {/* Middle: Text Label */}
-                        <Text fw={800} size="lg" mt={5} c="dark.3" style={{ textShadow: '1px 1px 0 white' }}>
-                            {item.title}
-                        </Text>
-
-                        {/* Bottom: Paper Tag Visual */}
-                        <Box
-                            mt={5}
-                            bg="white"
-                            px={8}
-                            py={1}
-                            style={{
-                                border: '1px solid #ced4da',
-                                borderRadius: '4px',
-                                fontSize: '9px',
-                                color: '#868e96',
-                                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)'
-                            }}
+                        <Text
+                            mt={4}
+                            size="xs"
+                            c="dimmed"
+                            style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}
                         >
                             {item.category.title}
-                        </Box>
+                        </Text>
 
-                        {/* Right: Handle Knob */}
+                        {/* Handle */}
                         <Box
                             style={{
                                 position: 'absolute',
-                                right: 10,
+                                right: 6,
                                 top: '50%',
                                 transform: 'translateY(-50%)',
-                                width: 10,
-                                height: 20,
-                                borderRadius: '4px',
-                                background: '#dee2e6',
-                                border: '1px solid #adb5bd',
-                                boxShadow: '1px 1px 2px rgba(0,0,0,0.2)'
+                                width: 4,
+                                height: 16,
+                                borderRadius: '2px',
+                                background: '#adb5bd',
                             }}
                         />
                     </Box>
@@ -184,7 +172,7 @@ function LockerBox({ item }: { item: any }) {
                             backfaceVisibility: 'hidden',
                             transform: 'rotateY(180deg)',
                             background: '#e9ecef',
-                            borderRadius: '8px',
+                            borderRadius: '6px',
                             border: '1px solid #dee2e6'
                         }}
                     >
@@ -201,29 +189,14 @@ function LockerBox({ item }: { item: any }) {
                         width: '100%',
                         height: '100%',
                         zIndex: -1,
-                        borderRadius: '8px',
-                        boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.2)', // Shadow inside
+                        borderRadius: '6px',
+                        boxShadow: 'inset 1px 1px 3px rgba(0,0,0,0.2)',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}
                 >
-                    {item.hasContent ? (
-                        <Box
-                            w="80%" h="60%" bg="dark"
-                            style={{
-                                borderRadius: 4,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
-                            }}
-                        >
-                            <IconPlayerPlay color="white" size={20} />
-                        </Box>
-                    ) : (
-                        <Text size="xs" c="gray.6">Empty</Text>
-                    )}
+                    {item.hasContent && <IconPlayerPlay color="white" size={24} fill="#212529" />}
                 </Box>
             </Box>
 
