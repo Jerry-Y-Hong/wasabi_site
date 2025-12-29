@@ -74,15 +74,16 @@ export default function AIConcierge() {
         }]);
     }, [isAdminPath, lang, mounted]);
 
-    // 3. Auto-open greeting after 2 seconds (only once per session or on first mount)
+    // 3. REMOVED Auto-open greeting - user finds it intrusive
+    /*
     useEffect(() => {
         if (!mounted) return;
         const timer = setTimeout(() => {
-            // Only auto-open if the user hasn't opened it yet
             setOpened(prev => prev || true);
         }, 2500);
         return () => clearTimeout(timer);
     }, [mounted]);
+    */
 
     const handleAction = (link: string, label: string) => {
         const navText = lang === 'ko' ? '알겠습니다. 안내해 드릴게요:' : 'Understood. Navigating to:';
@@ -107,13 +108,12 @@ export default function AIConcierge() {
                 {(transitionStyles) => (
                     <Box style={transitionStyles}>
                         {!opened ? (
-                            <Button
+                            <ActionIcon
                                 onClick={() => setOpened(true)}
-                                leftSection={<IconMessageChatbot size={20} />}
                                 variant="gradient"
                                 gradient={isAdminPath ? { from: 'dark.6', to: 'blue.9' } : { from: 'green.7', to: 'lime.8' }}
                                 radius="xl"
-                                size="lg"
+                                size={50}
                                 styles={{
                                     root: {
                                         boxShadow: '0 8px 15px rgba(0,0,0,0.2)',
@@ -121,8 +121,8 @@ export default function AIConcierge() {
                                     }
                                 }}
                             >
-                                {isAdminPath ? 'Admin Manager' : 'K-Farm Concierge'}
-                            </Button>
+                                <IconMessageChatbot size={24} />
+                            </ActionIcon>
                         ) : (
                             <Card
                                 shadow="xl"
