@@ -7,6 +7,9 @@ import { getBlogPosts } from '@/lib/actions';
 export const dynamic = 'force-dynamic';
 
 export default async function InsightsPage() {
+    const allPosts = await getBlogPosts();
+    const innovationPosts = allPosts.filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data');
+
     return (
         <Container size="xl" py={80}>
             <Stack align="center" mb={60} gap="xs">
@@ -239,10 +242,8 @@ export default async function InsightsPage() {
                 </Group>
 
                 <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
-                    {(await getBlogPosts())
-                        .filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data')
-                        .slice(0, 4) // Show up to 4 items
-                        .map((item: any) => (
+                    {innovationPosts.length > 0 ? (
+                        innovationPosts.slice(0, 4).map((item: any) => (
                             <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder component="a" href={`/blog/${item.slug}`}>
                                 <Group>
                                     <Image src={item.image || '/images/blog/stock_lab.png'} w={120} h={120} radius="md" alt={item.title} style={{ objectFit: 'cover' }} />
@@ -253,8 +254,8 @@ export default async function InsightsPage() {
                                     </Box>
                                 </Group>
                             </Card>
-                        ))}
-                    {(await getBlogPosts()).filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data').length === 0 && (
+                        ))
+                    ) : (
                         <Text c="dimmed" ta="center" w="100%" py="xl">No technical materials uploaded yet.</Text>
                     )}
                 </SimpleGrid>
