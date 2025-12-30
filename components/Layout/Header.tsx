@@ -40,20 +40,23 @@ export function Header() {
             <Container size="xl" className={classes.inner}>
                 <Link href="/" style={{ textDecoration: 'none' }}>
                     <Group gap={6} align="center" wrap="nowrap">
-                        <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={40} w={40} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
+                        <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={42} w={42} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
                         <Text
                             size="lg"
                             fw={900}
                             variant="gradient"
                             gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
-                            lh={1}
+                            style={{ transform: 'translateY(1px)' }} // Visual optical alignment
                         >
                             K-Farm Group / Wasabi Div.
                         </Text>
                     </Group>
                 </Link>
-                <Group gap={5} visibleFrom="xs">
-                    {items}
+                <Group gap={15} visibleFrom="xs" align="center">
+                    <Group gap={5}>
+                        {items}
+                    </Group>
+                    <div style={{ width: 1, height: 24, backgroundColor: 'var(--mantine-color-gray-3)' }} />
                     <TranslationWidget />
                 </Group>
 
