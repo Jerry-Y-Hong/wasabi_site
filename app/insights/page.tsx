@@ -6,9 +6,14 @@ import { getBlogPosts } from '@/lib/actions';
 export const dynamic = 'force-dynamic';
 
 export default async function InsightsPage() {
-    const posts = await getBlogPosts();
-    const allPosts = Array.isArray(posts) ? posts : [];
-    const innovationPosts = allPosts.filter((p: any) => p && (p.category === 'Innovation' || p.category === 'Tech Data'));
+    let innovationPosts: any[] = [];
+    try {
+        const posts = await getBlogPosts();
+        const allPosts = Array.isArray(posts) ? posts : [];
+        innovationPosts = allPosts.filter((p: any) => p && (p.category === 'Innovation' || p.category === 'Tech Data'));
+    } catch (e) {
+        console.error('[InsightsPage] Data fetch failed:', e);
+    }
 
     return (
         <Container size="xl" py={80}>
@@ -45,7 +50,7 @@ export default async function InsightsPage() {
                             <ThemeIcon color="orange" size={32} radius="md"><IconRotateClockwise /></ThemeIcon>
                             <Box flex={1}>
                                 <Text fw={700}>Aging Population</Text>
-                                <Text c="dimmed">Traditional cultivation is labor-intensive; the average age of farmers is rising.</Text>
+                                <Text c="dimmed">The labor force for traditional cultivation is declining rapidly.</Text>
                             </Box>
                         </Group>
                         <Group align="flex-start">
@@ -112,19 +117,6 @@ export default async function InsightsPage() {
                     ) : (
                         <Text c="dimmed" ta="center" w="100%" py="xl">No technical materials uploaded yet.</Text>
                     )}
-                </div>
-            </Box>
-
-            <Box py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} ta="center" mb={40}>Future Expansion</Title>
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '24px'
-                }}>
-                    <InsightCard title="High-Value Processing" description="Beyond fresh rhizomes, we are expanding into processed pastes and seasonings." icon={IconChartLine} />
-                    <InsightCard title="Functional Foods" description="Developing dietary supplements targeting cognitive and immune health." icon={IconFlask} />
-                    <InsightCard title="Cosmetics & Bio" description="Utilizing antimicrobial properties for natural skincare ingredients." icon={IconSparkles} />
                 </div>
             </Box>
         </Container>
