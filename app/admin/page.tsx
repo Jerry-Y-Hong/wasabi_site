@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar } from '@mantine/core';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconInbox, IconMessageCircle, IconSettings } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconInbox, IconMessageCircle, IconSettings, IconShare } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -120,8 +120,8 @@ export default function AdminDashboard() {
                         <Button component={Link} href="/admin/blog" variant="light" color="wasabi" fullWidth leftSection={<IconPencil size={16} />}>
                             Write Blog (AI)
                         </Button>
-                        <Button variant="light" color="cyan" fullWidth leftSection={<IconMail size={16} />} disabled>
-                            Check Email
+                        <Button component={Link} href="/admin/marketing" variant="light" color="grape" fullWidth leftSection={<IconShare size={16} />}>
+                            Smart Marketing
                         </Button>
                         <Button variant="light" color="gray" fullWidth leftSection={<IconSettings size={16} />} disabled>
                             Settings

@@ -9,6 +9,7 @@ import { Notifications } from '@mantine/notifications';
 import { theme } from '../theme';
 import { Header } from '@/components/Layout/Header';
 import { Footer } from '@/components/Layout/Footer';
+import AIConcierge from '@/components/ui/AIConcierge';
 import { LanguageProvider } from '@/lib/i18n';
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
             <Header />
             <main>{children}</main>
             <Footer />
+            <AIConcierge />
           </MantineProvider>
         </LanguageProvider>
       </body>

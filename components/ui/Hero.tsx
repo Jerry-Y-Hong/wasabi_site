@@ -35,7 +35,7 @@ export function Hero() {
                     </Button>
                     <Button
                         component={Link}
-                        href="/hunter"
+                        href="/admin/hunter"
                         variant="white"
                         size="lg"
                         className={classes.control}
