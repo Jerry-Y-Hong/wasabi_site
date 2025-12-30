@@ -8,7 +8,7 @@ import { Header } from '@/components/Layout/Header';
 import { Footer } from '@/components/Layout/Footer';
 
 export const metadata = {
-  title: 'K-Wasabi International',
+  title: 'K-Farm Group / Wasabi Div.',
   description: 'Premium Wasabi, AI-Aeroponic Systems, and Global Smart Farm Innovation',
 };
 

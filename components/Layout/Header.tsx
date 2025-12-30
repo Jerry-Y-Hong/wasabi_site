@@ -47,7 +47,7 @@ export function Header() {
                             variant="gradient"
                             gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
                         >
-                            K-Wasabi International
+                            K-Farm Group / Wasabi Div.
                         </Text>
                     </Group>
                 </Link>

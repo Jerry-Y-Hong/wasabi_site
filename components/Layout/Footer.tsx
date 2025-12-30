@@ -30,7 +30,7 @@ export function Footer() {
                 <Group gap="md">
                     <Image src="/images/logo.jpg?v=5" alt="Logo" h={60} w={75} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
                     <Stack gap={0}>
-                        <Text size="lg" fw={700} c="wasabi">K-Wasabi International Co., Ltd</Text>
+                        <Text size="lg" fw={700} c="wasabi">K-Farm Group / Wasabi Div.</Text>
                         <Text size="xs" c="dimmed">745, Damok-ri, Sangseo-myeon, Hwacheon-gun, Gangwon-state, Republic of Korea</Text>
                         <Text size="xs" c="dimmed">Tel: 82-10-4355-0633</Text>
                         <Text size="xs" c="dimmed">Email: info@k-wasabi.kr / sbienv0633@gmail.com</Text>
