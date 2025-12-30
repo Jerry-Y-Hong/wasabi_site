@@ -1,10 +1,10 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Textarea, Button, Group, Stack, Select, Paper, Badge, Table, ScrollArea, SimpleGrid, Modal, FileButton, Slider, Image, Box, Center, Switch } from '@mantine/core';
+import { Container, Title, Text, TextInput, Textarea, Button, Group, Stack, Select, Paper, Badge, Table, ScrollArea, SimpleGrid, Modal, FileButton, Slider, Image, Box, Center, Switch, CopyButton } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useState, useEffect, useRef } from 'react';
-import { IconMovie, IconPrinter, IconRobot, IconDeviceFloppy, IconHistory, IconPlayerPlay, IconPhoto, IconPlus, IconDownload, IconRepeat, IconVolume, IconCopy } from '@tabler/icons-react';
+import { IconMovie, IconPrinter, IconRobot, IconDeviceFloppy, IconHistory, IconPlayerPlay, IconPhoto, IconPlus, IconDownload, IconRepeat, IconVolume, IconCopy, IconCheck } from '@tabler/icons-react';
 import { generateVideoScript } from '@/lib/ai';
 import { saveVideoScript, getVideoScripts, saveAnimatorImage } from '@/lib/actions';
 
@@ -545,6 +545,16 @@ export default function VideoProducerPage() {
                                     required
                                     {...form.getInputProps('topic')}
                                 />
+                                <Group mt="xs" mb="xs">
+                                    <Badge variant="outline" color="gray" style={{ cursor: 'pointer' }} onClick={() => {
+                                        form.setValues({
+                                            topic: 'Wabsabi Tissue Culture Process (Micro-propagation)',
+                                            specs: '- Step 1: Extract Meristem from healthy mature Wasabi root.\n- Step 2: Surface Sterilization (Ethanol -> NaOCl).\n- Step 3: Tool Sterilization (Autoclave 121°C).\n- Step 4: Inoculation on MS Media (Agar).\n- Step 5: Multiplication phase (Bioreactor/Jar).'
+                                        });
+                                    }}>
+                                        🧪 Quick Load: Tissue Culture (조직배양)
+                                    </Badge>
+                                </Group>
                                 <Textarea
                                     label="Technical Specs / Key Points"
                                     placeholder="e.g. 121°C Autoclave, 15 min duration, 0.5mm tissue separation..."
@@ -639,6 +649,23 @@ export default function VideoProducerPage() {
                                                 </Table.Td>
                                                 <Table.Td>
                                                     <Text size="sm" fw={500}>{scene.visual_description}</Text>
+                                                    {scene.image_prompt && (
+                                                        <Group mt="xs">
+                                                            <CopyButton value={scene.image_prompt}>
+                                                                {({ copied, copy }) => (
+                                                                    <Button
+                                                                        size="compact-xs"
+                                                                        color={copied ? 'teal' : 'violet'}
+                                                                        variant="light"
+                                                                        onClick={copy}
+                                                                        leftSection={copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
+                                                                    >
+                                                                        {copied ? 'Copied Prompt' : 'Copy AI Image Prompt'}
+                                                                    </Button>
+                                                                )}
+                                                            </CopyButton>
+                                                        </Group>
+                                                    )}
                                                     {scene.technical_note && (
                                                         <Text size="xs" c="dimmed" mt={4}>💡 {scene.technical_note}</Text>
                                                     )}

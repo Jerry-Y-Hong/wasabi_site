@@ -226,7 +226,7 @@ export async function generateVideoScript(topic: string, seriesType: string = 'p
 
     const prompt = `
     Act as a Professional Video Director for K-Farm's Smart Farm Documentary Series.
-    Create a 60-second video script for the topic: "${topic}".
+    Create a highly engaging 60-second video script for the topic: "${topic}".
     
     ${styleInstruction}
 
@@ -237,14 +237,22 @@ export async function generateVideoScript(topic: string, seriesType: string = 'p
     - Output a strictly valid JSON array of objects.
     - Fields per object:
       - "scene_number" (integer)
-      - "visual_description" (detailed camera instruction)
-      - "voiceover" (the actual script to be spoken)
+      - "visual_description" (detailed camera instruction, assume Vertical 9:16 format for Shorts)
+      - "image_prompt" (A highly detailed, English prompt optimized for AI Image Generators like Midjourney/Firefly. Describe lighting, style, camera angle, and content precisely.)
+      - "voiceover" (the actual script to be spoken. engaging and concise)
       - "on_screen_text" (important data/KPIs to show as overlay)
-      - "technical_note" (director's note for lighting/props)
+      - "technical_note" (director's note for sound effects/music mood)
     
     Example JSON Structure:
     [
-        { "scene_number": 1, "visual_description": "...", "voiceover": "...", "on_screen_text": "...", "technical_note": "..." }
+        { 
+          "scene_number": 1, 
+          "visual_description": "Close up vertical shot...", 
+          "image_prompt": "Cinematic photo of a clean biotech lab, vertical composition, 8k resolution, soft blue lighting...",
+          "voiceover": "...", 
+          "on_screen_text": "...", 
+          "technical_note": "..." 
+        }
     ]
     `;
 
