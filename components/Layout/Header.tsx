@@ -40,7 +40,7 @@ export function Header() {
             <Container size="xl" className={classes.inner}>
                 <Link href="/" style={{ textDecoration: 'none' }}>
                     <Group gap={6} align="center" wrap="nowrap">
-                        <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={42} w={42} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
+                        <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={36} w={36} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
                         <Text
                             size="lg"
                             fw={900}
