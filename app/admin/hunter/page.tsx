@@ -145,6 +145,18 @@ export default function HunterPage() {
                 'VN': 'Thầu nông nghiệp chính phủ',
                 'Global': 'Government smart farming grant and tender opportunities'
             }
+        },
+        {
+            label: 'Special: Tennis Export 🎾',
+            icon: '🎾',
+            keywords: {
+                'KR': '테니스 라켓 유통 도매 수입 업체',
+                'JP': 'テニスラケット 輸入 卸売業者 スポーツ用品店',
+                'US': 'Tennis racket distributors importers',
+                'CN': '网球拍 进口商 批发',
+                'VN': 'Nhà nhập khẩu vợt tennis',
+                'Global': 'Tennis racket distributors importers'
+            }
         }
     ];
 
