@@ -41,20 +41,14 @@ export function Header() {
                 <Link href="/" style={{ textDecoration: 'none' }}>
                     <Group gap="xs">
                         <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={40} w={50} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
-                        <Box>
-                            <Text
-                                size="xl"
-                                fw={900}
-                                variant="gradient"
-                                gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
-                                style={{ lineHeight: 1.2 }}
-                            >
-                                K-Farm Group / Wasabi Div.
-                            </Text>
-                            <Text size="xs" fw={700} c="dimmed" style={{ letterSpacing: '0.5px' }}>
-                                International Marketing / Jerry Y. Hong
-                            </Text>
-                        </Box>
+                        <Text
+                            size="xl"
+                            fw={900}
+                            variant="gradient"
+                            gradient={{ from: 'wasabi.9', to: 'wasabi.5', deg: 45 }}
+                        >
+                            K-Farm Group / Wasabi Div.
+                        </Text>
                     </Group>
                 </Link>
                 <Group gap={5} visibleFrom="xs">
