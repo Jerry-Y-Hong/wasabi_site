@@ -8,8 +8,8 @@ import { Header } from '@/components/Layout/Header';
 import { Footer } from '@/components/Layout/Footer';
 
 export const metadata = {
-  title: 'Wasabi Smart Farm',
-  description: 'Premium Wasabi, Tissue Culture Seedlings, and Smart Farm Consulting',
+  title: 'K-Wasabi International',
+  description: 'Premium Wasabi, AI-Aeroponic Systems, and Global Smart Farm Innovation',
 };
 
 
