@@ -112,7 +112,7 @@ export default function Home() {
                 The <span style={{ color: 'var(--mantine-color-blue-6)', fontWeight: 600 }}>Circular Form</span> symbolizes our global network and the sustainable "Hyper-Cycle" ecosystem of our smart farms.
               </Text>
               <Text size="lg">
-                Together, distinctively K-Farm, they embody our mission to deliver the healthiest, purest gifts of nature through cutting-edge innovation.
+                Together, distinctively K-Farm Group, they embody our mission to deliver the healthiest, purest gifts of nature through cutting-edge innovation.
               </Text>
             </Grid.Col>
           </Grid>

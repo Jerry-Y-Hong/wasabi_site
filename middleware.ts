@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
         }
         // 🤖 k-smartfarm.ai.kr -> Innovation (Tech/R&D)
         if (hostname.includes('k-smartfarm.ai.kr')) {
-            return NextResponse.redirect(new URL('/innovation', request.url));
+            return NextResponse.redirect(new URL('/insights', request.url));
         }
     }
 
