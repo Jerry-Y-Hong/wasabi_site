@@ -39,8 +39,8 @@ export function Header() {
         <header className={classes.header}>
             <Container size="xl" className={classes.inner}>
                 <Link href="/" style={{ textDecoration: 'none' }}>
-                    <Group gap={6} align="center" wrap="nowrap">
-                        <Image src="/images/logo.jpg?v=5" alt="K-Farm Logo" h={36} w={36} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
+                    <Group gap={8} align="center" wrap="nowrap">
+                        <Image src="/images/logo.jpg?v=7" alt="K-Farm Logo" h={40} w={40} className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
                         <Text
                             size="lg"
                             fw={900}
