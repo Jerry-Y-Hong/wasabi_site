@@ -1,5 +1,3 @@
-'use client';
-
 import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Badge, List, Paper, Image, Grid, Button } from '@mantine/core';
 import { IconChartLine, IconAlertTriangle, IconRotateClockwise, IconWorld, IconFlask, IconSparkles, IconShieldCheck } from '@tabler/icons-react';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
