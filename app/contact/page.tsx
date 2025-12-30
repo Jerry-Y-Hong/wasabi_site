@@ -49,7 +49,7 @@ export default function ContactPage() {
 
             <Paper p="md" withBorder mb="lg" bg="gray.0">
                 <Text fw={500} size="sm" ta="center">Direct Contact</Text>
-                <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>kfarmjerry03@gmail.com</Text></Text>
+                <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>info@k-wasabi.kr</Text></Text>
                 <Text ta="center" size="sm" c="dimmed">Mobile: 82-10-4355-0633</Text>
             </Paper>
 

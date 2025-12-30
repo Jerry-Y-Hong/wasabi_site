@@ -33,7 +33,7 @@ export function Footer() {
                         <Text size="lg" fw={700} c="wasabi">K-Farm Group / Wasabi Div.</Text>
                         <Text size="xs" c="dimmed">745, Damok-ri, Sangseo-myeon, Hwacheon-gun, Gangwon-state, Republic of Korea</Text>
                         <Text size="xs" c="dimmed">Tel: 82-10-4355-0633</Text>
-                        <Text size="xs" c="dimmed">Email: info@k-wasabi.kr / sbienv0633@gmail.com</Text>
+                        <Text size="xs" c="dimmed">Email: info@k-wasabi.kr</Text>
                         <Text size="xs" c="dimmed" mt={5}>International Marketing / Jerry Y. Hong</Text>
                         <Text size="xs" c="dimmed">Premium Quality & Technology</Text>
                     </Stack>
