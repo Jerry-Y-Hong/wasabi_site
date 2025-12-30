@@ -519,7 +519,7 @@ export default function HunterPage() {
 
                     <Stack gap="xs" mb="xl">
                         <Text size="sm" fw={500} c="dimmed">{t('hunter_quick_target')}</Text>
-                        <Group gap={8}>
+                        <Group gap={8} wrap="wrap">
                             {TARGET_PRESETS.map((preset) => (
                                 <Badge
                                     key={preset.label}
