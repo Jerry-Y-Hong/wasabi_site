@@ -7,8 +7,9 @@ import { getBlogPosts } from '@/lib/actions';
 export const dynamic = 'force-dynamic';
 
 export default async function InsightsPage() {
-    const allPosts = await getBlogPosts();
-    const innovationPosts = allPosts.filter((p: any) => p.category === 'Innovation' || p.category === 'Tech Data');
+    const posts = await getBlogPosts();
+    const allPosts = Array.isArray(posts) ? posts : [];
+    const innovationPosts = allPosts.filter((p: any) => p && (p.category === 'Innovation' || p.category === 'Tech Data'));
 
     return (
         <Container size="xl" py={80}>
@@ -248,9 +249,15 @@ export default async function InsightsPage() {
                                 <Group>
                                     <Image src={item.image || '/images/blog/stock_lab.png'} w={120} h={120} radius="md" alt={item.title} style={{ objectFit: 'cover' }} />
                                     <Box flex={1}>
-                                        <Text size="xs" c="dimmed" mb={4}>{new Date(item.timestamp).toLocaleDateString()}</Text>
-                                        <Title order={4} mb={8} lineClamp={2}>{item.title}</Title>
-                                        <Text size="sm" c="dimmed" lineClamp={2}>{item.content.replace(/[#*`]/g, '').substring(0, 100)}...</Text>
+                                        <Text size="xs" c="dimmed" mb={4}>
+                                            {item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ''}
+                                        </Text>
+                                        <Text fw={700} size="lg" mb={8} lineClamp={2}>
+                                            {item.title}
+                                        </Text>
+                                        <Text size="sm" c="dimmed" lineClamp={2}>
+                                            {item.content ? item.content.replace(/[#*`]/g, '').substring(0, 100) : ''}...
+                                        </Text>
                                     </Box>
                                 </Group>
                             </Card>
