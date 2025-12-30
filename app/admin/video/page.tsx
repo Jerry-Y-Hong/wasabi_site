@@ -515,7 +515,7 @@ export default function VideoProducerPage() {
                 </div>
             </Group>
 
-            <SimpleGrid cols={{ base: 1, md: recentScripts.length > 0 ? 2 : 1 }} spacing="xl" style={{ alignItems: 'start' }}>
+            <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" style={{ alignItems: 'start' }}>
                 <Stack gap="xl">
                     {/* 1. Configuration Panel */}
                     <Paper p="lg" withBorder radius="md" shadow="sm" className="no-print">
@@ -662,15 +662,15 @@ export default function VideoProducerPage() {
                     )}
                 </Stack>
 
-                {/* 3. History Sidebar */}
-                {recentScripts.length > 0 && (
-                    <Stack className="no-print">
-                        <Group gap="xs">
-                            <IconHistory color="#adb5bd" size={20} />
-                            <Title order={4} c="dimmed">Recent Scripts</Title>
-                        </Group>
-                        <Stack gap="xs">
-                            {recentScripts.map((s: any) => (
+                {/* 3. History Sidebar (Always Visible) */}
+                <Stack className="no-print">
+                    <Group gap="xs">
+                        <IconHistory color="#adb5bd" size={20} />
+                        <Title order={4} c="dimmed">History (사서함)</Title>
+                    </Group>
+                    <Stack gap="xs">
+                        {recentScripts.length > 0 ? (
+                            recentScripts.map((s: any) => (
                                 <Paper
                                     key={s.id}
                                     p="sm"
@@ -690,10 +690,14 @@ export default function VideoProducerPage() {
                                     <Text size="sm" fw={500} lineClamp={1}>{s.topic}</Text>
                                     <Text size="xs" c="dimmed" lineClamp={1}>{s.scenes.length} Scenes</Text>
                                 </Paper>
-                            ))}
-                        </Stack>
+                            ))
+                        ) : (
+                            <Text size="sm" c="dimmed" ta="center" py="xl" style={{ border: '1px dashed #dee2e6', borderRadius: '4px' }}>
+                                저장된 스크립트가 없습니다.
+                            </Text>
+                        )}
                     </Stack>
-                )}
+                </Stack>
             </SimpleGrid>
         </Container>
     );

@@ -1,13 +1,16 @@
 'use client';
 
-import { Container, Title, Text, Image, Checkbox, Card, SimpleGrid, Group, ThemeIcon, List } from '@mantine/core';
+import { Container, Title, Text, Image, Card, SimpleGrid, ThemeIcon, List } from '@mantine/core';
 import { IconCheck, IconFlask, IconPlant, IconShieldCheck } from '@tabler/icons-react';
+import { useTranslation } from '@/lib/i18n';
 
 export default function SeedlingsPage() {
+    const { t } = useTranslation();
+
     return (
         <Container size="xl" py="xl">
             <Title order={1} ta="center" mb="xl">
-                High-Quality Tissue Culture Seedlings
+                {t('prod_seed_title')}
             </Title>
 
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing={50} verticalSpacing={50}>
@@ -20,17 +23,12 @@ export default function SeedlingsPage() {
                     />
                 </div>
                 <div>
-                    <Title order={2} mb="md">World-Class R&D and Tissue Culture</Title>
+                    <Title order={2} mb="md">{t('prod_seed_subtitle')}</Title>
                     <Text c="dimmed" mb="lg">
-                        At <strong>K-Farm International</strong>, our core strength lies in our cutting-edge laboratory environment.
-                        We don't just grow plants; we engineer success through advanced biotechnology. Our research facility
-                        focuses on the mass production of premium virus-free seedlings utilizing sophisticated
-                        tissue culture techniques.
+                        {t('prod_seed_desc_1')}
                     </Text>
                     <Text c="dimmed" mb="lg">
-                        This state-of-the-art sterile environment ensures that every seedling starts its life with maximum vigor,
-                        providing our partners with the genetic stability and robustness needed for successful
-                        large-scale cultivation.
+                        {t('prod_seed_desc_2')}
                     </Text>
 
                     <List
@@ -43,10 +41,10 @@ export default function SeedlingsPage() {
                             </ThemeIcon>
                         }
                     >
-                        <List.Item>Virus-Free Guarantee</List.Item>
-                        <List.Item>Genetic Uniformity</List.Item>
-                        <List.Item>High Survival Rate</List.Item>
-                        <List.Item>Year-Round Production</List.Item>
+                        <List.Item>{t('prod_seed_feat_1')}</List.Item>
+                        <List.Item>{t('prod_seed_feat_2')}</List.Item>
+                        <List.Item>{t('prod_seed_feat_3')}</List.Item>
+                        <List.Item>{t('prod_seed_feat_4')}</List.Item>
                     </List>
                 </div>
             </SimpleGrid>
@@ -54,18 +52,18 @@ export default function SeedlingsPage() {
             <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl" mt={80}>
                 <Feature
                     icon={IconFlask}
-                    title="Advanced Lab"
-                    description="State-of-the-art sterile environments for initiation and multiplication."
+                    title={t('prod_seed_card_1_title')}
+                    description={t('prod_seed_card_1_desc')}
                 />
                 <Feature
                     icon={IconPlant}
-                    title="Acclimatization"
-                    description="Rigorous hardening process to ensure success in vertical farm systems."
+                    title={t('prod_seed_card_2_title')}
+                    description={t('prod_seed_card_2_desc')}
                 />
                 <Feature
                     icon={IconShieldCheck}
-                    title="Quality Control"
-                    description="Every batch is tested for purity and vigor before shipping."
+                    title={t('prod_seed_card_3_title')}
+                    description={t('prod_seed_card_3_desc')}
                 />
             </SimpleGrid>
         </Container>

@@ -4,8 +4,10 @@ import { Container, Title, Text, TextInput, Textarea, Button, Group, SimpleGrid,
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { saveContactInquiry } from '@/lib/actions';
+import { useTranslation } from '@/lib/i18n';
 
 export default function ContactPage() {
+    const { t } = useTranslation();
     const form = useForm({
         initialValues: {
             category: 'Product Inquiry',
@@ -41,29 +43,28 @@ export default function ContactPage() {
 
     return (
         <Container size="sm" py="xl">
-            <Title order={1} ta="center" mb="lg">Contact Us</Title>
+            <Title order={1} ta="center" mb="lg">{t('contact_title')}</Title>
             <Text c="dimmed" ta="center" mb="xl">
-                Have questions about our products or consulting services?
-                Fill out the form below and we will get back to you shortly.
+                {t('contact_desc')}
             </Text>
 
             <Paper p="md" withBorder mb="lg" bg="gray.0">
-                <Text fw={500} size="sm" ta="center">Direct Contact</Text>
+                <Text fw={500} size="sm" ta="center">{t('contact_direct')}</Text>
                 <Text ta="center" size="sm">Email: <Text span c="wasabi" fw={700}>info@k-wasabi.kr</Text></Text>
-                <Text ta="center" size="sm" c="dimmed">Mobile: 82-10-4355-0633</Text>
+                <Text ta="center" size="sm" c="dimmed">{t('contact_tel_label')}: 82-10-4355-0633</Text>
             </Paper>
 
             <Paper p="xl" withBorder radius="md shadow-md">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Select
-                        label="Inquiry Category"
-                        placeholder="Select category"
+                        label={t('contact_cat_label')}
+                        placeholder={t('contact_cat_label')}
                         data={[
-                            'Product Inquiry',
-                            'Partnership',
-                            'Farm Visit',
-                            'Investment',
-                            'Other'
+                            { value: 'Product Inquiry', label: t('contact_cat_1') },
+                            { value: 'Partnership', label: t('contact_cat_2') },
+                            { value: 'Farm Visit', label: t('contact_cat_3') },
+                            { value: 'Investment', label: t('contact_cat_4') },
+                            { value: 'Other', label: t('contact_cat_5') }
                         ]}
                         mb="md"
                         required
@@ -72,13 +73,13 @@ export default function ContactPage() {
 
                     <SimpleGrid cols={{ base: 1, sm: 2 }}>
                         <TextInput
-                            label="Name"
-                            placeholder="Your name"
+                            label={t('contact_name_label')}
+                            placeholder={t('cons_inquiry_name_ph')}
                             required
                             {...form.getInputProps('name')}
                         />
                         <TextInput
-                            label="Email"
+                            label={t('contact_email_label')}
                             placeholder="your@email.com"
                             required
                             {...form.getInputProps('email')}
@@ -87,22 +88,22 @@ export default function ContactPage() {
 
                     <TextInput
                         mt="md"
-                        label="Subject"
-                        placeholder="Subject"
+                        label={t('contact_subject_label')}
+                        placeholder={t('contact_subject_label')}
                         required
                         {...form.getInputProps('subject')}
                     />
 
                     <Textarea
                         mt="md"
-                        label="Message"
-                        placeholder="Your message"
+                        label={t('contact_message_label')}
+                        placeholder={t('cons_inquiry_msg_ph')}
                         minRows={4}
                         {...form.getInputProps('message')}
                     />
 
                     <Group justify="flex-end" mt="md">
-                        <Button type="submit" color="wasabi" size="md">Send Message</Button>
+                        <Button type="submit" color="wasabi" size="md">{t('contact_btn_send')}</Button>
                     </Group>
                 </form>
             </Paper>

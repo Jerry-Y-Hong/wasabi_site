@@ -1,18 +1,15 @@
+'use client';
+
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import './globals.css';
 import React from 'react';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { theme } from '../theme';
 import { Header } from '@/components/Layout/Header';
 import { Footer } from '@/components/Layout/Footer';
-
-export const metadata = {
-  title: 'K-Farm Group / Wasabi Div.',
-  description: 'Premium Wasabi, AI-Aeroponic Systems, and Global Smart Farm Innovation',
-};
-
-
+import { LanguageProvider } from '@/lib/i18n';
 
 export default function RootLayout({
   children,
@@ -20,18 +17,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <head>
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>
-          <Notifications />
-          <Header />
-          {children}
-          {/* AIConcierge is resting per user request */}
-          <Footer />
-        </MantineProvider>
+        <LanguageProvider>
+          <MantineProvider theme={theme}>
+            <Notifications />
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </MantineProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

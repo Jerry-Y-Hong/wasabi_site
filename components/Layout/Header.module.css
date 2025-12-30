@@ -29,8 +29,32 @@
   }
 }
 
-.logo {
-  border-radius: 50%;
-  border: 2px solid white;
-  object-fit: cover;
+
+/* --- GOOGLE TRANSLATE FIXES --- */
+body {
+  top: 0 !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+iframe.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+}
+
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+#google_translate_element {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Fix for body shift */
+body>.skiptranslate {
+  display: none !important;
 }

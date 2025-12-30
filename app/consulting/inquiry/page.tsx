@@ -5,8 +5,12 @@ import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 
 import { saveConsultingInquiry } from '@/lib/actions';
+import { useTranslation } from '@/lib/i18n';
+
+export const dynamic = 'force-dynamic';
 
 export default function ConsultingInquiryPage() {
+    const { t } = useTranslation();
     const form = useForm({
         initialValues: {
             name: '',
@@ -48,9 +52,9 @@ export default function ConsultingInquiryPage() {
     return (
         <Container size="md" py={80}>
             <Stack align="center" mb={40} gap="xs">
-                <Title order={1}>Consulting Inquiry</Title>
+                <Title order={1}>{t('cons_inquiry_title')}</Title>
                 <Text c="dimmed" ta="center">
-                    Please provide some details about your project. Our experts will get back to you with a customized strategic proposal.
+                    {t('cons_inquiry_desc')}
                 </Text>
             </Stack>
 
@@ -59,14 +63,14 @@ export default function ConsultingInquiryPage() {
                     <Stack gap="xl">
                         <SimpleGrid cols={{ base: 1, sm: 2 }}>
                             <TextInput
-                                label="Contact Name"
-                                placeholder="Your full name"
+                                label={t('cons_inquiry_name')}
+                                placeholder={t('cons_inquiry_name_ph')}
                                 required
                                 {...form.getInputProps('name')}
                             />
                             <TextInput
-                                label="Organization / Company"
-                                placeholder="Name of your business"
+                                label={t('cons_inquiry_org')}
+                                placeholder={t('cons_inquiry_org_ph')}
                                 required
                                 {...form.getInputProps('organization')}
                             />
@@ -74,13 +78,13 @@ export default function ConsultingInquiryPage() {
 
                         <SimpleGrid cols={{ base: 1, sm: 2 }}>
                             <TextInput
-                                label="Email Address"
+                                label={t('cons_inquiry_email')}
                                 placeholder="your@email.com"
                                 required
                                 {...form.getInputProps('email')}
                             />
                             <TextInput
-                                label="Phone Number"
+                                label={t('cons_inquiry_phone')}
                                 placeholder="+1 (555) 000-0000"
                                 required
                                 {...form.getInputProps('phone')}
@@ -89,13 +93,13 @@ export default function ConsultingInquiryPage() {
 
                         <SimpleGrid cols={{ base: 1, sm: 2 }}>
                             <TextInput
-                                label="Proposed Location"
-                                placeholder="City, Country"
+                                label={t('cons_inquiry_loc')}
+                                placeholder={t('cons_inquiry_loc_ph')}
                                 required
                                 {...form.getInputProps('location')}
                             />
                             <NumberInput
-                                label="Planned Facility Size (sq. meters)"
+                                label={t('cons_inquiry_size')}
                                 placeholder="e.g. 1000"
                                 min={50}
                                 step={50}
@@ -104,7 +108,7 @@ export default function ConsultingInquiryPage() {
                         </SimpleGrid>
 
                         <Select
-                            label="Estimated Budget Range"
+                            label={t('cons_inquiry_budget')}
                             placeholder="Select a range"
                             data={[
                                 { value: 'under-100k', label: 'Under $100,000' },
@@ -116,23 +120,23 @@ export default function ConsultingInquiryPage() {
                         />
 
                         <MultiSelect
-                            label="Specific Interests"
+                            label={t('cons_inquiry_interests')}
                             placeholder="Pick all that apply"
                             data={[
-                                { value: 'design', label: 'Facility Design & Layout' },
-                                { value: 'systems', label: 'Aeroponic Systems & Hardware' },
-                                { value: 'seedlings', label: 'Tissue Culture Seedling Supply' },
-                                { value: 'training', label: 'Cultivation Training & Tech Transfer' },
-                                { value: 'roi', label: 'ROI Modeling & Business Strategy' },
-                                { value: 'distribution', label: 'Purchase Guarantee & Distribution' },
+                                { value: 'design', label: t('cons_label_arch') },
+                                { value: 'systems', label: t('cons_label_sys') },
+                                { value: 'seedlings', label: t('feat_1_title') },
+                                { value: 'training', label: 'Cultivation Training' },
+                                { value: 'roi', label: 'ROI Modeling' },
+                                { value: 'distribution', label: 'Distribution' },
                             ]}
                             {...form.getInputProps('interests')}
                             clearable
                         />
 
                         <Textarea
-                            label="Additional Message"
-                            placeholder="Tell us more about your vision and specific requirements"
+                            label={t('cons_inquiry_msg')}
+                            placeholder={t('cons_inquiry_msg_ph')}
                             minRows={4}
                             {...form.getInputProps('message')}
                         />
@@ -146,7 +150,7 @@ export default function ConsultingInquiryPage() {
                                 variant="gradient"
                                 gradient={{ from: 'wasabi.6', to: 'lime.6' }}
                             >
-                                Submit Consultation Request
+                                {t('cons_inquiry_btn_submit')}
                             </Button>
                         </Box>
                     </Stack>
@@ -155,7 +159,7 @@ export default function ConsultingInquiryPage() {
 
             <Box mt={40} ta="center">
                 <Text size="sm" c="dimmed">
-                    Your information is protected by our global privacy policy and will only be used for consulting purposes.
+                    {t('cons_inquiry_privacy')}
                 </Text>
             </Box>
         </Container>

@@ -1,26 +1,48 @@
-import { Container, Title, Text, Button, Group } from '@mantine/core';
+'use client';
+
+import { Title, Text, Container, Button, Group } from '@mantine/core';
 import Link from 'next/link';
 import classes from './Hero.module.css';
+import { useTranslation } from '@/lib/i18n';
 
 export function Hero() {
+    const { t } = useTranslation();
+
     return (
         <div className={classes.hero}>
             <Container size="md" className={classes.inner}>
                 <Title className={classes.title}>
-                    <span className={classes.highlight}>대한민국의 청정 와사비</span><br />
-                    <span style={{ fontSize: '0.7em', color: 'var(--mantine-color-gray-7)' }}>Global Wasabi Revolution</span>
+                    <span className={classes.highlight}>{t('hero_title_1')}</span><br />
+                    <span style={{ fontSize: '0.75em', color: '#ffffff', fontWeight: 900, textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                        {t('hero_title_2')}
+                    </span>
                 </Title>
 
                 <Text className={classes.description} mt={30} size="xl">
-                    Solving the global supply crisis through AI-driven Aeroponics. We deliver premium virus-free seedlings and next-generation food/bio solutions to the world.
+                    {t('hero_desc')}
                 </Text>
 
-                <Group mt={40}>
-                    <Button component={Link} href="/admin" size="xl" className={classes.control} variant="gradient" gradient={{ from: 'wasabi', to: 'lime' }}>
-                        Get Started (Admin)
+                <Group className={classes.controls} mt={40}>
+                    <Button
+                        component={Link}
+                        href="/admin"
+                        size="lg"
+                        className={classes.control}
+                        color="wasabi"
+                        radius="md"
+                    >
+                        {t('hero_btn_admin')}
                     </Button>
-                    <Button component={Link} href="/admin/hunter" size="xl" variant="default" className={classes.control}>
-                        Hunter AI
+                    <Button
+                        component={Link}
+                        href="/hunter"
+                        variant="white"
+                        size="lg"
+                        className={classes.control}
+                        radius="md"
+                        color="wasabi.8"
+                    >
+                        {t('hero_btn_hunter')}
                     </Button>
                 </Group>
             </Container>

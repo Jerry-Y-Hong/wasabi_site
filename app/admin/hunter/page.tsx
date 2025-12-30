@@ -5,11 +5,13 @@ import { useState, useEffect } from 'react';
 import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
-import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite } from '@/lib/actions';
+import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite, sendProposalEmail } from '@/lib/actions';
 import { generateProposalEmail } from '@/lib/ai';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
+
 
 interface HunterResult {
     id: number;
@@ -43,107 +45,110 @@ const COUNTRIES = [
     { value: 'VN', label: 'Vietnam 🇻🇳' }
 ];
 
-// Smart Targets Definition
-const TARGET_PRESETS = [
-    {
-        label: 'Wasabi Distributors',
-        icon: '🌱',
-        keywords: {
-            'KR': '와사비 유통 도매 업체',
-            'JP': '山葵 わさび 卸売業者 流通',
-            'US': 'Wasabi wholesale distributors',
-            'CN': '芥末 批发商',
-            'VN': 'Nhà phân phối Wasabi',
-            'Global': 'Wasabi distributors wholesale'
-        }
-    },
-    {
-        label: 'Smart Farm Research',
-        icon: '🔬',
-        keywords: {
-            'KR': '스마트팜 연구소 농업기술원',
-            'JP': 'スマートファーム 農業 研究所',
-            'US': 'Smart AgTech Research Institute',
-            'CN': '智慧农业 研究院',
-            'VN': 'Viện nghiên cứu nông nghiệp thông minh',
-            'Global': 'Smart Farming Research Institute'
-        }
-    },
-    {
-        label: 'Food Processing',
-        icon: ' Bento',
-        keywords: {
-            'KR': '식품 가공 제조 업체 (소스, 양념)',
-            'JP': '食品加工 会社 調味料',
-            'US': 'Food processing companies ingredients',
-            'CN': '食品加工厂',
-            'VN': 'Công ty chế biến thực phẩm',
-            'Global': 'Food Processing Manufactures'
-        }
-    },
-    {
-        label: 'High-end Restaurants',
-        icon: '🍣',
-        keywords: {
-            'KR': '고급 일식 오마카세 식자재 납품',
-            'JP': '高級 寿司 料亭 仕入れ',
-            'US': 'High-end Japanese Restaurant Suppliers',
-            'CN': '高端 日本料理 供应商',
-            'VN': 'Nhà hàng Nhật Bản cao cấp',
-            'Global': 'Premium Japanese Restaurant Suppliers'
-        }
-    },
-    {
-        label: 'Big Fish (Prestige)',
-        icon: '🐋',
-        keywords: {
-            'KR': 'site:.ac.kr 스마트팜 연구원 교수 생명공학',
-            'JP': 'site:.ac.jp スマートファーム 教授 研究所',
-            'US': 'site:.edu plant science vertical farming research lab director',
-            'CN': '智慧农业 教授 研究院',
-            'VN': 'Nghiên cứu nông nghiệp đại học',
-            'Global': 'site:.edu agricultural biotech research institute director'
-        }
-    },
-    {
-        label: '테니스 라켓',
-        icon: '🎾',
-        keywords: {
-            'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
-            'JP': '山葵 卸売業者 販売店 リスト',
-            'US': 'wasabi supply chain distributors wholesalers list',
-            'CN': '芥末 批发 零售 列表',
-            'VN': 'Danh sách nhà bán lẻ Wasabi',
-            'Global': 'wasabi food service suppliers wholesalers directory'
-        }
-    },
-    {
-        label: 'Investors / VC',
-        icon: '💰',
-        keywords: {
-            'KR': '스마트팜 스타트업 투자 벤처캐피털 AC VC',
-            'JP': 'アグリテック スタートアップ 投資 VC',
-            'US': 'AgTech venture capital indoor farming investment corp',
-            'CN': '农业科技 投资 风险投资',
-            'VN': 'Đầu tư nông nghiệp thông minh',
-            'Global': 'Agricultural technology venture capital firms'
-        }
-    },
-    {
-        label: 'Gov / Tenders',
-        icon: '🏛️',
-        keywords: {
-            'KR': '스마트팜 정부 국책 사업 입찰 공고',
-            'JP': 'スマートファーム 政府 補助금 公募',
-            'US': 'smart farm government grants USDA tender opportunities',
-            'CN': '农业部 智慧农业 招标',
-            'VN': 'Thầu nông nghiệp chính phủ',
-            'Global': 'Government smart farming grant and tender opportunities'
-        }
-    }
-];
-
 export default function HunterPage() {
+    const { t } = useTranslation();
+
+    // Smart Targets Definition
+    const TARGET_PRESETS = [
+        {
+            label: t('hunter_preset_1'),
+            icon: '🌱',
+            keywords: {
+                'KR': '와사비 유통 도매 업체',
+                'JP': '山葵 わさび 卸売業者 流通',
+                'US': 'Wasabi wholesale distributors',
+                'CN': '芥末 批发商',
+                'VN': 'Nhà phân phối Wasabi',
+                'Global': 'Wasabi distributors wholesale'
+            }
+        },
+        {
+            label: t('hunter_preset_2'),
+            icon: '🔬',
+            keywords: {
+                'KR': '스마트팜 연구소 농업기술원',
+                'JP': 'スマートファーム 農業 研究所',
+                'US': 'Smart AgTech Research Institute',
+                'CN': '智慧农业 研究院',
+                'VN': 'Viện nghiên cứu nông nghiệp thông minh',
+                'Global': 'Smart Farming Research Institute'
+            }
+        },
+        {
+            label: t('hunter_preset_3'),
+            icon: '🍱',
+            keywords: {
+                'KR': '식품 가공 제조 업체 (소스, 양념)',
+                'JP': '食品加工 会社 調味料',
+                'US': 'Food processing companies ingredients',
+                'CN': '食品加工厂',
+                'VN': 'Công ty chế biến thực phẩm',
+                'Global': 'Food Processing Manufactures'
+            }
+        },
+        {
+            label: t('hunter_preset_4'),
+            icon: '🍣',
+            keywords: {
+                'KR': '고급 일식 오마카세 식자재 납품',
+                'JP': '高級 寿司 料亭 仕入れ',
+                'US': 'High-end Japanese Restaurant Suppliers',
+                'CN': '高端 日本料理 供应商',
+                'VN': 'Nhà hàng Nhật Bản cao cấp',
+                'Global': 'Premium Japanese Restaurant Suppliers'
+            }
+        },
+        {
+            label: t('hunter_preset_5'),
+            icon: '🐋',
+            keywords: {
+                'KR': 'site:.ac.kr 스마트팜 연구원 교수 생명공학',
+                'JP': 'site:.ac.jp 스마트ファーム 教授 研究所',
+                'US': 'site:.edu plant science vertical farming research lab director',
+                'CN': '智慧农业 教授 研究院',
+                'VN': 'Nghiên cứu nông nghiệp đại học',
+                'Global': 'site:.edu agricultural biotech research institute director'
+            }
+        },
+        {
+            label: t('hunter_preset_6'),
+            icon: '🚜',
+            keywords: {
+                'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
+                'JP': '山葵 卸売業者 販売店 リスト',
+                'US': 'wasabi supply chain distributors wholesalers list',
+                'CN': '芥末 批发 零售 列表',
+                'VN': 'Danh sách nhà bán lẻ Wasabi',
+                'Global': 'wasabi food service suppliers wholesalers directory'
+            }
+        },
+        {
+            label: t('hunter_preset_7'),
+            icon: '💰',
+            keywords: {
+                'KR': '스마트팜 스타트업 투자 벤처캐피털 AC VC',
+                'JP': 'アグリテック スタートアップ 投資 VC',
+                'US': 'AgTech venture capital indoor farming investment corp',
+                'CN': '农业科技 投资 风险投资',
+                'VN': 'Đầu tư nông nghiệp thông minh',
+                'Global': 'Agricultural technology venture capital firms'
+            }
+        },
+        {
+            label: t('hunter_preset_8'),
+            icon: '🏛️',
+            keywords: {
+                'KR': '스마트팜 정부 국책 사업 입찰 공고',
+                'JP': 'スマートファーム 政府 補助金 公募',
+                'US': 'smart farm government grants USDA tender opportunities',
+                'CN': '农业部 智慧农业 招标',
+                'VN': 'Thầu nông nghiệp chính phủ',
+                'Global': 'Government smart farming grant and tender opportunities'
+            }
+        }
+    ];
+
+
     // Search State
     const [keyword, setKeyword] = useState('');
     const [country, setCountry] = useState<string | null>(''); // Default to Global (All)
@@ -396,9 +401,9 @@ export default function HunterPage() {
                     notifications.show({ title: 'AI Notice', message: 'AI is momentarily busy. Using standard template.', color: 'orange' });
                 }
 
-                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm International\nMobile: +82-10-4355-0633\nEmail: sbienv0633@gmail.com\nWeb: www.ksmart-farm.com`;
+                const signature = `\n\n------------------------------\n洪泳喜 (Jerry Y. Hong)\nK-Farm Group / Wasabi Div.\nMobile: +82-10-4355-0633\nEmail: info@k-wasabi.kr\nWeb: www.k-wasabi.kr`;
                 setDraftEmail({
-                    subject: aiResponse.subject || `[Proposal] Partnership with K-Farm International`,
+                    subject: aiResponse.subject || `[Proposal] Partnership with ${t('nav_brand')}`,
                     body: (aiResponse.body || getEmailContent(selectedPartner).body) + signature
                 });
 
@@ -411,8 +416,8 @@ export default function HunterPage() {
     };
 
     const getEmailContent = (partner: HunterResult) => {
-        const subject = `[Proposal] Strategic Partnership: K-Farm x ${partner.name}`;
-        const body = `Dear ${partner.contact || 'Partner'},\n\nI hope this email finds you well.\n\nMy name is Jerry Y. Hong, representing K-Farm International. We have been following the work of ${partner.name} with great interest.\n\nWe believe there is a strong potential for synergy between our organizations.\n\nBest regards,`;
+        const subject = `[Proposal] Strategic Partnership: ${t('nav_brand')} x ${partner.name}`;
+        const body = `Dear ${partner.contact || 'Partner'},\n\nI hope this email finds you well.\n\nMy name is Jerry Y. Hong, representing ${t('nav_brand')}. We have been following the work of ${partner.name} with great interest.\n\nWe believe there is a strong potential for synergy between our organizations.\n\nBest regards,`;
         return { subject, body };
     };
 
@@ -423,7 +428,7 @@ export default function HunterPage() {
                     <div />
                     <Stack align="center" gap="xs">
                         <Badge variant="filled" color="grape" size="lg">Sales Agent Beta</Badge>
-                        <Title order={1}>Hunter <Badge color="red" variant="light" size="sm">SECURE v2.1</Badge></Title>
+                        <Title order={1}>{t('hunter_title')} <Badge color="red" variant="light" size="sm">SECURE v2.1</Badge></Title>
                     </Stack>
                     <Group>
                         <Button component={Link} href="/admin" variant="subtle" color="gray">
@@ -435,8 +440,7 @@ export default function HunterPage() {
                     </Group>
                 </Group>
                 <Text c="dimmed" ta="center" maw={600}>
-                    I will scour the web to find the best potential partners for K-Farm.
-                    Save them to your pipeline and manage your outreach.
+                    {t('hunter_subtitle')}
                 </Text>
                 <Button
                     variant="outline"
@@ -461,7 +465,7 @@ export default function HunterPage() {
                         notifications.show({ title: 'Exported', message: 'Partner list downloaded as CSV.', color: 'green' });
                     }}
                 >
-                    Export Pipeline to Google Sheets (CSV)
+                    {t('hunter_export_btn')}
                 </Button>
             </Stack>
 
@@ -478,7 +482,7 @@ export default function HunterPage() {
                     <Card shadow="sm" radius="md" p="xl" withBorder mb={40}>
                         <Group align="flex-end">
                             <Select
-                                label="Target Country"
+                                label={t('hunter_country_label')}
                                 data={COUNTRIES}
                                 value={country}
                                 onChange={setCountry}
@@ -486,8 +490,8 @@ export default function HunterPage() {
                                 allowDeselect={false}
                             />
                             <TextInput
-                                label="Target Keyword"
-                                placeholder="Search partners..."
+                                label={t('hunter_keyword_placeholder')}
+                                placeholder={t('hunter_keyword_placeholder')}
                                 style={{ flex: 1 }}
                                 value={keyword}
                                 onChange={(event) => setKeyword(event.currentTarget.value)}
@@ -496,13 +500,13 @@ export default function HunterPage() {
                                 leftSection={<IconSearch size={16} />}
                             />
                             <Button size="md" color="grape" onClick={handleSearch} loading={loading} leftSection={<IconRobot size={20} />}>
-                                Start Hunt
+                                {t('hunter_btn_start')}
                             </Button>
                         </Group>
                     </Card>
 
                     <Stack gap="xs" mb="xl">
-                        <Text size="sm" fw={500} c="dimmed">Quick Target (Click to auto-search):</Text>
+                        <Text size="sm" fw={500} c="dimmed">{t('hunter_quick_target')}</Text>
                         <Group gap={8}>
                             {TARGET_PRESETS.map((preset) => (
                                 <Badge
@@ -524,18 +528,18 @@ export default function HunterPage() {
                     {results.length > 0 && (
                         <Stack>
                             <Group justify="space-between" mb={-10}>
-                                <Text size="sm" c="dimmed">Found {results.length} results</Text>
+                                <Text size="sm" c="dimmed">Found {results.length} {t('hunter_found_count')}</Text>
                                 {results[0].isMock && <Badge color="orange" variant="light">Demo Mode</Badge>}
                             </Group>
                             <Table striped highlightOnHover withTableBorder withColumnBorders>
                                 <Table.Thead>
                                     <Table.Tr>
-                                        <Table.Th w={60}>Cntry</Table.Th>
-                                        <Table.Th>Organization</Table.Th>
-                                        <Table.Th>Type</Table.Th>
-                                        <Table.Th>Relevance Analysis</Table.Th>
-                                        <Table.Th>Contact</Table.Th>
-                                        <Table.Th>Action</Table.Th>
+                                        <Table.Th w={60}>{t('hunter_col_country')}</Table.Th>
+                                        <Table.Th>{t('hunter_col_org')}</Table.Th>
+                                        <Table.Th>{t('hunter_col_type')}</Table.Th>
+                                        <Table.Th>{t('hunter_col_analysis')}</Table.Th>
+                                        <Table.Th>{t('hunter_col_contact')}</Table.Th>
+                                        <Table.Th>{t('hunter_col_action')}</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Table.Tbody>
@@ -573,20 +577,20 @@ export default function HunterPage() {
                                             </Table.Td>
                                             <Table.Td>
                                                 <Group gap={4}>
-                                                    <Tooltip label="Save">
+                                                    <Tooltip label={t('hunter_btn_save')}>
                                                         <ActionIcon variant="light" color="blue" size="sm" onClick={() => handleSaveToList(element)}>
                                                             <IconPlus size={14} />
                                                         </ActionIcon>
                                                     </Tooltip>
                                                     <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element)}>
-                                                        Proposal
+                                                        {t('hunter_btn_proposal')}
                                                     </Button>
-                                                    <Tooltip label="Scan Website">
+                                                    <Tooltip label={t('hunter_btn_scan')}>
                                                         <ActionIcon variant="light" color="grape" size="sm" onClick={() => handleScan(element)}>
                                                             <IconScan size={14} />
                                                         </ActionIcon>
                                                     </Tooltip>
-                                                    <Tooltip label="Dismiss">
+                                                    <Tooltip label={t('hunter_btn_dismiss')}>
                                                         <ActionIcon variant="subtle" color="gray" size="sm" onClick={() => handleDismiss(element.id)}>
                                                             <IconX size={14} />
                                                         </ActionIcon>
@@ -736,7 +740,7 @@ export default function HunterPage() {
             <Modal
                 opened={opened}
                 onClose={() => setOpened(false)}
-                title={emailMode ? "Draft Email" : "Proposal Preview"}
+                title={emailMode ? t('hunter_modal_email_title') : t('hunter_modal_proposal_title')}
                 size="xl"
                 centered
             >
@@ -744,16 +748,16 @@ export default function HunterPage() {
                     <Stack>
                         <Card withBorder shadow="sm" bg="gray.1" padding="xl">
                             <Text size="xl" fw={700} c="green.9" ta="center" mt="md">Strategic Partnership Proposal</Text>
-                            <Text size="lg" ta="center" mt="sm">K-Farm International x {selectedPartner.name}</Text>
+                            <Text size="lg" ta="center" mt="sm">{t('nav_brand')} x {selectedPartner.name}</Text>
                             <Text size="sm" c="dimmed" ta="center" mt="xl">Prepared for: {selectedPartner.contact}</Text>
                             <Badge color="red" variant="outline" mx="auto" mt="md">CONFIDENTIAL</Badge>
                         </Card>
                         <Group grow mt="md">
                             <Button leftSection={<IconDownload size={16} />} color="grape" variant="outline" onClick={() => handleDownloadPPT(selectedPartner)}>
-                                1. Download PPTX
+                                {t('hunter_modal_export_pptx')}
                             </Button>
                             <Button leftSection={<IconMail size={16} />} color="grape" onClick={handleDraftEmail} loading={loading}>
-                                2. Generate AI Proposal & Draft
+                                {t('hunter_modal_gen_ai')}
                             </Button>
                         </Group>
                     </Stack>
@@ -762,12 +766,12 @@ export default function HunterPage() {
                 {selectedPartner && emailMode && (
                     <Stack>
                         <Button variant="subtle" color="gray" size="xs" leftSection={<IconArrowLeft size={12} />} onClick={() => setEmailMode(false)}>
-                            Back to Proposal
+                            {t('hunter_modal_back')}
                         </Button>
-                        <TextInput label="Subject" value={draftEmail.subject || ''} onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })} rightSection={<CopyButton value={draftEmail.subject || ''}>
+                        <TextInput label={t('hunter_modal_subject')} value={draftEmail.subject || ''} onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })} rightSection={<CopyButton value={draftEmail.subject || ''}>
                             {({ copied, copy }) => (<ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>)}
                         </CopyButton>} />
-                        <Textarea label="Body" value={draftEmail.body || ''} onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })} autosize minRows={10} rightSection={<CopyButton value={draftEmail.body || ''}>
+                        <Textarea label={t('hunter_modal_body')} value={draftEmail.body || ''} onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })} autosize minRows={10} rightSection={<CopyButton value={draftEmail.body || ''}>
                             {({ copied, copy }) => (
                                 <Stack>
                                     <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>
@@ -776,21 +780,54 @@ export default function HunterPage() {
                             )}
                         </CopyButton>} />
 
-                        <Button
-                            component="a"
-                            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(editForm.email || selectedPartner.email || '')}&su=${encodeURIComponent(draftEmail.subject)}&body=${encodeURIComponent(draftEmail.body)}`}
-                            target="_blank"
-                            leftSection={<IconMail size={16} />}
-                            color="blue"
-                            size="md"
-                            fullWidth
-                            onClick={() => {
-                                notifications.show({ title: 'Opening Gmail', message: 'Check the new tab to send your proposal.', color: 'blue' });
-                                setOpened(false);
-                            }}
-                        >
-                            Send via Gmail
-                        </Button>
+
+                        <Group>
+                            <Button
+                                leftSection={<IconMail size={16} />}
+                                color="grape"
+                                size="md"
+                                style={{ flex: 1 }}
+                                loading={loading}
+                                onClick={async () => {
+                                    if (!selectedPartner) return;
+                                    const targetEmail = editForm.email || selectedPartner.email;
+                                    if (!targetEmail) return notifications.show({ title: 'No Email', message: 'Please add an email address first.', color: 'red' });
+
+                                    if (!confirm(`Launch proposal to ${targetEmail}? 🚀`)) return;
+
+                                    setLoading(true);
+                                    try {
+                                        const res = await sendProposalEmail(targetEmail, selectedPartner.name);
+                                        if (res.success) {
+                                            notifications.show({ title: 'Mission Accomplished! 🚀', message: `Email successfully sent to ${targetEmail}`, color: 'green', autoClose: 5000 });
+                                            await updateHunterStatus(selectedPartner.id, 'Proposal Sent');
+                                            setOpened(false);
+                                        }
+                                    } catch (err) {
+                                        notifications.show({ title: 'Send Failed', message: 'Check your email configuration.', color: 'red' });
+                                    } finally {
+                                        setLoading(false);
+                                    }
+                                }}
+                            >
+                                {t('hunter_modal_launch')}
+                            </Button>
+
+                            <Tooltip label="Open Gmail to send manually">
+                                <ActionIcon
+                                    component="a"
+                                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(editForm.email || selectedPartner.email || '')}&su=${encodeURIComponent(draftEmail.subject)}&body=${encodeURIComponent(draftEmail.body)}`}
+                                    target="_blank"
+                                    variant="light"
+                                    color="gray"
+                                    size="lg"
+                                    h={42} w={42}
+                                >
+                                    <IconExternalLink size={20} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
+
                     </Stack>
                 )}
             </Modal>

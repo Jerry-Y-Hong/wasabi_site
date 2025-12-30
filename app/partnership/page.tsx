@@ -1,62 +1,64 @@
 'use client';
 
-import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Button, List, ThemeIcon as MantineThemeIcon, Paper } from '@mantine/core';
-import { IconSchool, IconMicroscope, IconWorld, IconCertificate, IconArrowRight, IconMessage2, IconDeviceAnalytics, IconUsers, IconTent } from '@tabler/icons-react';
+import { Container, Title, Text, SimpleGrid, Card, ThemeIcon, Stack, Group, Box, Button, Paper, Badge } from '@mantine/core';
+import { IconSchool, IconMicroscope, IconWorld, IconCertificate, IconMessage2, IconUsers, IconTent } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 
 export default function PartnershipPage() {
+    const { t } = useTranslation();
+
     return (
         <Container size="xl" py={80}>
-            {/* Hero Section for Partnership */}
+            {/* Hero Section */}
             <Box ta="center" mb={80}>
-                <Badge variant="dot" color="wasabi" size="xl" mb="md">Joint Innovation</Badge>
-                <Title order={1} size="48px" mb="xl">Global R&D & Strategic Partnership</Title>
+                <Badge variant="dot" color="wasabi" size="xl" mb="md">{t('part_hero_badge')}</Badge>
+                <Title order={1} size="48px" mb="xl">{t('part_hero_title')}</Title>
                 <Text c="dimmed" size="xl" maw={900} mx="auto">
-                    We invite global universities, research institutes, and agri-tech pioneers to join us in
-                    revolutionizing the wasabi industry through data-driven biotechnology and specialized smart farming.
+                    {t('part_hero_desc')}
                 </Text>
             </Box>
 
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing={80} mb={100}>
                 <Stack gap="xl">
                     <Box>
-                        <Title order={2} mb="lg" c="wasabi.8">Collaboration Pillars</Title>
+                        <Title order={2} mb="lg" c="wasabi.8">{t('part_pillar_title')}</Title>
                         <Text size="lg" mb="xl">
-                            We offer our state-of-the-art Aeroponic facilities as a global test-bed for cutting-edge agricultural research.
+                            {t('part_pillar_desc')}
                         </Text>
                     </Box>
 
                     <CollaborationItem
                         icon={IconMicroscope}
-                        title="Biotech & Genetic Research"
-                        description="Joint studies on maximizing 6-MSITC content and developing virus-resistant wasabi strains through tissue culture optimization."
+                        title={t('part_item_1_title')}
+                        description={t('part_item_1_desc')}
                     />
                     <CollaborationItem
                         icon={IconWorld}
-                        title="Global Test-Bed Program"
-                        description="Establishing collaborative pilot plants in various climatic regions to validate technology scalability and localized nutrient recipes."
+                        title={t('part_item_2_title')}
+                        description={t('part_item_2_desc')}
                     />
                     <CollaborationItem
                         icon={IconUsers}
-                        title="Social Enterprise & Regional Welfare"
-                        description="Developing social welfare models that integrate smart farming with regional job creation and senior employment programs."
+                        title={t('part_item_3_title')}
+                        description={t('part_item_3_desc')}
                     />
                     <CollaborationItem
                         icon={IconTent}
-                        title="Theme Park & 6th Industry"
-                        description="Designing 'Experience Centers' and 'Healing Camps' that combine education, tourism, and consumption of fresh wasabi products."
+                        title={t('part_item_4_title')}
+                        description={t('part_item_4_desc')}
                     />
                 </Stack>
 
-                <Card padding="xl" radius="lg" withBorder shadow="md" bg="var(--mantine-color-gray-0)">
-                    <Title order={3} mb="xl">Strategic Proposals for Partners</Title>
+                <Card padding="xl" radius="lg" withBorder shadow="md" bg="gray.0">
+                    <Title order={3} mb="xl">{t('part_prop_title')}</Title>
                     <Stack gap="md">
                         <Paper p="md" radius="md" withBorder>
                             <Group>
                                 <ThemeIcon color="wasabi" size="lg" radius="xl"><IconCertificate /></ThemeIcon>
                                 <Box>
-                                    <Text fw={700}>Tech Licensing</Text>
-                                    <Text size="sm" c="dimmed">License our Aeroponic system designs and AI control software for localized research projects.</Text>
+                                    <Text fw={700}>{t('part_card_1_title')}</Text>
+                                    <Text size="sm" c="dimmed">{t('part_card_1_desc')}</Text>
                                 </Box>
                             </Group>
                         </Paper>
@@ -64,17 +66,8 @@ export default function PartnershipPage() {
                             <Group>
                                 <ThemeIcon color="blue" size="lg" radius="xl"><IconSchool /></ThemeIcon>
                                 <Box>
-                                    <Text fw={700}>Academic Exchange</Text>
-                                    <Text size="sm" c="dimmed">Internship programs and residency opportunities for PhD candidates specializing in vertical farming.</Text>
-                                </Box>
-                            </Group>
-                        </Paper>
-                        <Paper p="md" radius="md" withBorder>
-                            <Group>
-                                <ThemeIcon color="orange" size="lg" radius="xl"><IconWorld /></ThemeIcon>
-                                <Box>
-                                    <Text fw={700}>International Joint Ventures</Text>
-                                    <Text size="sm" c="dimmed">Co-developing premium wasabi processing facilities in overseas markets through institutional funding.</Text>
+                                    <Text fw={700}>{t('part_card_2_title')}</Text>
+                                    <Text size="sm" c="dimmed">{t('part_card_2_desc')}</Text>
                                 </Box>
                             </Group>
                         </Paper>
@@ -89,22 +82,18 @@ export default function PartnershipPage() {
                         rightSection={<IconMessage2 size={20} />}
                         fullWidth
                     >
-                        Request Partnership Proposal
+                        {t('part_btn_proposal')}
                     </Button>
                 </Card>
             </SimpleGrid>
 
-            {/* Global Vision Section */}
+            {/* Global Vision */}
             <Box ta="center" py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} mb="lg">Our Global Network Vision</Title>
-                <Text c="dimmed" mb={40} maw={700} mx="auto">
-                    By 2030, we aim to establish high-tech wasabi hubs in North America, Europe, and Southeast Asia
-                    through synergy with local research leaders.
-                </Text>
+                <Title order={2} mb="lg">Global Vision 2030</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    <StatCard label="Target Partners" value="20+" color="blue" />
-                    <StatCard label="Global Hubs" value="5 Cities" color="wasabi" />
-                    <StatCard label="Joint Patents" value="15+" color="orange" />
+                    <StatCard label={t('part_stats_1')} value="20+" color="blue" />
+                    <StatCard label={t('part_stats_2')} value="5 Cities" color="wasabi" />
+                    <StatCard label={t('part_stats_3')} value="15+" color="orange" />
                 </SimpleGrid>
             </Box>
         </Container>
@@ -133,5 +122,3 @@ function StatCard({ label, value, color }: { label: string; value: string; color
         </Paper>
     );
 }
-
-import { Badge } from '@mantine/core';

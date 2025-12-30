@@ -61,6 +61,300 @@ const FALLBACK_POSTS = [
     }
 ];
 
+const FALLBACK_POSTS_EN = [
+    {
+        "title": "K-Farm's Aeroponics Revolution: New Horizon for Wasabi Smart Farming",
+        "content": "# K-Farm's Aeroponics Revolution: New Horizon for Wasabi Smart Farming\n\nGlobal demand for Wasabi is rising, but traditional cultivation faces challenges due to climate change and environmental conditions. 🌱 K-Farm is opening a new era of Wasabi Smart Farming through innovative Aeroponics technology.\n\n## Why We Need Innovation\n\n*   **Long Cultivation Period**: Traditional methods take 18-24 months.\n*   **Environmental Dependency**: Requires specific temperature and water conditions.\n*   **Pest Risks**: Soil-based farming is vulnerable to pests.\n\n## K-Farm Aeroponics Technology\n\nK-Farm uses **Hyper-Cycle Aeroponics** to maximize efficiency.\n\n### Key Features\n\n*   **Shortened Cycle**: Harvest in just 9 months.\n*   **Precision Control**: Data-driven control of EC, pH, and PPFD. 💧\n*   **Disease Free**: Closed system prevents external contamination.\n*   **Maximized Yield**: Optimized environment for highest output.\n\n## Conclusion\n\nK-Farm is setting a new standard. Join us in shaping the future of agriculture. 🌱🚀",
+        "topic": "Aeroponics Revolution",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-en",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Wasabi Vertical Farming: Limitless Possibilities 🌱🚀",
+        "content": "# Wasabi Vertical Farming: Limitless Possibilities 🌱🚀\n\nVertical farming maximizes space efficiency and productivity. For Wasabi, it offers:\n\n*   **Higher Yields**: Stacked growing systems.\n*   **Environment Control**: Perfect conditions year-round.\n*   **Water Saving**: Closed-loop circulation.\n\n### K-Farm's Leadership\n\n*   **Virus-Free Seedlings**: Tissue culture technology.\n*   **Hyper-Cycle Aeroponics**: 9-month harvest cycle.\n*   **Quality Control**: Precision management of AITC content.\n\nJoin K-Farm in the future of Wasabi farming! **Contact us now!**",
+        "topic": "Vertical Farming Benefits",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-en",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Strategy for Global Expansion: K-Farm's Vision 🌍",
+        "content": "# Strategy for Global Expansion: K-Farm's Vision 🌍\n\nK-Farm is not just a domestic success. We are rapidly expanding our footprint worldwide.\n\n## Global Partnerships\n\nWe are collaborating with top agricultural universities and research institutes in the US, Netherlands, and Japan to continuously improve our technology.\n\n*   **Joint Research**: Developing next-gen nutrient solutions.\n*   **Tech Transfer**: Licensing our Aeroponics systems to global partners.\n\n## Future Goals\n\nOur goal is to become the **World's No.1 Wasabi Smart Farm Platform**. We invite investors and partners to join this green revolution.",
+        "topic": "Global Vision",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-en",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_JA = [
+    {
+        "title": "K-Farmのエアロポニックス革命：わさびスマート農業の新たな地平",
+        "content": "# K-Farmのエアロポニックス革命：わさびスマート農業の新たな地平\n\n世界的にわさびの需要が高まっていますが、伝統的な栽培方法は気候変動や環境条件により困難に直面しています。🌱 K-Farmは革新的なエアロポニックス技術を通じて、わさびスマート農業の新しい時代を切り開いています。\n\n## なぜ革新が必要なのか\n\n*   **長い栽培期間**: 伝統的な方法は18〜24ヶ月かかります。\n*   **環境への依存**: 特定の温度と水質条件が必要です。\n*   **病害虫リスク**: 土壌栽培は病害虫に対して脆弱です。\n\n## K-Farmのエアロポニックス技術\n\nK-Farmは**ハイパーサイクル・エアロポニックス**を使用して効率を最大化します。\n\n### 主な特徴\n\n*   **サイクルの短縮**: わずか9ヶ月で収穫可能。\n*   **精密制御**: EC、pH、PPFDのデータ駆動型制御。💧\n*   **無病**: 閉鎖型システムにより外部汚染を防止。\n*   **最大収量**: 最適化された環境で最高の生産量を実現。\n\n## 結論\n\nK-Farmは新たな基準を打ち立てています。農業の未来を共に築きましょう。🌱🚀",
+        "topic": "エアロポニックス革命",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-ja",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "わさび垂直農業：スマートファーム革新による無限の可能性 🌱🚀",
+        "content": "# わさび垂直農業：スマートファーム革新による無限の可能性 🌱🚀\n\n垂直農業は空間効率と生産性を最大化します。わさびにとって、それは以下を提供します：\n\n*   **高収量**: 積層栽培システム。\n*   **環境制御**: 年中完璧な条件。\n*   **節水**: 閉ループ循環。\n\n### K-Farmのリーダーシップ\n\n*   **ウイルスフリー苗**: 組織培養技術。\n*   **ハイパーサイクル・エアロポニックス**: 9ヶ月の収穫サイクル。\n*   **品質管理**: AITC含有量の精密管理。\n\nK-Farmと共にわさび農業の未来へ！ **今すぐお問い合わせください！**",
+        "topic": "垂直農業の利点",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-ja",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "グローバル展開戦略：K-Farmのビジョン 🌍",
+        "content": "# グローバル展開戦略：K-Farmのビジョン 🌍\n\nK-Farmは国内だけの成功にとどまりません。私たちは急速に世界中へと足跡を広げています。\n\n## グローバルパートナーシップ\n\n米国、オランダ、日本のトップ農業大学や研究機関と協力し、技術を継続的に改善しています。\n\n*   **共同研究**: 次世代の養液開発。\n*   **技術移転**: 当社のエアロポニックスシステムをグローバルパートナーにライセンス供与。\n\n## 将来の目標\n\n私たちの目標は、**世界No.1のわさびスマートファームプラットフォーム**になることです。投資家やパートナーの皆様を、このグリーン革命にご招待します。",
+        "topic": "グローバルビジョン",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-ja",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_ZH = [
+    {
+        "title": "K-Farm的气培法革命：山葵智慧农业的新视野",
+        "content": "# K-Farm的气培法革命：山葵智慧农业的新视野\n\n全球对山葵的需求正在上升，但由于气候变化和环境条件，传统种植面临挑战。🌱 K-Farm通过创新的气培法技术，开启了山葵智慧农业的新纪元。\n\n## 为什么我们需要创新\n\n*   **通过长的种植周期**：传统方法需要18-24个月。\n*   **环境依赖**：需要特定的温度和水质条件。\n*   **病虫害风险**：土壤种植容易受到病虫害的影响。\n\n## K-Farm气培法技术\n\nK-Farm使用**超循环气培法**来最大化效率。\n\n### 主要特点\n\n*   **周期缩短**：仅需9个月即可收获。\n*   **精准控制**：基于数据的EC、pH和PPFD控制。💧\n*   **无病害**：封闭系统防止外部污染。\n*   **最大产量**：优化环境以获得最高产量。\n\n## 结论\n\nK-Farm正在树立新标准。加入我们，共同塑造农业的未来。🌱🚀",
+        "topic": "气培法革命",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-zh",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "山葵垂直农业：通过智慧农场创新带来的无限可能 🌱🚀",
+        "content": "# 山葵垂直农业：通过智慧农场创新带来的无限可能 🌱🚀\n\n垂直农业最大化了空间效率和生产力。对于山葵，它提供：\n\n*   **更高产量**：层叠种植系统。\n*   **环境控制**：全年完美条件。\n*   **节水**：闭环循环。\n\n### K-Farm的领导力\n\n*   **无病毒种苗**：组织培养技术。\n*   **超循环气培法**：9个月的收获周期。\n*   **质量控制**：AITC含量的精准管理。\n\n加入K-Farm，共创山葵农业的未来！ **立即联系我们！**",
+        "topic": "垂直农业的优势",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-zh",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "全球扩张战略：K-Farm的愿景 🌍",
+        "content": "# 全球扩张战略：K-Farm的愿景 🌍\n\nK-Farm不仅仅是国内的成功案例。我们正在迅速将足迹扩展到世界各地。\n\n## 全球合作伙伴关系\n\n我们正在与美国、荷兰和日本的顶级农业大学及研究机构合作，以不断通过改进我们的技术。\n\n*   **联合研究**：开发下一代营养液。\n*   **技术转让**：将我们的气培法系统授权给全球合作伙伴。\n\n## 未来目标\n\n我们的目标是成为**世界第一的山葵智慧农场平台**。我们邀请投资者和合作伙伴加入这场绿色革命。",
+        "topic": "全球愿景",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-zh",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_AR = [
+    {
+        "title": "ثورة الزراعة الهوائية في K-Farm: أفق جديد لزراعة الوسابي الذكية",
+        "content": "# ثورة الزراعة الهوائية في K-Farm: أفق جديد لزراعة الوسابي الذكية\n\nيتزايد الطلب العالمي على الوسابي، لكن الزراعة التقليدية تواجه تحديات بسبب تغير المناخ والظروف البيئية. 🌱 تفتتح K-Farm حقبة جديدة لزراعة الوسابي الذكية من خلال تقنية الزراعة الهوائية المبتكرة.\n\n## لماذا نحتاج إلى الابتكار\n\n*   **فترة زراعة طويلة**: تستغرق الطرق التقليدية 18-24 شهرًا.\n*   **التبعية البيئية**: تتطلب درجات حرارة وظروف مائية محددة.\n*   **مخاطر الآفات**: الزراعة القائمة على التربة عرضة للآفات.\n\n## تقنية K-Farm للزراعة الهوائية\n\nتستخدم K-Farm **الزراعة الهوائية فائقة الدورة (Hyper-Cycle Aeroponics)** لزيادة الكفاءة إلى أقصى حد.\n\n### الميزات الرئيسية\n\n*   **دورة أقصر**: الحصاد في 9 أشهر فقط.\n*   **تحكم دقيق**: تحكم قائم على البيانات في الموصلية الكهربائية (EC)، ودرجة الحموضة (pH)، وكثافة تدفق الفوتون للتمثيل الضوئي (PPFD). 💧\n*   **خالية من الأمراض**: يمنع النظام المغلق التلوث الخارجي.\n*   **أقصى عائد**: بيئة محسنة لأعلى إنتاج.\n\n## الخاتمة\n\nتضع K-Farm معيارًا جديدًا. انضم إلينا في تشكيل مستقبل الزراعة. 🌱🚀",
+        "topic": "ثورة الزراعة الهوائية",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-ar",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "الزراعة العمودية للوسابي: إمكانيات لا حصر لها 🌱🚀",
+        "content": "# الزراعة العمودية للوسابي: إمكانيات لا حصر لها 🌱🚀\n\nتعمل الزراعة العمودية على زيادة كفاءة المساحة والإنتاجية إلى أقصى حد. بالنسبة للوسابي، فهي تقدم:\n\n*   **عائدات أعلى**: أنظمة زراعة مكدسة.\n*   **التحكم في البيئة**: ظروف مثالية على مدار السنة.\n*   **توفير المياه**: دورة مغلقة.\n\n### ريادة K-Farm\n\n*   **شتلات خالية من الفيروسات**: تقنية زراعة الأنسجة.\n*   **الزراعة الهوائية فائقة الدورة**: دورة حصاد مدتها 9 أشهر.\n*   **مراقبة الجودة**: إدارة دقيقة لمحتوى AITC.\n\nانضم إلى K-Farm في مستقبل زراعة الوسابي! **تواصل معنا الآن!**",
+        "topic": "فوائد الزراعة العمودية",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-ar",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "استراتيجية التوسع العالمي: رؤية K-Farm 🌍",
+        "content": "# استراتيجية التوسع العالمي: رؤية K-Farm 🌍\n\nK-Farm ليست مجرد نجاح محلي. نحن نوسع بصمتنا بسرعة في جميع أنحاء العالم.\n\n## الشراكات العالمية\n\nنتعاون مع أفضل الجامعات الزراعية ومعاهد البحوث في الولايات المتحدة وهولندا واليابان لتحسين تقنيتنا باستمرار.\n\n*   **بحث مشترك**: تطوير محاليل مغذية من الجيل التالي.\n*   **نقل التكنولوجيا**: ترخيص أنظمة الزراعة الهوائية لشركائنا العالميين.\n\n## الأهداف المستقبلية\n\nهدفنا هو أن نصبح **المنصة رقم 1 عالميًا لمزارع الوسابي الذكية**. ندعو المستثمرين والشركاء للانضمام إلى هذه الثورة الخضراء.",
+        "topic": "الرؤية العالمية",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-ar",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_FR = [
+    {
+        "title": "La Révolution Aéroponique de K-Farm : Nouvel Horizon pour l'Agriculture Intelligente du Wasabi",
+        "content": "# La Révolution Aéroponique de K-Farm : Nouvel Horizon pour l'Agriculture Intelligente du Wasabi\n\nLa demande mondiale de Wasabi augmente, mais la culture traditionnelle est confrontée à des défis dus au changement climatique et aux conditions environnementales. 🌱 K-Farm ouvre une nouvelle ère de l'agriculture intelligente du Wasabi grâce à une technologie aéroponique innovante.\n\n## Pourquoi nous avons besoin d'innovation\n\n*   **Longue période de culture** : Les méthodes traditionnelles prennent 18 à 24 mois.\n*   **Dépendance environnementale** : Nécessite des conditions de température et d'eau spécifiques.\n*   **Risques de pests** : L'agriculture basée sur le sol est vulnérable aux parasites.\n\n## Technologie Aéroponique K-Farm\n\nK-Farm utilise l'**aéroponie à cycle hyper** pour maximiser l'efficacité.\n\n### Caractéristiques Principales\n\n*   **Cycle Raccourci** : Récolte en seulement 9 mois.\n*   **Contrôle de Précision** : Contrôle basé sur les données de l'EC, du pH et du PPFD. 💧\n*   **Sans Maladie** : Le système fermé empêche la contamination externe.\n*   **Rendement Maximisé** : Environnement optimisé pour le rendement le plus élevé.\n\n## Conclusion\n\nK-Farm établit une nouvelle norme. Rejoignez-nous pour façonner l'avenir de l'agriculture. 🌱🚀",
+        "topic": "Révolution Aéroponique",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-fr",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Agriculture Verticale de Wasabi : Possibilités Illimitées 🌱🚀",
+        "content": "# Agriculture Verticale de Wasabi : Possibilités Illimitées 🌱🚀\n\nL'agriculture verticale maximise l'efficacité de l'espace et la productivité. Pour le Wasabi, elle offre :\n\n*   **Rendements Plus Élevés** : Systèmes de culture empilés.\n*   **Contrôle de l'Environnement** : Conditions parfaites toute l'année.\n*   **Économie d'Eau** : Circulation en boucle fermée.\n\n### Leadership de K-Farm\n\n*   **Plants Sans Virus** : Technologie de culture tissulaire.\n*   **Aéroponie à Cycle Hyper** : Cycle de récolte de 9 mois.\n*   **Contrôle de la Qualité** : Gestion précise de la teneur en AITC.\n\nRejoignez K-Farm dans l'avenir de la culture du Wasabi ! **Contactez-nous maintenant !**",
+        "topic": "Avantages de l'Agriculture Verticale",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-fr",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Stratégie d'Expansion Mondiale : La Vision de K-Farm 🌍",
+        "content": "# Stratégie d'Expansion Mondiale : La Vision de K-Farm 🌍\n\nK-Farm n'est pas seulement un succès national. Nous étendons rapidement notre empreinte dans le monde entier.\n\n## Partenariats Mondiaux\n\nNous collaborons avec les meilleures universités agricoles et instituts de recherche aux États-Unis, aux Pays-Bas et au Japon pour améliorer continuellement notre technologie.\n\n*   **Recherche Conjointe** : Développement de solutions nutritives de nouvelle génération.\n*   **Transfert de Technologie** : Licence de nos systèmes aéroponiques à des partenaires mondiaux.\n\n## Objectifs Futurs\n\nNotre objectif est de devenir la **plateforme de ferme intelligente de Wasabi n°1 au monde**. Nous invitons les investisseurs et partenaires à rejoindre cette révolution verte.",
+        "topic": "Vision Mondiale",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-fr",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_DE = [
+    {
+        "title": "K-Farms Aeroponik-Revolution: Neuer Horizont für Wasabi Smart Farming",
+        "content": "# K-Farms Aeroponik-Revolution: Neuer Horizont für Wasabi Smart Farming\n\nDie weltweite Nachfrage nach Wasabi steigt, aber der traditionelle Anbau steht aufgrund des Klimawandels und der Umweltbedingungen vor Herausforderungen. 🌱 K-Farm eröffnet durch innovative Aeroponik-Technologie eine neue Ära des intelligenten Wasabi-Anbaus.\n\n## Warum wir Innovation brauchen\n\n*   **Lange Anbauzeit**: Traditionelle Methoden dauern 18-24 Monate.\n*   **Umweltabhängigkeit**: Erfordert spezifische Temperatur- und Wasserbedingungen.\n*   **Schädlingsrisiken**: Bodenbasierter Anbau ist anfällig für Schädlinge.\n\n## K-Farm Aeroponik-Technologie\n\nK-Farm nutzt **Hyper-Cycle Aeroponik**, um die Effizienz zu maximieren.\n\n### Hauptmerkmale\n\n*   **Verkürzter Zyklus**: Ernte in nur 9 Monaten.\n*   **Präzisionskontrolle**: Datengesteuerte Kontrolle von EC, pH und PPFD. 💧\n*   **Krankheitsfrei**: Geschlossenes System verhindert externe Kontamination.\n*   **Maximierter Ertrag**: Optimierte Umgebung für höchsten Ertrag.\n\n## Fazit\n\nK-Farm setzt einen neuen Standard. Gestalten Sie mit uns die Zukunft der Landwirtschaft. 🌱🚀",
+        "topic": "Aeroponik-Revolution",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-de",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Wasabi Vertical Farming: Grenzenlose Möglichkeiten 🌱🚀",
+        "content": "# Wasabi Vertical Farming: Grenzenlose Möglichkeiten 🌱🚀\n\nVertical Farming maximiert Flächeneffizienz und Produktivität. Für Wasabi bietet es:\n\n*   **Höhere Erträge**: Gestapelte Anbausysteme.\n*   **Umweltkontrolle**: Perfekte Bedingungen das ganze Jahr über.\n*   **Wassersparen**: Geschlossener Kreislauf.\n\n### K-Farms Führung\n\n*   **Virenfreie Setzlinge**: Gewebekulturtechnologie.\n*   **Hyper-Cycle Aeroponik**: 9-monatiger Erntezyklus.\n*   **Qualitätskontrolle**: Präzises Management des AITC-Gehalts.\n\nBegleiten Sie K-Farm in die Zukunft des Wasabi-Anbaus! **Kontaktieren Sie uns jetzt!**",
+        "topic": "Vorteile von Vertical Farming",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-de",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Strategie zur globalen Expansion: K-Farms Vision 🌍",
+        "content": "# Strategie zur globalen Expansion: K-Farms Vision 🌍\n\nK-Farm ist nicht nur ein heimischer Erfolg. Wir bauen unsere Präsenz weltweit rasch aus.\n\n## Globale Partnerschaften\n\nWir arbeiten mit führenden landwirtschaftlichen Universitäten und Forschungsinstituten in den USA, den Niederlanden und Japan zusammen, um unsere Technologie kontinuierlich zu verbessern.\n\n*   **Gemeinsame Forschung**: Entwicklung von Nährlösungen der nächsten Generation.\n*   **Technologietransfer**: Lizenzierung unserer Aeroponik-Systeme an globale Partner.\n\n## Zukunftsziele\n\nUnser Ziel ist es, die **weltweit führende Plattform für Wasabi Smart Farms** zu werden. Wir laden Investoren und Partner ein, sich dieser grünen Revolution anzuschließen.",
+        "topic": "Globale Vision",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-de",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
+const FALLBACK_POSTS_ES = [
+    {
+        "title": "La Revolución Aeropónica de K-Farm: Nuevo Horizonte para el Cultivo Inteligente de Wasabi",
+        "content": "# La Revolución Aeropónica de K-Farm: Nuevo Horizonte para el Cultivo Inteligente de Wasabi\n\nLa demanda mundial de Wasabi está aumentando, pero el cultivo tradicional enfrenta desafíos debido al cambio climático y las condiciones ambientales. 🌱 K-Farm está abriendo una nueva era de cultivo inteligente de Wasabi a través de una innovadora tecnología aeropónica.\n\n## Por qué necesitamos innovación\n\n*   **Largo período de cultivo**: Los métodos tradicionales toman de 18 a 24 meses.\n*   **Dependencia ambiental**: Requiere condiciones específicas de temperatura y agua.\n*   **Riesgos de plagas**: La agricultura basada en el suelo es vulnerable a las plagas.\n\n## Tecnología Aeropónica K-Farm\n\nK-Farm utiliza **Aeroponía de Híper-Ciclo** para maximizar la eficiencia.\n\n### Características Clave\n\n*   **Ciclo Acortado**: Cosecha en solo 9 meses.\n*   **Control de Precisión**: Control basado en datos de EC, pH y PPFD. 💧\n*   **Libre de Enfermedades**: El sistema cerrado previene la contaminación externa.\n*   **Rendimiento Maximizado**: Entorno optimizado para la mayor producción.\n\n## Conclusión\n\nK-Farm está estableciendo un nuevo estándar. Únase a nosotros para dar forma al futuro de la agricultura. 🌱🚀",
+        "topic": "Revolución Aeropónica",
+        "keywords": "smart farm, aeroponics, wasabi, investment",
+        "tags": ["smart farm", "aeroponics", "wasabi"],
+        "author": "AI Writer",
+        "image": "https://image.pollinations.ai/prompt/A%20futuristic%20wasabi%20farm%20using%20aeroponics%20technology.?width=1024&height=600&seed=116779&model=flux&nologo=true",
+        "id": 1766927075509,
+        "slug": "k-farm-aeroponics-es",
+        "timestamp": "2025-12-28T13:04:35.509Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Agricultura Vertical de Wasabi: Posibilidades Ilimitadas 🌱🚀",
+        "content": "# Agricultura Vertical de Wasabi: Posibilidades Ilimitadas 🌱🚀\n\nLa agricultura vertical maximiza la eficiencia del espacio y la productividad. Para el Wasabi, ofrece:\n\n*   **Mayores Rendimientos**: Sistemas de cultivo apilados.\n*   **Control del Medio Ambiente**: Condiciones perfectas durante todo el año.\n*   **Ahorro de Agua**: Circulación de circuito cerrado.\n\n### Liderazgo de K-Farm\n\n*   **Plántulas Libres de Virus**: Tecnología de cultivo de tejidos.\n*   **Aeroponía de Híper-Ciclo**: Ciclo de cosecha de 9 meses.\n*   **Control de Calidad**: Gestión precisa del contenido de AITC.\n\n¡Únase a K-Farm en el futuro del cultivo de Wasabi! **¡Contáctenos ahora!**",
+        "topic": "Beneficios de la Agricultura Vertical",
+        "keywords": "smart farm, aeroponics, innovation",
+        "tags": ["smart farm", "aeroponics", "innovation"],
+        "author": "AI Writer",
+        "image": "/images/blog/stock_leaf.png",
+        "id": 1766919908100,
+        "slug": "wasabi-smart-farm-intro-es",
+        "timestamp": "2025-12-28T11:05:08.100Z",
+        "category": "Company Blog"
+    },
+    {
+        "title": "Estrategia de Expansión Global: La Visión de K-Farm 🌍",
+        "content": "# Estrategia de Expansión Global: La Visión de K-Farm 🌍\n\nK-Farm no es solo un éxito nacional. Estamos expandiendo rápidamente nuestra huella en todo el mundo.\n\n## Asociaciones Globales\n\nColaboramos con las mejores universidades agrícolas e institutos de investigación en EE. UU., Países Bajos y Japón para mejorar continuamente nuestra tecnología.\n\n*   **Investigación Conjunta**: Desarrollo de soluciones nutritivas de próxima generación.\n*   **Transferencia de Tecnología**: Licencia de nuestros sistemas aeropónicos a socios globales.\n\n## Objetivos Futuros\n\nNuestro objetivo es convertirnos en la **Plataforma de Granja Inteligente de Wasabi Nro. 1 del Mundo**. Invitamos a inversores y socios a unirse a esta revolución verde.",
+        "topic": "Visión Global",
+        "keywords": "global expansion, partnership, vision",
+        "tags": ["global", "partnership", "future"],
+        "author": "Jerry Hong",
+        "image": "https://image.pollinations.ai/prompt/Global%20network%20map%20connecting%20smart%20farms%20worldwide?width=1024&height=600&nologo=true",
+        "id": 1766910000000,
+        "slug": "k-farm-global-vision-es",
+        "timestamp": "2025-12-28T09:00:00.000Z",
+        "category": "Company Blog"
+    }
+];
+
 async function readDb(filename: string): Promise<any[]> {
     if (IS_VERCEL) {
         try {
@@ -348,9 +642,36 @@ export async function saveBlogPost(data: any) {
     return { success: true, slug };
 }
 
-export async function getBlogPosts() {
-    const data = await readDb('posts.json');
-    return data.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+export async function getBlogPosts(lang: string = 'ko') {
+    console.log(`[getBlogPosts] Request for lang: ${lang}`);
+    // 🔥 FORCE USE OF HARDCODED DATA FOR MULTI-LANG TO FIX CACHE ISSUES
+    // This ensures specific language requests always get the correct static content
+    // ignoring any stale file system caches.
+    if (lang === 'en') return FALLBACK_POSTS_EN;
+    if (lang === 'ja') return FALLBACK_POSTS_JA;
+    if (lang === 'zh-CN') return FALLBACK_POSTS_ZH;
+    if (lang === 'ar') return FALLBACK_POSTS_AR;
+    if (lang === 'fr') return FALLBACK_POSTS_FR;
+    if (lang === 'de') return FALLBACK_POSTS_DE;
+    if (lang === 'es') return FALLBACK_POSTS_ES;
+
+    // Determine the filename based on language
+    const filename = 'posts.json'; // Only Korean uses the dynamic file for now
+
+    try {
+        let data = await readDb(filename);
+
+        // Usage: If file is empty, use hardcoded fallback based on Language
+        if (!data || data.length === 0) {
+            // Default fallback for 'ko'
+            return FALLBACK_POSTS;
+        }
+
+        return data.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    } catch (e) {
+        // Error handling fallbacks (only needed for 'ko' really, but safe to keep)
+        return FALLBACK_POSTS;
+    }
 }
 
 export async function getBlogPost(slug: string) {
@@ -551,4 +872,39 @@ export async function searchPartners(keyword: string, page: number = 1, country:
 
     // Add isMock flag
     return paginatedResults.map(item => ({ ...item, isMock: true }));
+}
+
+import { sendEmail } from './email';
+
+export async function sendProposalEmail(to: string, partnerName: string) {
+    if (!to || !to.includes('@')) {
+        return { success: false, message: 'Invalid email address' };
+    }
+
+    const subject = `[Proposal] Partnership Opportunity with K-Farm Group / Wasabi Div.`;
+    const html = `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <p>Dear <strong>${partnerName}</strong> Team,</p>
+            <p>I hope this email finds you well.</p>
+            <p>This is <strong>K-Farm Group / Wasabi Div.</strong>, a premier Ag-Tech company specializing in Bio-Tissue Culture Wasabi and Aeroponics Smart Farm solutions in South Korea.</p>
+            <p>We have been following <strong>${partnerName}</strong>'s activities with great interest and believe there is a significant synergy to be explored between our organizations.</p>
+            <p>We would like to introduce our breakthrough <strong>"Hyper-Cycle Aeroponics"</strong> technology which shortens Wasabi cultivation time from 24 months to just 9 months, while ensuring virus-free quality.</p>
+            <p>Please visit our official website for more technical details: <a href="https://www.k-wasabi.kr" style="color: #4CAF50;">www.k-wasabi.kr</a></p>
+            <p>We are keen to discuss potential partnership opportunities in distribution or technology setup.</p>
+            <p>Looking forward to your positive response.</p>
+            <br/>
+            <p>Best regards,</p>
+            <hr style="border: 0; border-top: 1px solid #eee;" />
+            <p>
+                <strong>Jerry Y. Hong</strong><br/>
+                <span style="color: #666; font-size: 0.9em;">International Marketing Director</span><br/>
+                <strong>K-Farm Group / Wasabi Div.</strong><br/>
+                <a href="mailto:info@k-wasabi.kr" style="color: #333; text-decoration: none;">info@k-wasabi.kr</a><br/>
+                <a href="https://www.k-wasabi.kr" style="color: #4CAF50; text-decoration: none;">www.k-wasabi.kr</a>
+            </p>
+        </div>
+    `;
+
+    const result = await sendEmail({ to, subject, html });
+    return result;
 }

@@ -1,33 +1,36 @@
 'use client';
 
-import { Hero } from '@/components/ui/Hero';
+import { Container, Title, Text, SimpleGrid, Group, Button, Box, Grid, GridCol, Paper, Badge, Stack, Image as MantineImage } from '@mantine/core';
 import { FeatureCard } from '@/components/ui/FeatureCard';
-import { Container, SimpleGrid, Title, Text, Box, Grid, Paper, Stack, Badge, Button, Group, Image } from '@mantine/core';
+import { Hero } from '@/components/ui/Hero';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 
 export default function Home() {
+  const { t } = useTranslation();
+
   const features = [
     {
-      title: 'Tissue Culture Seedlings',
-      description: 'Virus-free, premium 무병묘(virus-free seedlings) produced via advanced tissue culture for maximum vigor and yield.',
+      title: t('feat_1_title'),
+      description: t('feat_1_desc'),
       image: '/images/tissue-culture.jpg',
       link: '/products/seedlings',
     },
     {
-      title: 'Aeroponic Cultivation',
-      description: 'Advanced vertical farming achieving 25x higher productivity and 50% faster growth cycles than traditional methods.',
+      title: t('feat_2_title'),
+      description: t('feat_2_desc'),
       image: '/images/smart-farm-rows.jpg',
       link: '/cultivation',
     },
     {
-      title: 'Premium Wasabi Products',
-      description: 'High-value Rhizomes and year-round fresh leaves/stems harvested at peak freshness from our smart farm.',
+      title: t('feat_3_title'),
+      description: t('feat_3_desc'),
       image: '/images/wasabi-leaves.jpg',
       link: '/products/fresh',
     },
     {
-      title: 'Smart Farm Consulting',
-      description: 'Comprehensive solutions from facility design to tech transfer and purchase guarantees for a 3-5 year ROI model.',
+      title: t('feat_4_title'),
+      description: t('feat_4_desc'),
       image: '/images/smart-farm-interior.jpg',
       link: '/consulting',
     },
@@ -37,87 +40,89 @@ export default function Home() {
     <>
       <Hero />
       <Container size="xl" py="xl">
-        <Title order={2} ta="center" mt="sm">
-          Our Business Areas
+        <Title order={2} ta="center" mt="sm" fw={900} c="dark.9">
+          {t('section_title')}
         </Title>
-        <Text c="dimmed" ta="center" mt="md" mb={50}>
-          From seed to shelf, we provide comprehensive wasabi solutions.
+        <Text c="gray.8" fw={500} ta="center" mt="md" mb={50}>
+          {t('section_subtitle')}
         </Text>
 
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
+          {features.map((feature, idx) => (
+            <FeatureCard key={idx} {...feature} />
           ))}
         </SimpleGrid>
 
         <Box mt={100} py={60} bg="var(--mantine-color-gray-0)" style={{ borderRadius: 'var(--mantine-radius-xl)', padding: '40px' }}>
           <Grid align="center">
-            <Grid.Col span={{ base: 12, md: 7 }}>
-              <Title order={2} mb="md">Responding to the Global Wasabi Crisis</Title>
-              <Text size="lg" mb="xl">
-                Climate change and an aging workforce are causing traditional wasabi production to plummet worldwide.
-                Our technology ensures a stable, high-quality supply in a market where demand is soaring.
+            <GridCol span={{ base: 12, md: 7 }}>
+              <Title order={2} mb="md" fw={900} c="dark.9">{t('market_title')}</Title>
+              <Text size="lg" mb="xl" c="gray.8" fw={500}>
+                {t('market_desc')}
               </Text>
               <Button component={Link} href="/insights" size="lg" color="wasabi" variant="outline" radius="md">
-                Explore Market Insights
+                {t('market_btn')}
               </Button>
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 5 }}>
+            </GridCol>
+            <GridCol span={{ base: 12, md: 5 }}>
               <Paper shadow="md" p="xl" radius="lg" withBorder>
-                <Title order={3} ta="center" mb="lg">Market Trends</Title>
+                <Title order={3} ta="center" mb="lg" fw={800} c="dark.9">{t('trend_title')}</Title>
                 <Stack gap="md">
-                  <TrendItem label="Japan Production" value="-40% (Last 10yrs)" color="red" />
-                  <TrendItem label="Global Demand" value="+300% (Last 10yrs)" color="wasabi" />
-                  <TrendItem label="Product Potential" value="Food, Bio, Cosmetics" color="blue" />
+                  <TrendItem label={t('trend_label_1')} value={t('trend_val_1')} color="red" />
+                  <TrendItem label={t('trend_label_2')} value={t('trend_val_2')} color="wasabi" />
+                  <TrendItem label={t('trend_label_3')} value={t('trend_val_3')} color="blue" />
                 </Stack>
               </Paper>
-            </Grid.Col>
+            </GridCol>
           </Grid>
         </Box>
+
         <Box mt={100} py={60}>
           <Grid gutter={50} align="center">
-            <Grid.Col span={{ base: 12, md: 5 }}>
+            <GridCol span={{ base: 12, md: 5 }}>
               <Paper shadow="xl" radius="lg" style={{ overflow: 'hidden' }}>
-                <Image src="/images/family-dinner-hd.png" alt="Family enjoying wasabi" />
+                <MantineImage src="/images/family-dinner-hd.png" alt="Family" />
               </Paper>
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 7 }}>
-              <Badge color="red" size="lg" mb="md">The Ultimate Experience</Badge>
-              <Title order={2} mb="md">Nature's Shield on Your Plate</Title>
-              <Text size="lg" mb="xl">
-                Wasabi is more than a condiment; it's a protector of flavor and health.
-                Whether it's paired with premium Sashimi or a perfectly marbled K-BBQ steak,
-                our fresh wasabi elevates every meal into a joyful, healthy experience for the whole family.
+            </GridCol>
+            <GridCol span={{ base: 12, md: 7 }}>
+              <Badge color="red" size="lg" mb="md">{t('gourmet_badge')}</Badge>
+              <Title order={2} mb="md" fw={900} c="dark.9">{t('gourmet_title')}</Title>
+              <Text size="lg" mb="xl" c="gray.8" fw={500}>
+                {t('gourmet_desc')}
               </Text>
               <Button component={Link} href="/products/fresh" size="lg" color="wasabi" radius="md">
-                Buy Fresh Wasabi
+                {t('gourmet_btn')}
               </Button>
-            </Grid.Col>
+            </GridCol>
           </Grid>
         </Box>
+
         <Box mt={100} mb={60} py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
           <Grid align="center" gutter={60}>
-            <Grid.Col span={{ base: 12, md: 4 }}>
-              <Paper shadow="sm" p="xl" radius="lg" withBorder style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Image src="/images/logo.jpg?v=2" w="80%" style={{ maxWidth: '250px', border: '4px solid white', borderRadius: '50%' }} alt="Brand Logo" />
+            <GridCol span={{ base: 12, md: 4 }}>
+              <Paper shadow="sm" p="xl" radius="lg" withBorder style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <MantineImage src="/images/logo.jpg?v=2" w="80%" style={{ maxWidth: '250px', border: '4px solid white', borderRadius: '50%' }} alt="Logo" />
               </Paper>
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 8 }}>
-              <Text c="wasabi" fw={700} mb="xs" size="sm" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>Brand Identity</Text>
-              <Title order={2} mb="md">Harmony of Nature & Technology</Title>
-              <Text size="lg" mb="md" c="dimmed">
-                The <span style={{ color: 'var(--mantine-color-wasabi-6)', fontWeight: 600 }}>Wasabi Leaf with Electronic Circuits</span> symbolizes the seamless fusion of nature and cutting-edge Smart Farm technology.
+            </GridCol>
+            <GridCol span={{ base: 12, md: 8 }}>
+              <Text c="wasabi" fw={700} mb="xs" size="sm" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>{t('identity_tag')}</Text>
+              <Title order={2} mb="md" fw={900} c="dark.9">{t('identity_title')}</Title>
+
+              <Text size="lg" mb="md" c="gray.8" fw={500}>
+                {t('identity_desc_1')}
               </Text>
-              <Text size="lg" mb="md" c="dimmed">
-                The <span style={{ color: 'var(--mantine-color-blue-6)', fontWeight: 600 }}>Circular Form</span> symbolizes our global network and the sustainable "Hyper-Cycle" ecosystem of our smart farms.
+
+              <Text size="lg" mb="md" c="gray.8" fw={500}>
+                {t('identity_desc_2')}
               </Text>
-              <Text size="lg">
-                Together, distinctively K-Farm Group, they embody our mission to deliver the healthiest, purest gifts of nature through cutting-edge innovation.
+
+              <Text size="lg" c="gray.8" fw={500}>
+                {t('identity_desc_3')}
               </Text>
-            </Grid.Col>
+            </GridCol>
           </Grid>
         </Box>
-      </Container >
+      </Container>
     </>
   );
 }
@@ -125,9 +130,8 @@ export default function Home() {
 function TrendItem({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <Group justify="space-between">
-      <Text fw={500}>{label}</Text>
+      <Text fw={600} c="gray.9">{label}</Text>
       <Badge color={color} size="lg">{value}</Badge>
     </Group>
   );
 }
-

@@ -1,106 +1,52 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Group, Select } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
-
-declare global {
-    interface Window {
-        google: any;
-        googleTranslateElementInit: any;
-    }
-}
+import { useTranslation } from '@/lib/i18n';
 
 const LANGUAGES = [
-    { value: 'en', label: 'English' },
     { value: 'ko', label: '한국어' },
+    { value: 'en', label: 'English' },
     { value: 'ja', label: '日本語' },
-    { value: 'de', label: 'Deutsch' },
+    { value: 'zh-CN', label: '中文' },
     { value: 'fr', label: 'Français' },
+    { value: 'de', label: 'Deutsch' },
     { value: 'es', label: 'Español' },
-    { value: 'ar', label: 'Arabic (العربية)' },
-    { value: 'zh-CN', label: '中文 (简体)' },
+    { value: 'ar', label: 'Arabic' },
 ];
 
 export function TranslationWidget() {
-    // Default to English if no preference
-    const [selected, setSelected] = useState<string | null>('en');
-
-    useEffect(() => {
-        window.googleTranslateElementInit = () => {
-            new window.google.translate.TranslateElement(
-                {
-                    pageLanguage: 'en',
-                    includedLanguages: 'en,ko,ja,zh-CN,zh-TW,de,fr,es,ar',
-                    autoDisplay: false,
-                },
-                'google_translate_element'
-            );
-        };
-
-        const scriptId = 'google-translate-script';
-        if (!document.getElementById(scriptId)) {
-            const script = document.createElement('script');
-            script.id = scriptId;
-            script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            script.async = true;
-            document.body.appendChild(script);
-        }
-    }, []);
-
-    useEffect(() => {
-        // Check for existing Google Translate cookie
-        const cookies = document.cookie.split(';');
-        const googtrans = cookies.find(c => c.trim().startsWith('googtrans='));
-        if (googtrans) {
-            const lang = googtrans.split('/').pop();
-            if (lang && LANGUAGES.some(l => l.value === lang)) {
-                setSelected(lang);
-            }
-        }
-    }, []);
-
-    const handleChange = (value: string | null) => {
-        if (!value) return;
-        setSelected(value);
-
-        // Magic: Control the hidden Google Widget
-        const combo = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-        if (combo) {
-            combo.value = value;
-            combo.dispatchEvent(new Event('change'));
-        }
-
-        // Force cookie update for persistence
-        document.cookie = `googtrans=/auto/${value}; path=/; domain=${window.location.hostname}`;
-        document.cookie = `googtrans=/auto/${value}; path=/;`;
-    };
+    const { language, setLanguage } = useTranslation();
 
     return (
-        <Group gap={5} align="center" style={{ marginRight: 10 }}>
-            {/* Custom Native Language Selector */}
+        <Group gap={0} align="center">
             <Select
-                placeholder="Language"
                 data={LANGUAGES}
-                value={selected}
-                onChange={handleChange}
+                value={language}
+                onChange={(val) => setLanguage(val as any)}
                 size="xs"
-                w={110}
-                variant="filled"
-                leftSection={<IconLanguage size={14} />}
+                w={100}
+                variant="unstyled"
+                leftSection={<IconLanguage size={16} color="var(--mantine-color-wasabi-7)" />}
                 allowDeselect={false}
                 styles={{
                     input: {
+                        fontSize: '13px',
+                        fontWeight: 800,
+                        color: 'var(--mantine-color-dark-4)',
+                        paddingLeft: '33px'
+                    },
+                    option: {
                         fontSize: '12px',
-                        fontWeight: 500,
-                        backgroundColor: '#f1f3f5',
-                        border: 'none'
+                        fontWeight: 600
                     }
                 }}
+                comboboxProps={{
+                    shadow: 'xl',
+                    transitionProps: { transition: 'pop-top-right', duration: 200 },
+                    withinPortal: true
+                }}
             />
-
-            {/* Completely Hidden Google Translate Widget */}
-            <div id="google_translate_element" style={{ display: 'none' }}></div>
         </Group>
     );
 }
