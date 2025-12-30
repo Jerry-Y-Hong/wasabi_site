@@ -147,15 +147,15 @@ export default function HunterPage() {
             }
         },
         {
-            label: 'Special: Tennis Export 🎾',
+            label: 'Tennis Racket (Big Fish) 🎾',
             icon: '🎾',
             keywords: {
-                'KR': '테니스 라켓 유통 도매 수입 업체',
-                'JP': 'テニスラケット 輸入 卸売業者 スポーツ用品店',
-                'US': 'Tennis racket distributors importers',
-                'CN': '网球拍 进口商 批发',
-                'VN': 'Nhà nhập khẩu vợt tennis',
-                'Global': 'Tennis racket distributors importers'
+                'KR': '대형 식품 유통사 구매 담당자 와사비',
+                'JP': '大手 食品 商社 わさび 卸売 高級 寿司 チェーン 本社 購買部',
+                'US': 'Major Food Distributors Purchasing Director Wasabi',
+                'CN': '大型 食品 贸易公司 采购部',
+                'VN': 'Nhà phân phối thực phẩm lớn',
+                'Global': 'Major Food Trading Companies Buyers'
             }
         }
     ];
