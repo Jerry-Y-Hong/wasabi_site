@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Group, Anchor, Text, Stack, Image } from '@mantine/core';
+import { Container, Group, Anchor, Text, Stack, Image, ActionIcon } from '@mantine/core';
 import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/icons-react';
 import classes from './Footer.module.css';
 
@@ -41,9 +41,15 @@ export function Footer() {
 
                 <Group className={classes.links}>{items}</Group>
                 <Group gap="xs" justify="flex-end" wrap="nowrap">
-                    <IconBrandTwitter size={18} stroke={1.5} />
-                    <IconBrandYoutube size={18} stroke={1.5} />
-                    <IconBrandInstagram size={18} stroke={1.5} />
+                    <ActionIcon size="lg" color="#1DA1F2" variant="subtle">
+                        <IconBrandTwitter size={24} stroke={1.5} />
+                    </ActionIcon>
+                    <ActionIcon size="lg" color="#FF0000" variant="subtle">
+                        <IconBrandYoutube size={24} stroke={1.5} />
+                    </ActionIcon>
+                    <ActionIcon size="lg" color="#E1306C" variant="subtle">
+                        <IconBrandInstagram size={24} stroke={1.5} />
+                    </ActionIcon>
                 </Group>
             </Container>
         </div>
