@@ -35,17 +35,21 @@ export async function generateProposalEmail(data: ProposalRequest) {
             languageInstruction = '**LANGUAGE: JAPANESE (Business Keigo/Formal)**';
             contextInstruction = '- Tone: Highly polite "Keigo", respectful, emphasizing "trust" and "quality".\n- Cultural Nuance: Start with greetings about the season or weather if appropriate, use standard Japanese business email structure.';
             companyContext = `
-            - Tech: ウイルスフリーわさび苗 (組織培養), エアロポニック・スマートファームシステム (Hyper-Cycle).
-            - Goal: わさび苗の輸出、スマートファーム技術提携、共同研究 (R&D).
+            - Location: 韩国 江原道 華川郡 (Wasabi Mecca of Korea).
+            - Role: Exclusive Aggregator & Distributor for nationwide Wasabi farms.
+            - Products: 全ての部位 (葉, 茎, 根茎, 粉末) を取り扱っています。
+            - Capabilities: 自社垂直農場 + 全国ネットワークによる安定供給保証.
             - My Name: 洪 泳喜 (Hong Young-hee)
             - My Title: 営業責任者 (Sales Director)
             `;
         } else if (country === 'KR') {
             languageInstruction = '**LANGUAGE: KOREAN (Business Formal)**';
-            contextInstruction = '- Tone: Professional, polite (Has하십시오-che), emphasizing "innovation" and "synergy".\n- Cultural Nuance: Standard Korean business email format.';
+            contextInstruction = '- Tone: Professional, polite (Has하십시오-che), emphasizing "reliability" and "stable supply".\n- Cultural Nuance: Standard Korean business email format.';
             companyContext = `
-            - Tech: 무병 와사비 모종 (조직배양), 초고속 에어로포닉 스마트팜 시스템.
-            - Goal: 모종 공급, 스마트팜 솔루션 컨설팅, 공동 R&D.
+            - Location: 강원도 화천군 (한국 와사비의 메카).
+            - Role: 전국 와사비 농원 수매 및 유통 전담 (본사 자체 수직농장 보유).
+            - Products: 와사비 잎, 줄기, 근경(뿌리), 분말 가공품 일체 취급.
+            - USP: 귀하께서 원하시는 어떠한 물량도 공급 가능한 탄탄한 네트워크 구축.
             - My Name: 홍영희 (Jerry Y. Hong)
             - My Title: 영업 이사 (Sales Director)
             `;
@@ -54,8 +58,10 @@ export async function generateProposalEmail(data: ProposalRequest) {
             languageInstruction = '**LANGUAGE: ENGLISH (Professional Business)**';
             contextInstruction = '- Tone: Professional, direct but polite, emphasizing "mutual benefit" and "efficiency".\n- Cultural Nuance: Clear value proposition, concise.';
             companyContext = `
-            - Tech: Virus-free Wasabi Seedlings (Tissue Culture), Aeroponic Smart Farm Systems.
-            - Goal: Exporting seedlings, Consultations, or Joint R&D.
+            - Location: Hwacheon-gun, Gangwon-do (The Mecca of Korean Wasabi).
+            - Role: Exclusive National Distributor & Aggregator.
+            - Products: We handle ALL parts: Leaves, Stems, Rhizomes (Roots), and Powder.
+            - USP: We have our own Vertical Farm + a massive network to guarantee supply volume.
             - My Name: Jerry Y. Hong (洪 泳喜)
             - My Title: Sales Director
             `;
@@ -238,7 +244,7 @@ export async function generateVideoScript(topic: string, seriesType: string = 'p
     - Fields per object:
       - "scene_number" (integer)
       - "visual_description" (detailed camera instruction, assume Vertical 9:16 format for Shorts)
-      - "image_prompt" (A highly detailed, English prompt optimized for AI Image Generators like Midjourney/Firefly. Describe lighting, style, camera angle, and content precisely.)
+      - "image_prompt" (A highly detailed, English prompt optimized for AI Video Generators (Veo/Sora). CRITICAL: You MUST explicitly include 'Indoor Smart Farm', 'Vertical Farming Towers', 'LED Grow Lights', 'Clean Lab Environment' in every prompt to avoid outdoor/soil-based generation. ALWAYS append these style keywords: 'Cinematic lighting, 8k, Photorealistic, Unreal Engine 5 render style, Vertical Ratio'.)
       - "voiceover" (the actual script to be spoken. engaging and concise)
       - "on_screen_text" (important data/KPIs to show as overlay)
       - "technical_note" (director's note for sound effects/music mood)

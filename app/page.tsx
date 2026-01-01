@@ -5,9 +5,14 @@ import { FeatureCard } from '@/components/ui/FeatureCard';
 import { Hero } from '@/components/ui/Hero';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
+import { Carousel } from '@mantine/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import { useRef } from 'react';
+import '@mantine/carousel/styles.css';
 
 export default function Home() {
   const { t } = useTranslation();
+  const autoplay = useRef(Autoplay({ delay: 3000 }));
 
   const features = [
     {
@@ -52,6 +57,42 @@ export default function Home() {
             <FeatureCard key={idx} {...feature} />
           ))}
         </SimpleGrid>
+
+        <Box mt={80} py={60} bg="black" style={{ borderRadius: 'var(--mantine-radius-xl)', overflow: 'hidden', position: 'relative' }}>
+          <Container size="lg" style={{ position: 'relative', zIndex: 2 }}>
+            <Group justify="center" mb="lg">
+              <Badge color="red" size="lg" variant="filled">COMING SOON</Badge>
+            </Group>
+            <Title order={2} ta="center" c="white" mb="sm" fw={900} style={{ fontSize: '3rem' }}>
+              THE GREEN REVOLUTION
+            </Title>
+            <Text ta="center" c="gray.4" mb={50} size="xl">
+              K-Wasabi 1st Official Brand Film
+            </Text>
+            <Box
+              mt={50}
+              style={{
+                position: 'relative',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: '0 20px 60px rgba(0,255,100,0.15)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}
+            >
+              <video
+                src="/videos/brand_film_full.mp4"
+                controls
+                autoPlay
+                muted
+                loop
+                style={{ width: '100%', display: 'block', aspectRatio: '16/9', objectFit: 'cover' }}
+              />
+            </Box>
+            <Text ta="center" c="dimmed" mt="md" size="sm">
+              * A Journey from Hwacheon's Snow to Your Table
+            </Text>
+          </Container>
+        </Box >
 
         <Box mt={100} py={60} bg="var(--mantine-color-gray-0)" style={{ borderRadius: 'var(--mantine-radius-xl)', padding: '40px' }}>
           <Grid align="center">
@@ -122,7 +163,7 @@ export default function Home() {
             </GridCol>
           </Grid>
         </Box>
-      </Container>
+      </Container >
     </>
   );
 }

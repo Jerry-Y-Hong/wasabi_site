@@ -5,6 +5,7 @@ import { promises as fsp } from 'fs';
 import pathLib from 'path';
 import { revalidatePath } from 'next/cache';
 import { put, list } from '@vercel/blob';
+import { spyOnCompany } from '@/lib/hunter-spy';
 
 // Use /tmp only on Vercel deployment
 // Use /tmp only on Vercel deployment, otherwise use strict absolute path for local
@@ -516,46 +517,24 @@ export async function updateHunterInfo(id: number, data: any) {
 
 export async function scanWebsite(url: string) {
     try {
-        console.log(`[Scan] Visiting: ${url}`);
+        console.log(`[Scan] Action Triggered for: ${url}`);
 
-        // Timeout handling (5 seconds max)
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const result = await spyOnCompany(url);
+        console.log(`[Scan] Result:`, result.success ? 'Success' : 'Fail');
 
-        const response = await fetch(url, {
-            signal: controller.signal,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) throw new Error('Failed to load page');
-
-        const html = await response.text();
-
-        // Regex Patterns
-        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-        const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
-
-        // Extraction
-        const foundEmails = html.match(emailRegex) || [];
-        const foundPhones = html.match(phoneRegex) || [];
-
-        // Filter valid stuff (remove junk like image@2x.png)
-        const validEmails = [...new Set(foundEmails)].filter(e => !e.endsWith('.png') && !e.endsWith('.jpg') && !e.endsWith('.svg') && !e.endsWith('.webp') && e.length < 50).slice(0, 3); // Max 3 unique
-        const validPhones = [...new Set(foundPhones)].filter(p => p.length > 8 && p.length < 20).slice(0, 3); // Max 3 unique
-
-        return {
-            success: true,
-            emails: validEmails,
-            phones: validPhones,
-            message: `Found ${validEmails.length} emails, ${validPhones.length} phones.`
-        };
-
+        if (result.success && result.data) {
+            return {
+                success: true,
+                emails: result.data.emails,
+                phones: result.data.phones,
+                message: `Found ${result.data.emails.length} emails, ${result.data.phones.length} phones.`
+            };
+        } else {
+            return { success: false, error: result.error || 'Could not access website.' };
+        }
     } catch (error) {
-        console.error(`[Scan] Error scanning ${url}:`, error);
-        return { success: false, error: 'Could not access website. (Block/Timeout)' };
+        console.error(`[Scan] Critical Error scanning ${url}:`, error);
+        return { success: false, error: 'System Error during scan.' };
     }
 }
 
@@ -876,35 +855,29 @@ export async function searchPartners(keyword: string, page: number = 1, country:
 
 import { sendEmail } from './email';
 
-export async function sendProposalEmail(to: string, partnerName: string) {
+export async function sendProposalEmail(to: string, partnerName: string, subject?: string, body?: string) {
     if (!to || !to.includes('@')) {
         return { success: false, message: 'Invalid email address' };
     }
 
-    const subject = `[Proposal] Partnership Opportunity with K-Farm Group / Wasabi Div.`;
-    const html = `
+    const emailSubject = subject || `[Proposal] Partnership Opportunity with K-Wasabi`;
+
+    // Use the dynamic body if provided, otherwise use the legacy template
+    const emailHtml = body
+        ? `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; white-space: pre-wrap;">${body}</div>`
+        : `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <p>Dear <strong>${partnerName}</strong> Team,</p>
-            <p>I hope this email finds you well.</p>
-            <p>This is <strong>K-Farm Group / Wasabi Div.</strong>, a premier Ag-Tech company specializing in Bio-Tissue Culture Wasabi and Aeroponics Smart Farm solutions in South Korea.</p>
-            <p>We have been following <strong>${partnerName}</strong>'s activities with great interest and believe there is a significant synergy to be explored between our organizations.</p>
-            <p>We would like to introduce our breakthrough <strong>"Hyper-Cycle Aeroponics"</strong> technology which shortens Wasabi cultivation time from 24 months to just 9 months, while ensuring virus-free quality.</p>
-            <p>Please visit our official website for more technical details: <a href="https://www.k-wasabi.kr" style="color: #4CAF50;">www.k-wasabi.kr</a></p>
-            <p>We are keen to discuss potential partnership opportunities in distribution or technology setup.</p>
-            <p>Looking forward to your positive response.</p>
+            <p>This is <strong>K-Farm Group / Wasabi Div.</strong> (K-Wasabi) from Korea.</p>
+            <p>We are the exclusive aggregator and distributor for Wasabi farms in Hwacheon-gun, the Mecca of Korean Wasabi.</p>
+            <p>We supply all parts: Leaves, Stems, Roots, and Powder.</p>
+            <p>Please check our proposal attached or visit <a href="https://www.k-wasabi.kr">www.k-wasabi.kr</a>.</p>
             <br/>
             <p>Best regards,</p>
-            <hr style="border: 0; border-top: 1px solid #eee;" />
-            <p>
-                <strong>Jerry Y. Hong</strong><br/>
-                <span style="color: #666; font-size: 0.9em;">International Marketing Director</span><br/>
-                <strong>K-Farm Group / Wasabi Div.</strong><br/>
-                <a href="mailto:info@k-wasabi.kr" style="color: #333; text-decoration: none;">info@k-wasabi.kr</a><br/>
-                <a href="https://www.k-wasabi.kr" style="color: #4CAF50; text-decoration: none;">www.k-wasabi.kr</a>
-            </p>
+            <p><strong>Jerry Y. Hong</strong><br/>Sales Director<br/>K-Wasabi</p>
         </div>
     `;
 
-    const result = await sendEmail({ to, subject, html });
+    const result = await sendEmail({ to, subject: emailSubject, html: emailHtml });
     return result;
 }

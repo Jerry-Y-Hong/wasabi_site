@@ -1,8 +1,8 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader } from '@mantine/core';
+import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader, Divider } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan } from '@tabler/icons-react';
+import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan, IconRocket } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
 import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite, sendProposalEmail } from '@/lib/actions';
@@ -51,111 +51,51 @@ export default function HunterPage() {
     // Smart Targets Definition
     const TARGET_PRESETS = [
         {
-            label: t('hunter_preset_1'),
-            icon: '🌱',
+            label: '💎 VIP: KR High-end Dining',
+            icon: '🍽️',
             keywords: {
-                'KR': '와사비 유통 도매 업체',
-                'JP': '山葵 わさび 卸売業者 流通',
-                'US': 'Wasabi wholesale distributors',
-                'CN': '芥末 批发商',
-                'VN': 'Nhà phân phối Wasabi',
-                'Global': 'Wasabi distributors wholesale'
+                'KR': '"오마카세" OR "파인다이닝" "지배인" OR "헤드셰프" OR "구매" -블로그 -후기 -리뷰',
+                'JP': '"高級寿司" OR "和食" "仕入れ" "担当" -review',
+                'Global': 'Premium Sushi Omakase Purchasing Manager'
             }
         },
         {
-            label: t('hunter_preset_2'),
-            icon: '🔬',
+            label: '🐋 Global Big Fish: Wholesalers',
+            icon: '🌍',
             keywords: {
-                'KR': '스마트팜 연구소 농업기술원',
-                'JP': 'スマートファーム 農業 研究所',
-                'US': 'Smart AgTech Research Institute',
-                'CN': '智慧农业 研究院',
-                'VN': 'Viện nghiên cứu nông nghiệp thông minh',
-                'Global': 'Smart Farming Research Institute'
+                // Smart Multi-lingual Support
+                'KR': '"와사비" "도매" "유통" "납품문의" -쿠팡 -스마트스토어',
+                'JP': '"わさび" ("卸売" OR "商社" OR "問屋") "会社概要" -recipe',
+                'CN': '芥末 批发商 "联系方式"',
+                // For US, EU, and others, use English B2B terms + Country Filter
+                'Global': '"Wasabi" ("Wholesale" OR "Distributor" OR "Importer") -recipe -blog -amazon'
             }
         },
         {
-            label: t('hunter_preset_3'),
+            label: '🏭 Factory: Food Processors',
             icon: '🍱',
             keywords: {
-                'KR': '식품 가공 제조 업체 (소스, 양념)',
-                'JP': '食品加工 会社 調味料',
-                'US': 'Food processing companies ingredients',
-                'CN': '食品加工厂',
-                'VN': 'Công ty chế biến thực phẩm',
-                'Global': 'Food Processing Manufactures'
+                'KR': '"식품제조" OR "소스제조" "구매팀" OR "품질관리" "와사비" "HACCP"',
+                'JP': '"食品加工" "わさび" "仕入れ" "工場長"',
+                'Global': 'Food Processing Plant Purchasing Manager Wasabi'
             }
         },
         {
-            label: t('hunter_preset_4'),
-            icon: '🍣',
+            label: '🧬 Lab: Smart Farm R&D',
+            icon: '🔬',
             keywords: {
-                'KR': '고급 일식 오마카세 식자재 납품',
-                'JP': '高級 寿司 料亭 仕入れ',
-                'US': 'High-end Japanese Restaurant Suppliers',
-                'CN': '高端 日本料理 供应商',
-                'VN': 'Nhà hàng Nhật Bản cao cấp',
-                'Global': 'Premium Japanese Restaurant Suppliers'
+                'KR': '"스마트팜" "연구소" "기술제휴" OR "MOU"',
+                'JP': '"植物工場" "研究開発" "共同研究"',
+                'Global': 'Vertical Farming Research Institute Partnership'
             }
         },
         {
-            label: t('hunter_preset_5'),
-            icon: '🐋',
+            label: '📂 Hunt: Excel/PDF Lists',
+            icon: '🕵️',
             keywords: {
-                'KR': 'site:.ac.kr 스마트팜 연구원 교수 생명공학',
-                'JP': 'site:.ac.jp 스마트ファーム 教授 研究所',
-                'US': 'site:.edu plant science vertical farming research lab director',
-                'CN': '智慧农业 教授 研究院',
-                'VN': 'Nghiên cứu nông nghiệp đại học',
-                'Global': 'site:.edu agricultural biotech research institute director'
-            }
-        },
-        {
-            label: t('hunter_preset_6'),
-            icon: '🚜',
-            keywords: {
-                'KR': '와사비 식자재 납품 업체 유통 도매 리스트',
-                'JP': '山葵 卸売業者 販売店 リスト',
-                'US': 'wasabi supply chain distributors wholesalers list',
-                'CN': '芥末 批发 零售 列表',
-                'VN': 'Danh sách nhà bán lẻ Wasabi',
-                'Global': 'wasabi food service suppliers wholesalers directory'
-            }
-        },
-        {
-            label: t('hunter_preset_7'),
-            icon: '💰',
-            keywords: {
-                'KR': '스마트팜 스타트업 투자 벤처캐피털 AC VC',
-                'JP': 'アグリテック スタートアップ 投資 VC',
-                'US': 'AgTech venture capital indoor farming investment corp',
-                'CN': '农业科技 投资 风险投资',
-                'VN': 'Đầu tư nông nghiệp thông minh',
-                'Global': 'Agricultural technology venture capital firms'
-            }
-        },
-        {
-            label: t('hunter_preset_8'),
-            icon: '🏛️',
-            keywords: {
-                'KR': '스마트팜 정부 국책 사업 입찰 공고',
-                'JP': 'スマートファーム 政府 補助金 公募',
-                'US': 'smart farm government grants USDA tender opportunities',
-                'CN': '农业部 智慧农业 招标',
-                'VN': 'Thầu nông nghiệp chính phủ',
-                'Global': 'Government smart farming grant and tender opportunities'
-            }
-        },
-        {
-            label: 'Tennis Racket (Big Fish) 🎾',
-            icon: '🎾',
-            keywords: {
-                'KR': '대형 식품 유통사 구매 담당자 와사비',
-                'JP': '大手 食品 商社 わさび 卸売 高級 寿司 チェーン 本社 購買部',
-                'US': 'Major Food Distributors Purchasing Director Wasabi',
-                'CN': '大型 食品 贸易公司 采购部',
-                'VN': 'Nhà phân phối thực phẩm lớn',
-                'Global': 'Major Food Trading Companies Buyers'
+                'KR': 'filetype:xls OR filetype:xlsx OR filetype:pdf "식품업체 현황" OR "유통업체 리스트"',
+                'JP': 'filetype:pdf "食品卸売業者" "名簿" OR "一覧"',
+                'Global': 'filetype:pdf "Food Distributors List" contact email'
             }
         }
     ];
@@ -209,10 +149,19 @@ export default function HunterPage() {
     };
 
     const handlePresetClick = (preset: any) => {
-        const activeCountry = country || 'Global';
+        let activeCountry = country || 'Global';
+
+        // Auto-detect country from preset
+        if (preset.label.includes('🇯🇵') || preset.label.includes('JP')) activeCountry = 'JP';
+        if (preset.label.includes('🇰🇷') || preset.label.includes('KR')) activeCountry = 'KR';
+        if (preset.label.includes('🇺🇸') || preset.label.includes('US')) activeCountry = 'US';
+        if (preset.label.includes('🇨🇳') || preset.label.includes('CN')) activeCountry = 'CN';
+
+        setCountry(activeCountry === 'Global' ? '' : activeCountry);
+
         const searchTerm = preset.keywords[activeCountry] || preset.keywords['Global'];
         setKeyword(searchTerm);
-        performSearch(searchTerm, country);
+        performSearch(searchTerm, activeCountry === 'Global' ? '' : activeCountry);
     };
 
     const performSearch = async (term: string, countryCode: string | null) => {
@@ -222,6 +171,15 @@ export default function HunterPage() {
 
         try {
             const data = await searchPartners(term, 1, countryCode || '');
+
+            // Enforce selected country context on results
+            if (countryCode && data.length > 0) {
+                // Map code to Name if possible, or just use code. AI handles 'JP' well.
+                // Simple mapping for display niceness
+                const countryName = COUNTRIES.find(c => c.value === countryCode)?.label || countryCode;
+                data.forEach(item => item.country = countryName);
+            }
+
             setResults(data);
 
             if (data.length > 0) {
@@ -540,8 +498,51 @@ export default function HunterPage() {
                     {results.length > 0 && (
                         <Stack>
                             <Group justify="space-between" mb={-10}>
-                                <Text size="sm" c="dimmed">Found {results.length} {t('hunter_found_count')}</Text>
-                                {results[0].isMock && <Badge color="orange" variant="light">Demo Mode</Badge>}
+                                <Group>
+                                    <Text size="sm" c="dimmed">Found {results.length} {t('hunter_found_count')}</Text>
+                                    {results[0].isMock && <Badge color="orange" variant="light">Demo Mode</Badge>}
+                                </Group>
+                                <Button
+                                    size="xs"
+                                    variant="light"
+                                    color="teal"
+                                    leftSection={<IconScan size={14} />}
+                                    onClick={async () => {
+                                        if (!confirm(`Add & Scan all ${results.length} leads?\n(This will take about ${results.length * 3} seconds)`)) return;
+                                        setLoading(true);
+                                        let count = 0;
+
+                                        for (const item of results) {
+                                            notifications.show({ id: 'scan-progress', title: `Scanning ${count + 1}/${results.length}`, message: `Analyzing ${item.name}...`, loading: true, autoClose: false });
+
+                                            // 1. Deep Scan first
+                                            let enrichedItem = { ...item };
+                                            try {
+                                                if (item.url && !item.email) {
+                                                    const scanRes: any = await scanWebsite(item.url);
+                                                    if (scanRes.success) {
+                                                        enrichedItem.email = (scanRes.emails && scanRes.emails.length > 0) ? scanRes.emails[0] : enrichedItem.email;
+                                                        enrichedItem.phone = (scanRes.phones && scanRes.phones.length > 0) ? scanRes.phones[0] : enrichedItem.phone;
+                                                        enrichedItem.status = 'Contact Found';
+                                                    }
+                                                }
+                                            } catch (e) {
+                                                console.error("Auto-scan failed for", item.name);
+                                            }
+
+                                            // 2. Save enriched item
+                                            await saveHunterResult(enrichedItem);
+                                            count++;
+                                        }
+
+                                        notifications.hide('scan-progress');
+                                        await loadSavedPartners();
+                                        setLoading(false);
+                                        notifications.show({ title: 'Batch Scan & Save Complete', message: `Processed ${count} partners with AI analysis!`, color: 'teal' });
+                                    }}
+                                >
+                                    Add & Scan All (Auto)
+                                </Button>
                             </Group>
                             <Table striped highlightOnHover withTableBorder withColumnBorders>
                                 <Table.Thead>
@@ -577,13 +578,21 @@ export default function HunterPage() {
                                                 <Text size="xs" lineClamp={2}>{element.relevance}</Text>
                                             </Table.Td>
                                             <Table.Td>
-                                                {element.contact && element.contact.includes('@') ? (
+                                                {element.email ? (
+                                                    <Stack gap={0}>
+                                                        <Group gap={4} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `mailto:${element.email}`}>
+                                                            <IconMail size={12} color="blue" />
+                                                            <Text size="xs" fw={700} c="blue" style={{ textDecoration: 'underline' }}>{element.email}</Text>
+                                                        </Group>
+                                                        {element.contact && <Text size="xs" c="dimmed">{element.contact}</Text>}
+                                                    </Stack>
+                                                ) : element.contact && element.contact.includes('@') ? (
                                                     <Group gap={4} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `mailto:${element.contact}`}>
                                                         <IconMail size={12} color="gray" />
                                                         <Text size="xs" fw={500} c="blue" style={{ textDecoration: 'underline' }}>{element.contact}</Text>
                                                     </Group>
                                                 ) : (
-                                                    <Text size="xs" fw={500}>{element.contact?.startsWith('http') ? '-' : element.contact}</Text>
+                                                    <Text size="xs" fw={500}>{element.contact?.startsWith('http') ? '-' : element.contact || '-'}</Text>
                                                 )}
                                                 <Text size="xs" c="dimmed">{element.phone}</Text>
                                             </Table.Td>
@@ -780,66 +789,113 @@ export default function HunterPage() {
                         <Button variant="subtle" color="gray" size="xs" leftSection={<IconArrowLeft size={12} />} onClick={() => setEmailMode(false)}>
                             {t('hunter_modal_back')}
                         </Button>
-                        <TextInput label={t('hunter_modal_subject')} value={draftEmail.subject || ''} onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })} rightSection={<CopyButton value={draftEmail.subject || ''}>
-                            {({ copied, copy }) => (<ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>)}
-                        </CopyButton>} />
-                        <Textarea label={t('hunter_modal_body')} value={draftEmail.body || ''} onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })} autosize minRows={10} rightSection={<CopyButton value={draftEmail.body || ''}>
-                            {({ copied, copy }) => (
-                                <Stack>
-                                    <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}><IconCopy size={16} /></ActionIcon>
-                                    {loading && <Loader size="xs" color="pink" />}
-                                </Stack>
-                            )}
-                        </CopyButton>} />
 
+                        <TextInput
+                            label="To (Recipient Email)"
+                            placeholder="name@company.com"
+                            value={editForm.email || selectedPartner.email || ''}
+                            onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                            mb="sm"
+                            required
+                        />
 
-                        <Group>
-                            <Button
-                                leftSection={<IconMail size={16} />}
-                                color="grape"
-                                size="md"
+                        <Group align="flex-end" gap="xs">
+                            <TextInput
+                                label={t('hunter_modal_subject')}
+                                value={draftEmail.subject || ''}
+                                onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })}
                                 style={{ flex: 1 }}
+                            />
+                            <CopyButton value={draftEmail.subject || ''}>
+                                {({ copied, copy }) => (
+                                    <Button color={copied ? 'teal' : 'gray'} onClick={copy} variant="filled">
+                                        {copied ? 'Copied!' : 'Copy Subject'}
+                                    </Button>
+                                )}
+                            </CopyButton>
+                        </Group>
+
+                        <Stack gap={4}>
+                            <Textarea
+                                label={t('hunter_modal_body')}
+                                value={draftEmail.body || ''}
+                                onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })}
+                                autosize
+                                minRows={10}
+                            />
+                            <Group justify="flex-end">
+                                <CopyButton value={draftEmail.body || ''}>
+                                    {({ copied, copy }) => (
+                                        <Button color={copied ? 'teal' : 'blue'} onClick={copy} leftSection={<IconCopy size={16} />}>
+                                            {copied ? 'Body Copied!' : 'Copy Body Text'}
+                                        </Button>
+                                    )}
+                                </CopyButton>
+                            </Group>
+                        </Stack>
+
+                        <Group mt="md" grow>
+                            <Button
+                                leftSection={<IconRocket size={16} />}
+                                color="blue"
+                                size="md"
                                 loading={loading}
                                 onClick={async () => {
                                     if (!selectedPartner) return;
                                     const targetEmail = editForm.email || selectedPartner.email;
                                     if (!targetEmail) return notifications.show({ title: 'No Email', message: 'Please add an email address first.', color: 'red' });
 
-                                    if (!confirm(`Launch proposal to ${targetEmail}? 🚀`)) return;
+                                    if (!confirm(`🚀 Launch this actual email to ${targetEmail}?\n\n(Sender: info@k-wasabi.kr)`)) return;
 
                                     setLoading(true);
                                     try {
-                                        const res = await sendProposalEmail(targetEmail, selectedPartner.name);
+                                        const res: any = await sendProposalEmail(targetEmail, selectedPartner.name, draftEmail.subject, draftEmail.body);
                                         if (res.success) {
-                                            notifications.show({ title: 'Mission Accomplished! 🚀', message: `Email successfully sent to ${targetEmail}`, color: 'green', autoClose: 5000 });
+                                            notifications.show({ title: 'System Launch Success! 🚀', message: `Email sent to ${targetEmail}`, color: 'green', autoClose: 5000 });
                                             await updateHunterStatus(selectedPartner.id, 'Proposal Sent');
                                             setOpened(false);
+                                        } else {
+                                            notifications.show({ title: 'Launch Failed', message: res.message || 'SMTP Error', color: 'red' });
                                         }
                                     } catch (err) {
-                                        notifications.show({ title: 'Send Failed', message: 'Check your email configuration.', color: 'red' });
+                                        console.error(err);
+                                        notifications.show({ title: 'Launch Error', message: 'Check server logs.', color: 'red' });
                                     } finally {
                                         setLoading(false);
                                     }
                                 }}
                             >
-                                {t('hunter_modal_launch')}
+                                Launch Now (System)
                             </Button>
+                        </Group>
 
-                            <Tooltip label="Open Gmail to send manually">
+                        <Divider label="or use manual method" labelPosition="center" my="sm" />
+
+                        <Group>
+                            <Button
+                                component="a"
+                                href={`mailto:${editForm.email || selectedPartner.email || ''}?subject=${encodeURIComponent(draftEmail.subject)}&body=${encodeURIComponent(draftEmail.body)}`}
+                                leftSection={<IconMail size={16} />}
+                                color="gray"
+                                variant="outline"
+                                size="sm"
+                                style={{ flex: 1 }}
+                            >
+                                Open Email Client (Manual)
+                            </Button>
+                            <Tooltip label="Open Gmail">
                                 <ActionIcon
                                     component="a"
                                     href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(editForm.email || selectedPartner.email || '')}&su=${encodeURIComponent(draftEmail.subject)}&body=${encodeURIComponent(draftEmail.body)}`}
                                     target="_blank"
-                                    variant="light"
-                                    color="gray"
+                                    variant="default"
                                     size="lg"
-                                    h={42} w={42}
+                                    h={36} w={36}
                                 >
-                                    <IconExternalLink size={20} />
+                                    <IconExternalLink size={16} />
                                 </ActionIcon>
                             </Tooltip>
                         </Group>
-
                     </Stack>
                 )}
             </Modal>
@@ -861,6 +917,6 @@ export default function HunterPage() {
                     <Button color="blue" onClick={handleSaveEdit}>Save Changes</Button>
                 </Stack>
             </Modal>
-        </Container>
+        </Container >
     );
 }

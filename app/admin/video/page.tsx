@@ -548,11 +548,27 @@ export default function VideoProducerPage() {
                                 <Group mt="xs" mb="xs">
                                     <Badge variant="outline" color="gray" style={{ cursor: 'pointer' }} onClick={() => {
                                         form.setValues({
-                                            topic: 'Wabsabi Tissue Culture Process (Micro-propagation)',
+                                            topic: 'Wasabi Tissue Culture Process (Micro-propagation)',
                                             specs: '- Step 1: Extract Meristem from healthy mature Wasabi root.\n- Step 2: Surface Sterilization (Ethanol -> NaOCl).\n- Step 3: Tool Sterilization (Autoclave 121°C).\n- Step 4: Inoculation on MS Media (Agar).\n- Step 5: Multiplication phase (Bioreactor/Jar).'
                                         });
                                     }}>
-                                        🧪 Quick Load: Tissue Culture (조직배양)
+                                        🧪 1. Tissue Culture
+                                    </Badge>
+                                    <Badge variant="outline" color="blue" style={{ cursor: 'pointer' }} onClick={() => {
+                                        form.setValues({
+                                            topic: 'Aeroponic Smart Farm System (Hyper-Cycle)',
+                                            specs: '- Step 1: Transplant seedlings to vertical towers.\n- Step 2: Mist nozzles spraying nutrient solution (seconds interval).\n- Step 3: LED Spectrum control for growth.\n- Step 4: Environmental control (Temp/Humidity/CO2).\n- Step 5: Rapid root development.'
+                                        });
+                                    }}>
+                                        💧 2. Aeroponics
+                                    </Badge>
+                                    <Badge variant="outline" color="teal" style={{ cursor: 'pointer' }} onClick={() => {
+                                        form.setValues({
+                                            topic: 'Premium Wasabi Harvesting & Processing',
+                                            specs: '- Step 1: Selecting mature 12-month plants.\n- Step 2: Careful hand-harvesting to protect roots.\n- Step 3: Cleaning with pure water (removing leaves).\n- Step 4: Quality Inspection (Size/Shape).\n- Step 5: Vacuum packing for freshness.'
+                                        });
+                                    }}>
+                                        🎁 3. Harvest
                                     </Badge>
                                 </Group>
                                 <Textarea

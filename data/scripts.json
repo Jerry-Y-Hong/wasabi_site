@@ -114,5 +114,176 @@
     ],
     "id": 1766900883617,
     "timestamp": "2025-12-28T05:48:03.617Z"
+  },
+  {
+    "topic": "Wasabi Tissue Culture Process (Micro-propagation)",
+    "seriesType": "process",
+    "specs": "- Step 1: Extract Meristem from healthy mature Wasabi root.\n- Step 2: Surface Sterilization (Ethanol -> NaOCl).\n- Step 3: Tool Sterilization (Autoclave 121°C).\n- Step 4: Inoculation on MS Media (Agar).\n- Step 5: Multiplication phase (Bioreactor/Jar).",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Extreme close-up on gloved hands carefully slicing into a mature Wasabi root. Shallow depth of field focuses on the scalpel and the vibrant green tissue.",
+        "image_prompt": "Macro photography, vertical composition, 8k resolution, shallow depth of field, soft natural lighting, gloved hands precisely dissecting a fresh, healthy Wasabi rhizome with a sterile scalpel, focus on the meristematic tissue. Sharp focus.",
+        "voiceover": "The secret to K-Farm's consistent Wasabi quality lies within. It begins with the meristem, the plant's source of new growth, extracted from healthy mature roots.",
+        "on_screen_text": "Step 1: Extract Meristem",
+        "technical_note": "Gentle, inquisitive music starts."
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Medium shot of a lab technician carefully washing the extracted meristem tissue in a beaker under a laminar flow hood. Emphasis on sterile technique.",
+        "image_prompt": "Vertical composition, 8k resolution, soft, diffused lighting, a lab technician wearing gloves and a lab coat carefully washing extracted Wasabi meristem tissue within a sterile laminar flow hood. Using ethanol and NaOCl. Focus on the precise hand movements and sterile environment.",
+        "voiceover": "To ensure purity, the extracted tissue undergoes rigorous surface sterilization, first with ethanol, then with sodium hypochlorite.",
+        "on_screen_text": "Step 2: Surface Sterilization (Ethanol -> NaOCl)",
+        "technical_note": "Sound of gentle liquid swirling."
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "Close up of an autoclave door closing, steam visibly escaping. Then, a shot of various sterilized tools laid out on a clean surface.",
+        "image_prompt": "Vertical composition, 8k resolution, neutral lighting, a shiny stainless steel autoclave with steam escaping, followed by a meticulously arranged display of sterilized lab tools on a clean white surface. Sterilized scalpel, forceps, petri dishes.",
+        "voiceover": "Uncompromising sterilization is paramount. Every tool used is treated at 121 degrees Celsius in an autoclave, guaranteeing a contaminant-free environment.",
+        "on_screen_text": "Step 3: Tool Sterilization (Autoclave 121°C)",
+        "technical_note": "Sound of autoclave hissing."
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "Close-up, steady shot of the technician using sterile forceps to carefully place the sterilized meristem onto a petri dish filled with MS media (Agar).",
+        "image_prompt": "Vertical composition, 8k resolution, soft natural lighting, a gloved hand delicately placing the sterilized Wasabi meristem onto a petri dish filled with Murashige and Skoog (MS) agar media. Extreme close-up showing texture of agar and meristem.",
+        "voiceover": "The sterilized meristem is then carefully inoculated onto a nutrient-rich Murashige and Skoog (MS) media, providing the essential building blocks for growth.",
+        "on_screen_text": "Step 4: Inoculation on MS Media (Agar)",
+        "technical_note": "Subtle 'click' sound as meristem is placed."
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "Time-lapse shot of multiple bioreactor jars or culture bottles filled with growing Wasabi plantlets. Focus pulls back to reveal a whole shelf filled with these jars.",
+        "image_prompt": "Vertical composition, 8k resolution, diffused natural lighting, time-lapse sequence showing Wasabi plantlets multiplying and growing inside bioreactor jars/culture bottles. Camera pans across a shelf filled with numerous jars containing varying stages of Wasabi growth. Emphasize the vibrant green color of the plants.",
+        "voiceover": "In the multiplication phase, these cultures thrive in controlled environments, rapidly multiplying to create thousands of genetically identical Wasabi plantlets.",
+        "on_screen_text": "Step 5: Multiplication Phase (Bioreactor/Jar)",
+        "technical_note": "Music swells slightly, adding a hopeful and triumphant tone."
+      },
+      {
+        "scene_number": 6,
+        "visual_description": "Final shot: Wide shot of a K-Farm Wasabi field, healthy plants growing vigorously. Focus shifts to a close-up of a farmer inspecting the plants.",
+        "image_prompt": "Vertical composition, 8k resolution, golden hour lighting, a vast Wasabi field with healthy, lush green plants growing vigorously. A farmer smiles gently and inspects the plants, showing pride and satisfaction. Warm, inviting colors.",
+        "voiceover": "This is the code of life, decoded and cultivated, bringing the distinct flavor of K-Farm Wasabi from the lab to your table.",
+        "on_screen_text": "K-Farm: The Future of Flavor",
+        "technical_note": "Music fades out gently, leaving a feeling of optimism."
+      }
+    ],
+    "id": 1767129582679,
+    "timestamp": "2025-12-30T21:19:42.679Z"
+  },
+  {
+    "topic": "Aeroponic Smart Farm System (Hyper-Cycle)",
+    "seriesType": "process",
+    "specs": "- Step 1: Transplant seedlings to vertical towers.\n- Step 2: Mist nozzles spraying nutrient solution (seconds interval).\n- Step 3: LED Spectrum control for growth.\n- Step 4: Environmental control (Temp/Humidity/CO2).\n- Step 5: Rapid root development.",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Close-up, steady shot of gloved hands carefully transferring a small seedling from a propagation tray into a net pot. The background is a blurred view of a clean, well-lit laboratory.",
+        "image_prompt": "Macro photograph, extremely detailed, of gloved hands gently placing a vibrant green seedling into a black net pot. Soft, diffused lighting emphasizing the texture of the leaves and the soil. Shallow depth of field, blurring the background lab. 8k resolution, professional photography.",
+        "voiceover": "The foundation of hyper-cycle farming: carefully selected seedlings, ready for their vertical journey.",
+        "on_screen_text": "Step 1: Transplant",
+        "technical_note": "Gentle, organic-sounding background music starts."
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Medium shot of a vertical aeroponic tower system. Focus on the mist nozzles spraying a fine mist of nutrient solution onto the plant roots inside the tower. Capture the shimmering effect of the mist.",
+        "image_prompt": "Realistic photograph of a vertical aeroponic tower, showcasing mist nozzles spraying a nutrient-rich solution onto exposed plant roots. Close-up shot, capturing the water droplets and root structures. Natural, even lighting. 8k resolution. Focus stack to have both roots and nozzles sharp.",
+        "voiceover": "Precise nutrient delivery. Timed misting provides optimal hydration and essential elements, at precise seconds intervals.",
+        "on_screen_text": "Step 2: Nutrient Mist (15 second interval)",
+        "technical_note": "Sound of gentle mist spraying; music swells slightly."
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "Time-lapse footage showing plant growth under LED lights. The LED lights cycle through different spectrums (red, blue, etc.).",
+        "image_prompt": "Time-lapse photography of leafy greens growing rapidly under multi-spectrum LED grow lights. Dramatic shifts in the lighting from blue to red hues throughout the sequence. Close up, detailed shots of the foliage. High resolution, 8k, professional documentation photography.",
+        "voiceover": "Optimized light, precisely tuned. LED spectrum control accelerates growth, maximizing yield and nutritional value.",
+        "on_screen_text": "Step 3: LED Spectrum Control",
+        "technical_note": "Subtle electronic pulses synchronized with the LED color changes."
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "Wide shot of the smart farm system, showing sensors and monitoring equipment. A scientist in a lab coat is seen making adjustments to a control panel.",
+        "image_prompt": "Documentary style photograph of a smart farm control center. A scientist wearing a lab coat is adjusting settings on a modern control panel. Sensors and monitoring equipment are visible. Natural, neutral lighting. Clean and organized setting. 8k resolution, documentary photography.",
+        "voiceover": "Environmental mastery. Precise temperature, humidity, and CO2 control ensure ideal growing conditions.",
+        "on_screen_text": "Step 4: Environmental Control (Temp/Humidity/CO2)",
+        "technical_note": "Sound of low hum from the control systems."
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "Extreme close-up of healthy, white plant roots thriving in the aeroponic system. Roots should look vibrant and robust.",
+        "image_prompt": "Extreme macro photography of healthy, white, and vibrant plant roots flourishing in an aeroponic system. Sharp focus on the root hairs and intricate structures. Soft, diffused lighting highlighting the vitality of the roots. 8k resolution, macro lens, professional documentation.",
+        "voiceover": "The result: rapid root development, driving accelerated plant growth and harvest cycles.",
+        "on_screen_text": "Step 5: Rapid Root Development",
+        "technical_note": "Uplifting and positive musical score swells."
+      },
+      {
+        "scene_number": 6,
+        "visual_description": "Shot of harvested produce being packaged and labeled. K-Farm logo prominently displayed.",
+        "image_prompt": "Shot of freshly harvested, vibrant greens being carefully packaged and labeled in a clean, well-lit environment. The K-Farm logo is prominently displayed. Professional lighting, sharp focus, product photography.",
+        "voiceover": "K-Farm: Engineering the future of sustainable agriculture, today.",
+        "on_screen_text": "K-Farm: The Code of Life",
+        "technical_note": "Music fades out with K-Farm logo sting."
+      }
+    ],
+    "id": 1767167758283,
+    "timestamp": "2025-12-31T07:55:58.283Z"
+  },
+  {
+    "topic": "Premium Wasabi Harvesting & Processing",
+    "seriesType": "process",
+    "specs": "- Step 1: Selecting mature 12-month plants.\n- Step 2: Careful hand-harvesting to protect roots.\n- Step 3: Cleaning with pure water (removing leaves).\n- Step 4: Quality Inspection (Size/Shape).\n- Step 5: Vacuum packing for freshness.",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Close up, vertical shot of a farmer's hands carefully selecting a vibrant green wasabi plant amongst many others. Focus on the leaves and the base of the plant.",
+        "image_prompt": "Close-up, cinematic photograph, vertical composition, K-Farm, natural sunlight filtering through greenhouse roof, farmer's hands selecting a healthy, mature wasabi plant, detailed texture of leaves and soil, depth of field, 8k resolution, realistic.",
+        "voiceover": "At K-Farm, premium wasabi begins with a code of life, carefully nurtured over twelve months.",
+        "on_screen_text": "Step 1: Selecting mature 12-month plants",
+        "technical_note": "Gentle, hopeful background music begins."
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Medium shot, vertical, showing the farmer gently digging around the base of the chosen wasabi plant. Extreme care taken not to damage the rhizome (root).",
+        "image_prompt": "Medium shot, vertical composition, K-Farm greenhouse, natural lighting, farmer carefully hand-harvesting wasabi plant, preserving the delicate root system, focus on the hands and the earth, realistic textures, 8k resolution.",
+        "voiceover": "Hand-harvesting protects the integrity of the precious roots, ensuring peak flavor and quality.",
+        "on_screen_text": "Step 2: Careful hand-harvesting to protect roots",
+        "technical_note": "Sound of earth being carefully moved."
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "Close up, vertical, showing harvested wasabi plants being rinsed under a gentle stream of pure, clean water. Leaves are being gently removed.",
+        "image_prompt": "Close-up, vertical, K-Farm processing facility, natural, clean lighting, harvested wasabi plants being rinsed with pure water, leaves gently removed by hand, focus on the water droplets and the plant's texture, 8k resolution.",
+        "voiceover": "Each plant is cleansed with pure water, meticulously preparing it for processing.",
+        "on_screen_text": "Step 3: Cleaning with pure water (removing leaves)",
+        "technical_note": "Sound of running water."
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "Medium shot, vertical, a technician in a lab coat carefully inspecting the size and shape of a cleaned wasabi rhizome. Rulers and measuring tools are visible.",
+        "image_prompt": "Medium shot, vertical, clean and modern K-Farm laboratory setting, natural lighting, technician wearing lab coat examining a wasabi rhizome, using measuring tools, focused and precise expression, sterile environment, 8k resolution.",
+        "voiceover": "Only the finest specimens meet our rigorous quality standards.",
+        "on_screen_text": "Step 4: Quality Inspection (Size/Shape)",
+        "technical_note": "Subtle, scientific hum in the background."
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "Close up, vertical, wasabi rhizomes being carefully placed into vacuum-sealed packaging. The packaging is clear, showing the fresh wasabi.",
+        "image_prompt": "Close-up, vertical, K-Farm packaging facility, clean and well-lit, wasabi rhizomes being vacuum-packed in clear packaging, showcasing the freshness and vibrant color, focus on the sealing process, 8k resolution.",
+        "voiceover": "Vacuum packing preserves freshness, delivering the authentic K-Farm taste to your table.",
+        "on_screen_text": "Step 5: Vacuum packing for freshness",
+        "technical_note": "Sound of vacuum sealer."
+      },
+      {
+        "scene_number": 6,
+        "visual_description": "Wide shot, vertical, showcasing the K-Farm logo with fields of wasabi plants in the background. Text overlay: 'K-Farm: The Code of Life'.",
+        "image_prompt": "Wide shot, vertical composition, K-Farm landscape, lush green wasabi fields, clear blue sky, K-Farm logo prominently displayed, natural sunlight, sense of abundance and quality, 8k resolution.",
+        "voiceover": "K-Farm. The Code of Life. Cultivating excellence, naturally.",
+        "on_screen_text": "K-Farm: The Code of Life",
+        "technical_note": "Music swells to a positive and conclusive tone."
+      }
+    ],
+    "id": 1767178769008,
+    "timestamp": "2025-12-31T10:59:29.008Z"
   }
 ]

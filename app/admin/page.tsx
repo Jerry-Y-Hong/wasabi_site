@@ -114,7 +114,7 @@ export default function AdminDashboard() {
                 <Card withBorder radius="md" p="lg" bg="white">
                     <Title order={4} mb="md" c="dimmed" tt="uppercase" size="xs" fw={700}>Quick Actions</Title>
                     <SimpleGrid cols={2}>
-                        <Button component={Link} href="/admin/video" variant="light" color="orange" fullWidth leftSection={<IconMovie size={16} />}>
+                        <Button component={Link} href="/admin/studio" variant="light" color="orange" fullWidth leftSection={<IconMovie size={16} />}>
                             AI Video Producer
                         </Button>
                         <Button component={Link} href="/admin/blog" variant="light" color="wasabi" fullWidth leftSection={<IconPencil size={16} />}>
