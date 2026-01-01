@@ -91,7 +91,7 @@ export default function StudioPage() {
             narration_kr: '가장 순수한 자연이, 기술의 손길로 완성됩니다. K-Farm 프리미엄 와사비.',
             narration_en: 'Nature in its purest form, perfected by technology. K-Farm Premium Wasabi.',
             bgm: '🎵 Emotional orchestral climax, triumphant finale.',
-            video_prompt: 'Robotic harvesting arm gently picking fresh wasabi in clean room, transition to premium packaging design, workers in hazmat suits inspecting quality, bright sterile lighting, 8k --ar 16:9',
+            video_prompt: 'Cinematic robotic arm gently harvesting green wasabi plant in a clean white room, bright lighting, high tech future farm, 4k resolution, clear details --ar 16:9',
             image: '/images/studio/scene5.png',
             video: '/videos/scene5.mp4'
         }
