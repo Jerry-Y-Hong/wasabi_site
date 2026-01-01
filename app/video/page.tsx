@@ -36,16 +36,18 @@ export default function VideoPage() {
         const rowIndex = Math.floor(i / ROW_SIZE);
         const category = ROW_CATEGORIES[rowIndex % ROW_CATEGORIES.length];
 
-        // Manual Mapping for Slots 1 & 2
+        // Manual Mapping for Slots 1, 2 & 3
         let customContent = null;
         if (i === 0) {
             customContent = { title: 'SEEDING', topic: 'Auto Seeding System', videoUrl: '/videos/video_2.mp4' };
         } else if (i === 1) {
             customContent = { title: 'GROWTH', topic: 'Smart Cultivation', videoUrl: '/videos/video_1.mp4' };
+        } else if (i === 2) {
+            customContent = { title: 'FILM', topic: 'Brand Identity', videoUrl: '/videos/brand_film_full.mp4' };
         }
 
         // Retrieve script content for others if exists
-        const script = savedScripts[i]; // Potentially offset logic if we want to save 0/1 for manual
+        const script = savedScripts[i]; // Potentially offset logic if we want to save 0/1/2 for manual
 
         return {
             id: i + 1,

@@ -64,7 +64,7 @@ export default function Home() {
               <Badge color="red" size="lg" variant="filled">COMING SOON</Badge>
             </Group>
             <Title order={2} ta="center" c="white" mb="sm" fw={900} style={{ fontSize: '3rem' }}>
-              THE GREEN REVOLUTION
+              THE WASABI GENESIS
             </Title>
             <Text ta="center" c="gray.4" mb={50} size="xl">
               K-Wasabi 1st Official Brand Film
