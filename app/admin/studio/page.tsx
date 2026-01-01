@@ -57,7 +57,7 @@ export default function StudioPage() {
             narration_kr: '화천의 차가운 천연 암반수... 그 완벽한 환경을 과학으로 제어하여, 자연 재생의 기적을 설계합니다.',
             narration_en: 'Hwacheon\'s pristine bedrock water. We engineer its perfect condition to scientifically recreate a miracle of natural regeneration.',
             bgm: '🎵 Water flowing sound mixing with high-tech beats.',
-            video_prompt: 'Cinematic shot of crystal clear water flowing in high-tech pipes, hydroponic system, temperature data HUD overlay, purple LED lights in background, scientific laboratory atmosphere --ar 16:9',
+            video_prompt: 'High-tech smart farm hydroponic pipes with crystal clear water flowing inside, digital temperature overlay HUD, purple grow lights illuminating green plants, cinematic sci-fi laboratory aesthetic, 8k, photorealistic --ar 16:9',
             image: '/images/studio/scene2.png',
             video: '/videos/scene2.mp4'
         },
