@@ -62,6 +62,7 @@ export default function StudioPage() {
             video: '/videos/scene2.mp4'
         },
         {
+            // Force redeploy for scene3
             time: '0:25 - 0:45',
             title: 'Scene 3: The Product',
             visual: 'Close up of fresh green Wasabi leaves, thick Rhizomes. Water droplets.',
