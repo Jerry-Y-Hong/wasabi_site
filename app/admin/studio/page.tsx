@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Container, Title, Text, Stack, Card, Group, Button, Badge, ThemeIcon, Timeline, Divider, Grid, SegmentedControl, Code, ActionIcon, CopyButton, Tooltip, Image, Select, Slider } from '@mantine/core'; // Added Select, Slider
-import { IconMovie, IconPlayerPlay, IconMusic, IconMicrophone, IconBrandYoutube, IconCopy, IconCheck, IconSettings } from '@tabler/icons-react';
+import { IconMovie, IconPlayerPlay, IconMusic, IconBrandYoutube, IconCopy, IconCheck, IconSettings } from '@tabler/icons-react';
 
 export default function StudioPage() {
     const [playing, setPlaying] = useState(false);
@@ -13,7 +13,7 @@ export default function StudioPage() {
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [selectedVoiceURI, setSelectedVoiceURI] = useState<string | null>(null);
     const [pitch, setPitch] = useState(1.1); // Default slightly higher for 'younger' tone
-    const [rate, setRate] = useState(0.9);
+    const [rate] = useState(0.9);
 
     useEffect(() => {
         const loadVoices = () => {
@@ -204,7 +204,7 @@ export default function StudioPage() {
                                 <Stack align="flex-end">
                                     <SegmentedControl
                                         value={lang}
-                                        onChange={(val: any) => setLang(val)}
+                                        onChange={(val: string) => setLang(val as 'ko-KR' | 'en-US')}
                                         data={[
                                             { label: '🇺🇸 English', value: 'en-US' },
                                             { label: '🇰🇷 Korean', value: 'ko-KR' },
@@ -275,7 +275,7 @@ export default function StudioPage() {
                                                 >
                                                     <IconPlayerPlay size={12} />
                                                 </ActionIcon>
-                                                <Text fw={500} size="md">"{lang === 'en-US' ? scene.narration_en : scene.narration_kr}"</Text>
+                                                <Text fw={500} size="md">&quot;{lang === 'en-US' ? scene.narration_en : scene.narration_kr}&quot;</Text>
                                             </Group>
                                         </Card>
 

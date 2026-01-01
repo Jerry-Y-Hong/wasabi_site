@@ -1,0 +1,327 @@
+﻿
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\blog\page.tsx
+    3:99  warning  'Loader' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    7:21  warning  'IconPencil' is defined but never used                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   17:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   77:18  warning  'error' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  218:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  265:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\hunter\page.tsx
+    3:157  warning  'Loader' is defined but never used                       @typescript-eslint/no-unused-vars
+    5:51   warning  'IconFileText' is defined but never used                 @typescript-eslint/no-unused-vars
+  151:40   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  190:18   warning  'error' is defined but never used                        @typescript-eslint/no-unused-vars
+  207:18   warning  'error' is defined but never used                        @typescript-eslint/no-unused-vars
+  220:71   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  220:98   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  284:28   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  307:76   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  319:13   error    'pres' is never reassigned. Use 'const' instead          prefer-const
+  320:13   error    'slide1' is never reassigned. Use 'const' instead        prefer-const
+  328:13   error    'slide2' is never reassigned. Use 'const' instead        prefer-const
+  337:13   error    'slide3' is never reassigned. Use 'const' instead        prefer-const
+  380:22   warning  'error' is defined but never used                        @typescript-eslint/no-unused-vars
+  519:49   error    'enrichedItem' is never reassigned. Use 'const' instead  prefer-const
+  522:68   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  529:54   warning  'e' is defined but never used                            @typescript-eslint/no-unused-vars
+  732:150  error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  852:52   error    Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\layout.tsx
+  15:11  warning  'pathname' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\marketing\page.tsx
+    3:113  warning  'ActionIcon' is defined but never used    @typescript-eslint/no-unused-vars
+   48:18   warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  172:71   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\page.tsx
+    4:82  warning  'IconInbox' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    4:93  warning  'IconMessageCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   20:17  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+   34:9   error    Error: Cannot access variable before it is declared
+
+`loadStats` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\page.tsx:34:9
+  32 |
+  33 |     useEffect(() => {
+> 34 |         loadStats();
+     |         ^^^^^^^^^ `loadStats` accessed before it is declared
+  35 |     }, []);
+  36 |
+  37 |     const loadStats = async () => {
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\page.tsx:37:5
+  35 |     }, []);
+  36 |
+> 37 |     const loadStats = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |         const data = await getDashboardStats();
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |         setStats(data);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |     };
+     | ^^^^^^^ `loadStats` is declared here
+  41 |
+  42 |     if (!stats) return (
+  43 |         <Container py="xl" h="100vh" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>  react-hooks/immutability
+   49:11  warning  'proposalSent' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  145:76  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  173:77  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  194:17  warning  'base' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  196:10  warning  'LegendItem' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  196:46  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\studio\page.tsx
+    5:48   warning  'IconMicrophone' is defined but never used                       @typescript-eslint/no-unused-vars
+   16:18   warning  'setRate' is assigned a value but never used                     @typescript-eslint/no-unused-vars
+  207:57   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  278:74   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  278:135  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\admin\video\page.tsx
+    6:31   warning  'useRef' is defined but never used                                                                           @typescript-eslint/no-unused-vars
+    7:103  warning  'IconPlus' is defined but never used                                                                         @typescript-eslint/no-unused-vars
+    9:44   warning  'saveAnimatorImage' is defined but never used                                                                @typescript-eslint/no-unused-vars
+   14:42   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+   15:56   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  160:18   warning  'error' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+  181:18   warning  'error' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+  188:38   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  287:24   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  367:45   warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  383:43   warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  406:46   warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  406:211  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  408:37   warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  421:46   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  661:61   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  716:51   error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\api\posts\route.ts
+  9:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\api\uploads\[filename]\route.ts
+  34:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\blog\[slug]\page.tsx
+    1:63  warning  'ThemeIcon' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+    2:25  warning  'IconCalendar' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+    2:49  warning  'IconShare' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   54:11  warning  'fadeInUpVal' is assigned a value but never used                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   55:11  warning  'animDuration' is assigned a value but never used                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  118:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\blog\page.tsx
+   1:54  warning  'Button' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   1:73  warning  'Grid' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  12:64  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  34:43  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  35:47  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\blog\page.tsx:35:47
+  33 |                 {validPosts.length > 0 ? (
+  34 |                     validPosts.map((post: any) => (
+> 35 |                         <Card key={post.id || Math.random()} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column' }}>
+     |                                               ^^^^^^^^^^^^^ Cannot call impure function
+  36 |                             <Group justify="space-between" mb="xs">
+  37 |                                 <Badge color="wasabi" variant="light">{post.topic || 'Opinion'}</Badge>
+  38 |                                 <Text size="xs" c="dimmed">  react-hooks/purity
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\consulting\inquiry\page.tsx
+   3:63  warning  'Group' is defined but never used  @typescript-eslint/no-unused-vars
+  43:18  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\consulting\page.tsx
+  118:80  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\contact\page.tsx
+  35:18  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\cultivation\page.tsx
+    3:102  warning  'Group' is defined but never used       @typescript-eslint/no-unused-vars
+    3:109  warning  'Divider' is defined but never used     @typescript-eslint/no-unused-vars
+  100:13   warning  't' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\insights\page.tsx
+   11:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\login\page.tsx
+  25:18  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\news\page.tsx
+  11:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\page.tsx
+   8:10  warning  'Carousel' is defined but never used                             @typescript-eslint/no-unused-vars
+  15:9   warning  'autoplay' is assigned a value but never used                    @typescript-eslint/no-unused-vars
+  92:40  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\partnership\page.tsx
+  103:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\privacy\page.tsx
+   3:40  warning  'ThemeIcon' is defined but never used                            @typescript-eslint/no-unused-vars
+   3:58  warning  'Anchor' is defined but never used                               @typescript-eslint/no-unused-vars
+   3:66  warning  'Divider' is defined but never used                              @typescript-eslint/no-unused-vars
+  13:29  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  13:33  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  13:35  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  13:40  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  13:45  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  13:48  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\products\fresh\page.tsx
+  3:86  warning  'Paper' is defined but never used             @typescript-eslint/no-unused-vars
+  3:99  warning  'List' is defined but never used              @typescript-eslint/no-unused-vars
+  4:10  warning  'EcosystemDiagram' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\products\seedlings\page.tsx
+  73:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\app\video\page.tsx
+    6:75  warning  'IconLock' is defined but never used      @typescript-eslint/no-unused-vars
+   23:54  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\DashboardCharts.tsx
+  5:30  warning  'Group' is defined but never used  @typescript-eslint/no-unused-vars
+  5:37  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\Layout\Footer.tsx
+  4:10  warning  'IconBrandTwitterFilled' is defined but never used  @typescript-eslint/no-unused-vars
+  4:90  warning  'IconArticle' is defined but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\Layout\Header.tsx
+  8:26  warning  'dictionary' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\Layout\TranslationWidget.tsx
+  26:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\AIConcierge.tsx
+   4:87  warning  'Avatar' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  17:95  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  21:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\AIConcierge.tsx:21:9
+  19 |     // 1. Mark as mounted to prevent hydration errors
+  20 |     useEffect(() => {
+> 21 |         setMounted(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  22 |     }, []);
+  23 |
+  24 |     // 2. Set initial message ONLY after mounting and whenever path/lang changes              react-hooks/set-state-in-effect
+  70:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\AIConcierge.tsx:70:9
+  68 |
+  69 |         // Only reset to greeting if messages are currently empty or it's a path change
+> 70 |         setMessages([{
+     |         ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  71 |             sender: 'ai',
+  72 |             text: current.text,
+  73 |             actions: current.actions  react-hooks/set-state-in-effect
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\EcosystemDiagram.tsx
+   3:53  warning  'Title' is defined but never used                    @typescript-eslint/no-unused-vars
+   9:7   warning  'ecosystemNodes' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  97:85  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\FeatureCard.tsx
+  5:8  warning  'classes' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\components\ui\ShareButtons.tsx
+  5:10  warning  'notifications' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\debug-path.js
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\lib\actions.ts
+    3:8   warning  'fs' is defined but never used                         @typescript-eslint/no-unused-vars
+    7:15  warning  'list' is defined but never used                       @typescript-eslint/no-unused-vars
+  359:50  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  369:22  warning  'e' is defined but never used                          @typescript-eslint/no-unused-vars
+  377:26  warning  'err' is defined but never used                        @typescript-eslint/no-unused-vars
+  406:48  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  439:48  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  454:51  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  469:46  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  473:44  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  494:48  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  507:58  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  509:48  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  543:47  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  560:50  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  560:61  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  567:19  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  567:27  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  569:21  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  580:32  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  594:42  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  641:13  error    'data' is never reassigned. Use 'const' instead        prefer-const
+  649:30  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  649:38  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  650:14  warning  'e' is defined but never used                          @typescript-eslint/no-unused-vars
+  658:26  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  661:45  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  675:26  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  675:34  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  760:9   error    'finalQuery' is never reassigned. Use 'const' instead  prefer-const
+  777:46  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  791:27  warning  'lowerTitle' is assigned a value but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\lib\email.ts
+  14:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\lib\hunter-spy.ts
+  90:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\lib\i18n.tsx
+  1633:12  warning  'isMounted' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  1638:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\lib\i18n.tsx:1638:13
+  1636 |         const saved = localStorage.getItem('kfarm_lang') as Language;
+  1637 |         if (saved && dictionary[saved]) {
+> 1638 |             setLanguageState(saved);
+       |             ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  1639 |         }
+  1640 |         setIsMounted(true);
+  1641 |     }, []);  react-hooks/set-state-in-effect
+  1654:29  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  1654:63  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+
+C:\Users\car13\.gemini\antigravity\scratch\wasabi-smart-farm\test_gemini.js
+  1:32  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+??165 problems (93 errors, 72 warnings)
+  7 errors and 0 warnings potentially fixable with the `--fix` option.
+

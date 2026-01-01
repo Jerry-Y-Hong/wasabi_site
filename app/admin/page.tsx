@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar } from '@mantine/core';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconInbox, IconMessageCircle, IconSettings, IconShare } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -30,14 +30,14 @@ export default function AdminDashboard() {
         router.push('/login');
     };
 
-    useEffect(() => {
-        loadStats();
-    }, []);
-
     const loadStats = async () => {
         const data = await getDashboardStats();
         setStats(data);
     };
+
+    useEffect(() => {
+        loadStats();
+    }, []);
 
     if (!stats) return (
         <Container py="xl" h="100vh" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -46,10 +46,8 @@ export default function AdminDashboard() {
     );
 
     const totalPipeline = stats.pipeline.total;
-    const proposalSent = stats.pipeline.statusCounts['Proposal Sent'] || 0;
     const proceeding = stats.pipeline.statusCounts['Proceeding'] || 0;
     const contracted = stats.pipeline.statusCounts['Contracted'] || 0;
-
     const activeLeads = proceeding + contracted;
 
     return (
@@ -191,7 +189,7 @@ function StatsCard({ title, value, description, icon: Icon, color, trend }: any)
 }
 
 // Helper for consistent sizing if needed, or simply use strings
-function xl_rem(base: number) { return '3rem'; }
+function xl_rem(_base: number) { return '3rem'; }
 
 function LegendItem({ color, label, value }: any) {
     return (

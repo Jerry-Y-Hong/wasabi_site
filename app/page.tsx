@@ -88,6 +88,25 @@ export default function Home() {
                 style={{ width: '100%', display: 'block', aspectRatio: '16/9', objectFit: 'cover' }}
               />
             </Box>
+
+            <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg" mt={40}>
+              <Box>
+                <Text fw={700} c="white" mb="sm">🌱 Process 1: Seeding</Text>
+                <video
+                  src="/videos/video_1.mp4"
+                  controls
+                  style={{ width: '100%', borderRadius: '12px', border: '1px solid #333' }}
+                />
+              </Box>
+              <Box>
+                <Text fw={700} c="white" mb="sm">🌿 Process 2: Cultivation</Text>
+                <video
+                  src="/videos/video_2.mp4"
+                  controls
+                  style={{ width: '100%', borderRadius: '12px', border: '1px solid #333' }}
+                />
+              </Box>
+            </SimpleGrid>
             <Text ta="center" c="dimmed" mt="md" size="sm">
               * A Journey from Hwacheon's Snow to Your Table
             </Text>

@@ -325,6 +325,10 @@ export const dictionary = {
         footer_slogan: '최고의 품질과 혁신 기술',
 
         btn_more: '자세히 보기',
+
+        part_inv_title: '투자에 관심이 있으신가요?',
+        part_inv_desc: '공식 IR 자료(사업계획서)와 재무 데이터를 확인하실 수 있습니다.',
+        part_inv_btn: '투자 정보(IR) 확인하기',
     },
     en: {
         nav_brand: 'K-Farm Group',
@@ -587,6 +591,10 @@ export const dictionary = {
         part_stats_2: 'Global Hubs',
         part_stats_3: 'Joint Patents',
 
+        part_inv_title: 'Interested in Investment Opportunities?',
+        part_inv_desc: 'Access our official Investor Relations deck and financial data.',
+        part_inv_btn: 'Go to Investor Relations',
+
         // Video
         vid_hero_title: 'Tech Visualization & Videos',
         vid_hero_desc: 'Experience our smart farm technology through high-definition video.',
@@ -837,6 +845,10 @@ export const dictionary = {
         part_stats_2: 'グローバル拠点',
         part_stats_3: '共同特許確保',
 
+        part_inv_title: '投資機会にご興味がありますか？',
+        part_inv_desc: '公式IR資料と財務データをご確認いただけます。',
+        part_inv_btn: '投資家情報(IR)を確認する',
+
         // Video
         vid_hero_title: '技術の可視化と設備動画',
         vid_hero_desc: '高画質動画を通じて、K-Farmの革新的なスマートファーム技術を直接ご確認ください。',
@@ -1078,6 +1090,10 @@ export const dictionary = {
         part_stats_1: '目标合作伙伴',
         part_stats_2: '全球基地',
         part_stats_3: '共同获得专利',
+
+        part_inv_title: '对投资机会感兴趣吗？',
+        part_inv_desc: '查看我们的官方投资者关系资料和财务数据。',
+        part_inv_btn: '查看投资者关系(IR)',
 
         // Video
         vid_hero_title: '技术展示与设备视频',

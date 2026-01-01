@@ -87,13 +87,24 @@ export default function PartnershipPage() {
                 </Card>
             </SimpleGrid>
 
+            {/* Investor Relations Link */}
+            <Box ta="center" py={40} mb={60} bg="gray.0" style={{ borderRadius: '16px' }}>
+                <Title order={2} mb="md">{t('part_inv_title')}</Title>
+                <Text c="dimmed" mb="xl">
+                    {t('part_inv_desc')}
+                </Text>
+                <Button component={Link} href="/invest" size="lg" variant="outline" color="dark">
+                    {t('part_inv_btn')} &rarr;
+                </Button>
+            </Box>
+
             {/* Global Vision */}
             <Box ta="center" py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
                 <Title order={2} mb="lg">Global Vision 2030</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    <StatCard label={t('part_stats_1')} value="20+" color="blue" />
-                    <StatCard label={t('part_stats_2')} value="5 Cities" color="wasabi" />
-                    <StatCard label={t('part_stats_3')} value="15+" color="orange" />
+                    <StatCard label={t('part_stats_1')} value="50+" color="blue" />
+                    <StatCard label={t('part_stats_2')} value="30 Cities" color="wasabi" />
+                    <StatCard label={t('part_stats_3')} value="20+" color="orange" />
                 </SimpleGrid>
             </Box>
         </Container>

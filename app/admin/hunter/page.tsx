@@ -1,8 +1,8 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Loader, Divider } from '@mantine/core';
+import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Divider } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { IconSearch, IconExternalLink, IconRobot, IconFileText, IconDownload, IconCheck, IconMail, IconCopy, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan, IconRocket } from '@tabler/icons-react';
+import { IconSearch, IconExternalLink, IconRobot, IconDownload, IconCheck, IconMail, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan, IconCopy, IconRocket } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
 import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite, sendProposalEmail } from '@/lib/actions';
@@ -177,7 +177,7 @@ export default function HunterPage() {
                 // Map code to Name if possible, or just use code. AI handles 'JP' well.
                 // Simple mapping for display niceness
                 const countryName = COUNTRIES.find(c => c.value === countryCode)?.label || countryCode;
-                data.forEach(item => item.country = countryName);
+                data.forEach((item: HunterResult) => item.country = countryName);
             }
 
             setResults(data);
@@ -203,7 +203,7 @@ export default function HunterPage() {
 
         try {
             const data = await searchPartners(keyword, nextPage, country || '');
-            setResults(prev => [...prev, ...data]);
+            setResults((prev: HunterResult[]) => [...prev, ...data]);
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to load more.', color: 'red' });
         } finally {
@@ -257,7 +257,7 @@ export default function HunterPage() {
     };
 
     const handleDismiss = (id: number) => {
-        setResults((prev) => prev.filter((item) => item.id !== id));
+        setResults((prev) => prev.filter((item: HunterResult) => item.id !== id));
         notifications.show({ title: 'Dismissed', message: 'Removed from search results.', color: 'gray', autoClose: 1500 });
     };
 
@@ -293,11 +293,11 @@ export default function HunterPage() {
             }
 
             if (Object.keys(updates).length > 0) {
-                if (savedPartners.some(p => p.id === partner.id)) {
+                if (savedPartners.some((p: HunterResult) => p.id === partner.id)) {
                     await updateHunterInfo(partner.id, updates);
                     loadSavedPartners();
                 } else {
-                    setResults(prev => prev.map(p => p.id === partner.id ? { ...p, ...updates } : p));
+                    setResults((prev: HunterResult[]) => prev.map((p: HunterResult) => p.id === partner.id ? { ...p, ...updates } : p));
                 }
                 notifications.show({ title: 'Scan Complete', message: updateMsg || 'Found contact info!', color: 'green' });
             } else {
@@ -316,37 +316,111 @@ export default function HunterPage() {
     };
 
     const handleDownloadPPT = (partner: HunterResult) => {
-        let pres = new pptxgen();
-        let slide1 = pres.addSlide();
-        slide1.background = { color: 'F1F3F5' };
-        slide1.addText('Strategic Partnership Proposal', { x: 1, y: 2, w: 8, h: 1, fontSize: 36, bold: true, color: '2B8A3E' });
-        slide1.addText(`K-Farm International  x  ${partner.name}`, { x: 1, y: 3.5, w: 8, h: 1, fontSize: 24, color: '343A40' });
-        const contactInfo = partner.contact || 'Partner';
-        slide1.addText(`Prepared for: ${contactInfo}`, { x: 1, y: 5, w: 8, h: 0.5, fontSize: 14, color: '868E96' });
-        slide1.addText('Confidential', { x: 8, y: 5, w: 1.5, h: 0.5, fontSize: 12, color: 'FF0000' });
+        const pres = new pptxgen();
 
-        let slide2 = pres.addSlide();
-        slide2.addText('Why We Connected', { x: 0.5, y: 0.5, w: 9, h: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
-        slide2.addText(`Analysis of ${partner.name}`, { x: 0.5, y: 1.0, w: 9, h: 0.8, fontSize: 24, bold: true });
+        // Define Language Templates
+        const lang = partner.country || 'Global';
+        let text = {
+            title: 'Strategic Partnership Proposal',
+            subtitle: `K-Farm International  x  ${partner.name}`,
+            prepared: 'Prepared for:',
+            confidential: 'Confidential',
+            slide2_title: 'Why We Connected',
+            slide2_sub: `Analysis of ${partner.name}`,
+            slide2_rel: 'Target Relevance:',
+            slide2_type: 'Organization Type:',
+            slide2_syn: 'Potential Synergy: Shared R&D goals in smart agriculture.',
+            slide3_title: 'Our Core Competency',
+            slide3_sub: 'K-Farm Smart Solutions',
+            slide3_p1: 'Virus-Free Seedlings (Tissue Culture)',
+            slide3_p2: 'Hyper-Cycle Aeroponic Systems (9 Months Cycle)',
+            slide3_p3: 'ESG & Energy Efficient LED Technology'
+        };
+
+        // Simple Translation Logic
+        if (lang === 'Japan' || lang === 'JP') {
+            text = {
+                title: '戦略的パートナーシップのご提案',
+                subtitle: `K-Farm International  x  ${partner.name}`,
+                prepared: '受取人:',
+                confidential: '社外秘',
+                slide2_title: '提案の背景',
+                slide2_sub: `${partner.name} 様の分析`,
+                slide2_rel: '関連性:',
+                slide2_type: '組織タイプ:',
+                slide2_syn: 'シナジー効果: スマート農業におけるR&D目標の共有',
+                slide3_title: 'K-Farmの核心競争力',
+                slide3_sub: 'K-Farm スマートソリューション',
+                slide3_p1: 'ウイルスフリー苗 (組織培養)',
+                slide3_p2: 'ハイパーサイクル・エアロポニックス (9ヶ月サイクル)',
+                slide3_p3: 'ESG & エネルギー効率の高いLED技術'
+            };
+        } else if (lang === 'China' || lang === 'CN') {
+            text = {
+                title: '战略合作伙伴建议书',
+                subtitle: `K-Farm International  x  ${partner.name}`,
+                prepared: '收件人:',
+                confidential: '机密',
+                slide2_title: '提案背景',
+                slide2_sub: `${partner.name} 分析`,
+                slide2_rel: '相关性:',
+                slide2_type: '组织类型:',
+                slide2_syn: '潜在协同效应: 智慧农业研发目标的共享',
+                slide3_title: '核心竞争力',
+                slide3_sub: 'K-Farm 智慧解决方案',
+                slide3_p1: '无病毒种苗 (组织培养)',
+                slide3_p2: '超循环气培系统 (9个月周期)',
+                slide3_p3: 'ESG & 高能效LED技术'
+            };
+        } else if (lang === 'Korea' || lang === 'KR') {
+            text = {
+                title: '전략적 파트너십 제안서',
+                subtitle: `K-Farm International  x  ${partner.name}`,
+                prepared: '수신:',
+                confidential: '대외비',
+                slide2_title: '제안 배경',
+                slide2_sub: `${partner.name} 분석`,
+                slide2_rel: '관련성:',
+                slide2_type: '조직 유형:',
+                slide2_syn: '기대 효과: 스마트 농업 R&D 목표 공유 및 시너지',
+                slide3_title: '핵심 경쟁력',
+                slide3_sub: 'K-Farm 스마트 솔루션',
+                slide3_p1: '무병묘 생산 (조직 배양)',
+                slide3_p2: '하이퍼 사이클 에어로포닉스 (9개월 주기)',
+                slide3_p3: 'ESG & 고효율 LED 재배 기술'
+            };
+        }
+
+        const slide1 = pres.addSlide();
+        slide1.background = { color: 'F1F3F5' };
+        slide1.addText(text.title, { x: 1, y: 2, w: 8, h: 1, fontSize: 36, bold: true, color: '2B8A3E' });
+        slide1.addText(text.subtitle, { x: 1, y: 3.5, w: 8, h: 1, fontSize: 24, color: '343A40' });
+        const contactInfo = partner.contact || 'Partner';
+        slide1.addText(`${text.prepared} ${contactInfo}`, { x: 1, y: 5, w: 8, h: 0.5, fontSize: 14, color: '868E96' });
+        slide1.addText(text.confidential, { x: 8, y: 5, w: 1.5, h: 0.5, fontSize: 12, color: 'FF0000' });
+
+        const slide2 = pres.addSlide();
+        slide2.addText(text.slide2_title, { x: 0.5, y: 0.5, w: 9, h: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
+        slide2.addText(text.slide2_sub, { x: 0.5, y: 1.0, w: 9, h: 0.8, fontSize: 24, bold: true });
         slide2.addText([
-            { text: `Target Relevance: ${partner.relevance}`, options: { bullet: true, breakLine: true } },
-            { text: `Organization Type: ${partner.type}`, options: { bullet: true, breakLine: true } },
-            { text: 'Potential Synergy: Shared R&D goals in smart agriculture.', options: { bullet: true } }
+            { text: `${text.slide2_rel} ${partner.relevance}`, options: { bullet: true, breakLine: true } },
+            { text: `${text.slide2_type} ${partner.type}`, options: { bullet: true, breakLine: true } },
+            { text: text.slide2_syn, options: { bullet: true } }
         ], { x: 0.5, y: 2.0, w: 9, h: 4, fontSize: 14, color: '343A40' });
 
-        let slide3 = pres.addSlide();
-        slide3.addText('Our Core Competency', { x: 0.5, y: 0.5, w: 9, h: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
-        slide3.addText('K-Farm Smart Solutions', { x: 0.5, y: 1.0, w: 9, h: 0.8, fontSize: 24, bold: true });
+        const slide3 = pres.addSlide();
+        slide3.addText(text.slide3_title, { x: 0.5, y: 0.5, w: 9, h: 0.5, fontSize: 18, color: '2B8A3E', bold: true });
+        slide3.addText(text.slide3_sub, { x: 0.5, y: 1.0, w: 9, h: 0.8, fontSize: 24, bold: true });
         slide3.addText([
-            { text: 'Virus-Free Seedlings (Tissue Culture)', options: { bullet: true, breakLine: true } },
-            { text: 'Hyper-Cycle Aeroponic Systems (9 Months Cycle)', options: { bullet: true, breakLine: true } },
-            { text: 'ESG & Energy Efficient LED Technology', options: { bullet: true } }
+            { text: text.slide3_p1, options: { bullet: true, breakLine: true } },
+            { text: text.slide3_p2, options: { bullet: true, breakLine: true } },
+            { text: text.slide3_p3, options: { bullet: true } }
         ], { x: 0.5, y: 2.0, w: 9, h: 4, fontSize: 16, color: '343A40' });
 
         const safeName = partner.name.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
-        pres.writeFile({ fileName: `K-Farm_Proposal_${safeName}.pptx` });
+        pres.writeFile({ fileName: `K-Farm_Proposal_${safeName}_${lang}.pptx` });
 
-        notifications.show({ title: 'PPT Downloaded', message: 'Attach this file when sending email!', color: 'green' });
+        notifications.show({ title: 'PPT Downloaded', message: `Generated in ${lang}!`, color: 'green' });
     };
 
     const handleDraftEmail = async () => {
@@ -420,7 +494,7 @@ export default function HunterPage() {
                     onClick={() => {
                         const escapeCsv = (val: string) => `"${(val || '').toString().replace(/"/g, '""')}"`;
                         const headers = ["Name", "Type", "Relevance", "Contact", "Phone", "Email", "URL", "Status"];
-                        const rows = savedPartners.map(e => [
+                        const rows = savedPartners.map((e: HunterResult) => [
                             e.name, e.type, e.relevance, e.contact || "", e.phone || "", e.email || "", e.url, e.status || "New"
                         ].map(val => escapeCsv(val)).join(","));
 
@@ -486,8 +560,8 @@ export default function HunterPage() {
                                     color="gray"
                                     style={{ cursor: 'pointer', textTransform: 'none' }}
                                     onClick={() => handlePresetClick(preset)}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f1f3f5'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => e.currentTarget.style.backgroundColor = '#f1f3f5'}
+                                    onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => e.currentTarget.style.backgroundColor = 'transparent'}
                                 >
                                     {preset.icon} {preset.label}
                                 </Badge>
@@ -516,7 +590,7 @@ export default function HunterPage() {
                                             notifications.show({ id: 'scan-progress', title: `Scanning ${count + 1}/${results.length}`, message: `Analyzing ${item.name}...`, loading: true, autoClose: false });
 
                                             // 1. Deep Scan first
-                                            let enrichedItem = { ...item };
+                                            const enrichedItem = { ...item };
                                             try {
                                                 if (item.url && !item.email) {
                                                     const scanRes: any = await scanWebsite(item.url);
@@ -556,7 +630,7 @@ export default function HunterPage() {
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Table.Tbody>
-                                    {results.map((element) => (
+                                    {results.map((element: HunterResult) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.9rem' }}>
                                             <Table.Td>
                                                 <Badge variant="outline" color="gray" size="sm">{element.country || 'Global'}</Badge>
@@ -660,7 +734,7 @@ export default function HunterPage() {
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Table.Tbody>
-                                    {savedPartners.map((element) => (
+                                    {savedPartners.map((element: HunterResult) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.85rem' }}>
                                             <Table.Td>
                                                 <Menu shadow="md" width={150}>
@@ -729,7 +803,7 @@ export default function HunterPage() {
                                                             <IconEdit size={14} />
                                                         </ActionIcon>
                                                     </Tooltip>
-                                                    <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element as any)}>
+                                                    <Button variant="light" size="compact-xs" color="wasabi" onClick={() => handlePreview(element)}>
                                                         Proposal
                                                     </Button>
                                                     <Tooltip label="Scan Website">
@@ -794,7 +868,7 @@ export default function HunterPage() {
                             label="To (Recipient Email)"
                             placeholder="name@company.com"
                             value={editForm.email || selectedPartner.email || ''}
-                            onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, email: e.target.value })}
                             mb="sm"
                             required
                         />
@@ -803,7 +877,7 @@ export default function HunterPage() {
                             <TextInput
                                 label={t('hunter_modal_subject')}
                                 value={draftEmail.subject || ''}
-                                onChange={(e) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDraftEmail({ ...draftEmail, subject: e.currentTarget.value })}
                                 style={{ flex: 1 }}
                             />
                             <CopyButton value={draftEmail.subject || ''}>
@@ -819,7 +893,7 @@ export default function HunterPage() {
                             <Textarea
                                 label={t('hunter_modal_body')}
                                 value={draftEmail.body || ''}
-                                onChange={(e) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDraftEmail({ ...draftEmail, body: e.currentTarget.value })}
                                 autosize
                                 minRows={10}
                             />
@@ -849,13 +923,13 @@ export default function HunterPage() {
 
                                     setLoading(true);
                                     try {
-                                        const res: any = await sendProposalEmail(targetEmail, selectedPartner.name, draftEmail.subject, draftEmail.body);
+                                        const res = await sendProposalEmail(targetEmail, selectedPartner.name, draftEmail.subject || '', draftEmail.body || '');
                                         if (res.success) {
                                             notifications.show({ title: 'System Launch Success! 🚀', message: `Email sent to ${targetEmail}`, color: 'green', autoClose: 5000 });
                                             await updateHunterStatus(selectedPartner.id, 'Proposal Sent');
                                             setOpened(false);
                                         } else {
-                                            notifications.show({ title: 'Launch Failed', message: res.message || 'SMTP Error', color: 'red' });
+                                            notifications.show({ title: 'Launch Failed', message: (res as { message?: string; error?: string }).message || (res as { message?: string; error?: string }).error || 'SMTP Error', color: 'red' });
                                         }
                                     } catch (err) {
                                         console.error(err);
@@ -902,18 +976,18 @@ export default function HunterPage() {
 
             <Modal opened={editOpened} onClose={() => setEditOpened(false)} title="Edit Partner Info" centered>
                 <Stack>
-                    <TextInput label="Organization Name" value={editForm.name || ''} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+                    <TextInput label="Organization Name" value={editForm.name || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, name: e.target.value })} />
                     <Select
                         label="Country"
                         data={COUNTRIES}
                         value={editForm.country || 'Global'}
-                        onChange={(val) => setEditForm({ ...editForm, country: val || 'Global' })}
+                        onChange={(val: string | null) => setEditForm({ ...editForm, country: val || 'Global' })}
                     />
-                    <TextInput label="Type" value={editForm.type || ''} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} />
-                    <TextInput label="Contact Person" placeholder="Name of person" value={editForm.contact || ''} onChange={(e) => setEditForm({ ...editForm, contact: e.target.value })} />
-                    <TextInput label="Email Address" placeholder="email@address.com" value={editForm.email || ''} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} />
-                    <TextInput label="Phone Number" value={editForm.phone || ''} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} />
-                    <Textarea label="Notes / Relevance" autosize minRows={3} value={editForm.relevance || ''} onChange={(e) => setEditForm({ ...editForm, relevance: e.target.value })} />
+                    <TextInput label="Type" value={editForm.type || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, type: e.target.value })} />
+                    <TextInput label="Contact Person" placeholder="Name of person" value={editForm.contact || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, contact: e.target.value })} />
+                    <TextInput label="Email Address" placeholder="email@address.com" value={editForm.email || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, email: e.target.value })} />
+                    <TextInput label="Phone Number" value={editForm.phone || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm({ ...editForm, phone: e.target.value })} />
+                    <Textarea label="Notes / Relevance" autosize minRows={3} value={editForm.relevance || ''} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditForm({ ...editForm, relevance: e.target.value })} />
                     <Button color="blue" onClick={handleSaveEdit}>Save Changes</Button>
                 </Stack>
             </Modal>
