@@ -71,7 +71,7 @@ export default function StudioPage() {
             bgm: '🎵 Grand orchestral swelling. Drums kicking in.',
             video_prompt: 'Macro extreme close-up of fresh green Wasabi leaves and thick rhizome root, water droplets on surface, vibrant lush green, advertising product photography style, 8k, sharp focus --ar 16:9',
             image: '/images/studio/scene3.png',
-            video: '/videos/scene3.mp4'
+            video: '/videos/scene3_fixed.mp4'
         },
         {
             time: '0:45 - 0:55',
