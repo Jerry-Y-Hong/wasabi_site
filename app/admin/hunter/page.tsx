@@ -36,17 +36,29 @@ const APP_STATUS: Record<string, string> = {
     'Dropped': 'red'
 };
 
-const COUNTRIES = [
-    { value: '', label: 'Global (All) 🌍' },
-    { value: 'KR', label: 'Korea 🇰🇷' },
-    { value: 'JP', label: 'Japan 🇯🇵' },
-    { value: 'US', label: 'USA 🇺🇸' },
-    { value: 'CN', label: 'China 🇨🇳' },
-    { value: 'VN', label: 'Vietnam 🇻🇳' }
+// Initial countries constant for type safety or reference if needed, 
+// but we will use a localized version inside the component.
+const COUNTRY_CODES = [
+    { value: '', label_key: 'hunter_country_all' },
+    { value: 'KR', label_key: 'hunter_country_kr' },
+    { value: 'JP', label_key: 'hunter_country_jp' },
+    { value: 'US', label_key: 'hunter_country_us' },
+    { value: 'CN', label_key: 'hunter_country_cn' },
+    { value: 'VN', label_key: 'hunter_country_vn' },
+    { value: 'FR', label_key: 'hunter_country_fr' },
+    { value: 'AE', label_key: 'hunter_country_ae' },
+    { value: 'DE', label_key: 'hunter_country_de' },
+    { value: 'ES', label_key: 'hunter_country_es' }
 ];
 
 export default function HunterPage() {
     const { t } = useTranslation();
+
+    // Localized Country List
+    const COUNTRIES = COUNTRY_CODES.map(c => ({
+        value: c.value,
+        label: t(c.label_key as any)
+    }));
 
     // Smart Targets Definition
     const TARGET_PRESETS = [
@@ -67,6 +79,10 @@ export default function HunterPage() {
                 'KR': '"와사비" "도매" "유통" "납품문의" -쿠팡 -스마트스토어',
                 'JP': '"わさび" ("卸売" OR "商社" OR "問屋") "会社概要" -recipe',
                 'CN': '芥末 批发商 "联系方式"',
+                'FR': '"Wasabi" (Grossiste OR Distributeur OR Importateur) "Contact" -recette',
+                'AE': '"وسابي" (جملة OR موزع OR مستورد) "اتصال" -وصفة',
+                'DE': '"Wasabi" (Großhandel OR Distributor OR Importeur) "Kontakt" -rezept',
+                'ES': '"Wasabi" (Mayorista OR Distribuidor OR Importador) "Contacto" -receta',
                 // For US, EU, and others, use English B2B terms + Country Filter
                 'Global': '"Wasabi" ("Wholesale" OR "Distributor" OR "Importer") -recipe -blog -amazon'
             }
@@ -174,9 +190,9 @@ export default function HunterPage() {
 
             // Enforce selected country context on results
             if (countryCode && data.length > 0) {
-                // Map code to Name if possible, or just use code. AI handles 'JP' well.
-                // Simple mapping for display niceness
-                const countryName = COUNTRIES.find(c => c.value === countryCode)?.label || countryCode;
+                // Map code to Name if possible, or just use code
+                const countryObj = COUNTRIES.find(c => c.value === countryCode);
+                const countryName = countryObj ? countryObj.label : countryCode;
                 data.forEach((item: HunterResult) => item.country = countryName);
             }
 

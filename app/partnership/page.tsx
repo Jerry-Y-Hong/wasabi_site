@@ -100,10 +100,10 @@ export default function PartnershipPage() {
 
             {/* Global Vision */}
             <Box ta="center" py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-                <Title order={2} mb="lg">Global Vision 2030</Title>
+                <Title order={2} mb="lg">{t('part_stats_title')}</Title>
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
                     <StatCard label={t('part_stats_1')} value="50+" color="blue" />
-                    <StatCard label={t('part_stats_2')} value="30 Cities" color="wasabi" />
+                    <StatCard label={t('part_stats_2')} value={t('part_stats_2_val')} color="wasabi" />
                     <StatCard label={t('part_stats_3')} value="20+" color="orange" />
                 </SimpleGrid>
             </Box>

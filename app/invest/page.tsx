@@ -3,37 +3,40 @@
 import { Container, Title, Text, Button, Group, Paper, Badge, ThemeIcon, Box, SimpleGrid } from '@mantine/core';
 import { IconDownload, IconChartPie, IconDeviceLaptop, IconFileText, IconLeaf } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 
 export default function InvestPage() {
+    const { t } = useTranslation();
+
     return (
         <Box bg="#f8f9fa">
             {/* Header Section */}
             <Box bg="white" py={80} style={{ borderBottom: '1px solid #e9ecef' }}>
                 <Container size="lg">
                     <Group justify="center" mb="lg">
-                        <Badge variant="filled" color="dark" size="lg">INVESTOR RELATIONS</Badge>
+                        <Badge variant="filled" color="dark" size="lg">{t('ir_badge')}</Badge>
                     </Group>
                     <Title order={1} ta="center" fw={900} style={{ fontSize: '3.5rem', letterSpacing: '-2px', lineHeight: 1.1 }}>
-                        The Green Gold Revolution
+                        {t('ir_title')}
                     </Title>
                     <Text ta="center" mt="md" size="xl" c="dimmed" maw={700} mx="auto">
-                        Join the future of high-tech agriculture. We are scaling the world's most advanced smart farm technology.
+                        {t('ir_desc')}
                     </Text>
 
                     <Group justify="center" mt={50}>
                         <Button
                             component="a"
-                            href="/assets/brochure_full.pdf"
+                            href="/wasabi_ir_deck.pdf"
                             download
                             size="xl"
                             color="wasabi"
                             rightSection={<IconDownload size={24} />}
                             style={{ boxShadow: '0 10px 20px rgba(43, 138, 62, 0.2)' }}
                         >
-                            Download IR Deck (PDF)
+                            {t('ir_btn_download')}
                         </Button>
                         <Button component={Link} href="/contact" size="xl" variant="default" leftSection={<IconDeviceLaptop size={24} />}>
-                            Contact IR Team
+                            {t('ir_btn_contact')}
                         </Button>
                     </Group>
                 </Container>
@@ -44,21 +47,21 @@ export default function InvestPage() {
                 <SimpleGrid cols={{ base: 1, md: 3 }} spacing={30}>
                     <MetricCard
                         icon={IconChartPie}
-                        title="Market Growth"
+                        title={t('ir_metric_1_title')}
                         value="13.5%"
-                        desc="CAGR projected through 2030 in global functional food market."
+                        desc={t('ir_metric_1_desc')}
                     />
                     <MetricCard
                         icon={IconLeaf}
-                        title="Production Yield"
+                        title={t('ir_metric_2_title')}
                         value="950g"
-                        desc="Average yield per plant using our hyper-cycle aeroponic system."
+                        desc={t('ir_metric_2_desc')}
                     />
                     <MetricCard
                         icon={IconFileText}
-                        title="IP Assets"
+                        title={t('ir_metric_3_title')}
                         value="12+"
-                        desc="Patents filed for smart control logic and LED optimization."
+                        desc={t('ir_metric_3_desc')}
                     />
                 </SimpleGrid>
             </Container>
@@ -66,12 +69,12 @@ export default function InvestPage() {
             {/* Footer CTA */}
             <Box bg="dark.9" py={60} c="white">
                 <Container size="md" ta="center">
-                    <Title order={3} mb="md">Ready to discuss details?</Title>
+                    <Title order={3} mb="md">{t('ir_cta_title')}</Title>
                     <Text c="gray.5" mb="xl">
-                        We are currently open for Series A funding discussions. Access our data room.
+                        {t('ir_cta_desc')}
                     </Text>
                     <Button component="a" href="mailto:ir@k-wasabi.kr" variant="white" color="dark" size="lg">
-                        Email: ir@k-wasabi.kr
+                        {t('ir_email_label')}
                     </Button>
                 </Container>
             </Box>

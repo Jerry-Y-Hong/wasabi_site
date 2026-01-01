@@ -39,10 +39,11 @@ export function Header() {
     return (
         <header className={classes.header}>
             <Container fluid className={classes.inner} px="md" style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(150px, 250px) 1fr minmax(150px, 250px)',
+                display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                height: '60px'
+                height: '60px',
+                maxWidth: '100%'
             }}>
 
                 {/* Left: Logo */}

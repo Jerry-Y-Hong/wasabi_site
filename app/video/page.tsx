@@ -36,14 +36,18 @@ export default function VideoPage() {
         const rowIndex = Math.floor(i / ROW_SIZE);
         const category = ROW_CATEGORIES[rowIndex % ROW_CATEGORIES.length];
 
-        // Manual Mapping for Slots 1, 2 & 3
+        // Manual Mapping for Slots 1 & 4
         let customContent = null;
-        if (i === 0) {
-            customContent = { title: 'SEEDING', topic: 'Auto Seeding System', videoUrl: '/videos/video_2.mp4' };
-        } else if (i === 1) {
-            customContent = { title: 'GROWTH', topic: 'Smart Cultivation', videoUrl: '/videos/video_1.mp4' };
-        } else if (i === 2) {
-            customContent = { title: 'FILM', topic: 'Brand Identity', videoUrl: '/videos/brand_film_full.mp4' };
+        if (i === 0) { // Slot 1
+            customContent = { title: 'IDENTITY', topic: 'Brand Identity', videoUrl: '/videos/real_drone.mp4?v=20260101_final', type: 'video' };
+        } else if (i === 1) { // Slot 2
+            customContent = { title: 'SEEDING', topic: 'Auto Seeding', videoUrl: '/videos/video_2.mp4', type: 'video' };
+        } else if (i === 2) { // Slot 3
+            customContent = { title: 'CULTIVATE', topic: 'Cultivation System', videoUrl: '/videos/video_1.mp4', type: 'video' };
+        } else if (i === 3) { // Slot 4
+            customContent = { title: 'CONTROL', topic: 'Smart Control', videoUrl: '/videos/brand_film_final.mp4?v=20260101_final', type: 'video' };
+        } else if (i === 8) { // Slot 9
+            customContent = { title: 'INVEST', topic: 'IR Deck (PDF)', videoUrl: '/wasabi_ir_deck.pdf', type: 'pdf' };
         }
 
         // Retrieve script content for others if exists
@@ -128,11 +132,19 @@ function LockerBox({ item, onPlay }: { item: any, onPlay: (url: string, title: s
 
         if (!wasOpened) {
             if (item.hasContent && item.videoUrl) {
-                // Play Video
-                setTimeout(() => {
-                    onPlay(item.videoUrl, item.customContent.title);
-                    setOpened(false); // Reset door after playing
-                }, 800);
+                // Check Content Type
+                if (item.customContent?.type === 'pdf') {
+                    setTimeout(() => {
+                        window.open(item.videoUrl, '_blank');
+                        setOpened(false);
+                    }, 800);
+                } else {
+                    // Play Video
+                    setTimeout(() => {
+                        onPlay(item.videoUrl, item.customContent.title);
+                        setOpened(false); // Reset door after playing
+                    }, 800);
+                }
             } else {
                 // Navigate to Admin (Create/Edit)
                 setTimeout(() => {

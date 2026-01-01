@@ -1,7 +1,8 @@
 'use client';
 
-import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar } from '@mantine/core';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare } from '@tabler/icons-react';
+import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar, Grid, Divider } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -106,6 +107,55 @@ export default function AdminDashboard() {
                     data={stats.inquiries.categoryCounts || {}}
                 />
             </SimpleGrid>
+
+            {/* Specialized Tools: Greenhouse Design Integration - Slim Version */}
+            <Paper radius="md" p="lg" withBorder bg="dark.7" mb={30} style={{
+                backgroundImage: 'linear-gradient(135deg, #1A1B1E 0%, #2C2E33 100%)',
+                borderColor: '#404040',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+            }}>
+                <Grid align="center" gutter="md">
+                    <Grid.Col span={{ base: 12, md: 8 }}>
+                        <Group gap="lg">
+                            <ThemeIcon color="cyan" variant="light" size={48} radius="md">
+                                <IconBuildingArch size={26} />
+                            </ThemeIcon>
+                            <Stack gap={2}>
+                                <Group gap="xs">
+                                    <Badge color="cyan" variant="filled" size="xs">Integration Tool</Badge>
+                                    <Title order={3} c="white" style={{ fontSize: '1.2rem' }}>온실 설계 커맨드 (GHModeler)</Title>
+                                </Group>
+                                <Text c="gray.5" size="sm">농진청 규격 설계 프로그램 연계 및 AI 분석 시스템</Text>
+                            </Stack>
+                        </Group>
+                    </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                        <Group gap="sm" justify="flex-end">
+                            <Button
+                                component="a"
+                                href="http://www.nongsaro.go.kr"
+                                target="_blank"
+                                variant="light"
+                                color="cyan"
+                                size="xs"
+                                leftSection={<IconDownload size={14} />}
+                            >
+                                프로그램 다운로드
+                            </Button>
+                            <Button
+                                variant="filled"
+                                color="cyan"
+                                size="xs"
+                                leftSection={<IconFileAnalytics size={14} />}
+                                onClick={() => notifications.show({ title: 'AI 분석 대기', message: 'GHModeler 결과 파일을 준비해주세요.', color: 'cyan' })}
+                            >
+                                설계 데이터 분석
+                            </Button>
+                        </Group>
+                    </Grid.Col>
+                </Grid>
+            </Paper>
 
             {/* Quick Actions & Recent Inquiries (Re-organized) */}
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">

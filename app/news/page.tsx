@@ -52,22 +52,26 @@ export default function NewsPage() {
                 }}>
                     {validPosts.length > 0 ? (
                         validPosts.map((post: any) => (
-                            <Card key={`${language}-${post.id || Math.random()}`} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column' }}>
-                                <Group justify="space-between" mb="xs">
-                                    <Badge color="wasabi" variant="light">{post.topic || 'News'}</Badge>
-                                    <Text size="xs" c="dimmed">
+                            <Card key={`${language}-${post.id || Math.random()}`} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Group justify="space-between" mb="xs" wrap="nowrap">
+                                    <Badge color="wasabi" variant="light" style={{ maxWidth: '65%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {post.topic || 'News'}
+                                    </Badge>
+                                    <Text size="xs" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
                                         {post.timestamp ? new Date(post.timestamp).toLocaleDateString() : 'Date'}
                                     </Text>
                                 </Group>
 
                                 <a href={`/blog/${post.slug || '#'}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    <Title order={3} size="h4" mb="sm" style={{ minHeight: 50, lineHeight: 1.3, cursor: 'pointer' }}>
+                                    <Title order={3} size="h4" mb="sm" lineClamp={2} style={{ minHeight: '3.1em', lineHeight: 1.3, cursor: 'pointer' }}>
                                         {post.title}
                                     </Title>
                                 </a>
 
-                                <Text size="sm" c="dimmed" lineClamp={3} mb="md" style={{ minHeight: 60 }}>
-                                    {(post.content || '').replace(/[#*`]/g, '')}
+                                <Text size="sm" c="dimmed" lineClamp={3} mb="md" style={{ minHeight: '4.5em' }}>
+                                    {(post.content || '')
+                                        .replace(new RegExp(`^#\\s*${post.title?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\n?`, 'i'), '') // Remove title if it starts the content
+                                        .replace(/[#*`]/g, '')}
                                 </Text>
 
                                 <Group mt="auto">

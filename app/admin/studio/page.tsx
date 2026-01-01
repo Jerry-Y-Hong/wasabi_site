@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Title, Text, Stack, Card, Group, Button, Badge, ThemeIcon, Timeline, Divider, Grid, SegmentedControl, Code, ActionIcon, CopyButton, Tooltip, Image, Select, Slider } from '@mantine/core'; // Added Select, Slider
+import { Container, Title, Text, Stack, Card, Group, Button, Badge, ThemeIcon, Timeline, Divider, Grid, SegmentedControl, Code, ActionIcon, CopyButton, Tooltip, Image, Select, Slider } from '@mantine/core';
 import { IconMovie, IconPlayerPlay, IconMusic, IconBrandYoutube, IconCopy, IconCheck, IconSettings } from '@tabler/icons-react';
 
 export default function StudioPage() {
@@ -20,7 +20,7 @@ export default function StudioPage() {
             const availVoices = window.speechSynthesis.getVoices();
             setVoices(availVoices);
             // Auto-select a female voice if possible, or any voice for the current language
-            if (!selectedVoiceURI) { // Only set default if no voice is already selected
+            if (!selectedVoiceURI) {
                 const defaultVoice = availVoices.find(v =>
                     v.lang.includes(lang) &&
                     (v.name.includes('Google') || v.name.includes('Female') || v.name.includes('Woman') || v.name.includes('Samantha') || v.name.includes('Zira'))
@@ -32,68 +32,55 @@ export default function StudioPage() {
         loadVoices();
         window.speechSynthesis.onvoiceschanged = loadVoices;
 
-        // Cleanup function
         return () => {
             window.speechSynthesis.onvoiceschanged = null;
         };
-    }, [lang, selectedVoiceURI]); // Re-run if lang changes to find appropriate default, or if selectedVoiceURI is cleared
+    }, [lang, selectedVoiceURI]);
 
     const scenes = [
         {
-            time: '0:00 - 0:10',
-            title: 'Scene 1: The Origin',
-            visual: 'Drone shot of Hwacheon\'s snowy mountains, morning mist.',
-            narration_kr: '가장 차갑고, 가장 깨끗한 곳, 강원도 화천.',
-            narration_en: 'Hwacheon. The coldest, purest sanctuary.',
-            bgm: '🎵 Wind sounds, subtle piano, dawn breaking.',
-            video_prompt: 'Cinematic drone shot of snowy mountains in Hwacheon Korea, morning mist, majestic nature, 8k, photorealistic, slow smooth motion --ar 16:9',
-            image: '/images/studio/scene1.png',
-            video: '/videos/scene1_real.mp4'
+            time: '0:00 - 0:15',
+            title: 'Scene 1: Neural Data Core',
+            visual: 'Dark Server Room with glowing blue data cables looking like roots.',
+            narration_kr: 'K-Farm의 심장은 흙이 아닌 데이터로 뜁니다.',
+            narration_en: 'The heart of K-Farm beats not with soil, but with data.',
+            bgm: '🎵 Dark Synthwave',
+            video_prompt: 'Cinematic dark server room, glowing blue fiber optic cables tangling like plant roots, cybernetic atmosphere, matrix style code raining in background, 8k, unreal engine 5 render --ar 16:9',
+            image: '',
+            video: '/videos/tech_scene1.mp4'
         },
         {
-            time: '0:10 - 0:25',
-            title: 'Scene 2: The Innovation',
-            visual: 'Crystal clear underground water flowing -> Hydroponic system circulating -> LED lights.',
-            narration_kr: '화천의 차가운 천연 암반수... 그 완벽한 환경을 과학으로 제어하여, 자연 재생의 기적을 설계합니다.',
-            narration_en: 'Hwacheon\'s pristine bedrock water. We engineer its perfect condition to scientifically recreate a miracle of natural regeneration.',
-            bgm: '🎵 Water flowing sound mixing with high-tech beats.',
-            video_prompt: 'High-tech smart farm hydroponic pipes with crystal clear water flowing inside, digital temperature overlay HUD, purple grow lights illuminating green plants, cinematic sci-fi laboratory aesthetic, 8k, photorealistic --ar 16:9',
-            image: '/images/studio/scene2.png',
-            video: '/videos/scene2.mp4'
+            time: '0:15 - 0:30',
+            title: 'Scene 2: X-Ray Vision',
+            visual: 'X-ray style scan of a Wasabi leaf showing internal veins.',
+            narration_kr: '식물의 혈관까지 보는 투시력. 엽록소의 움직임까지 읽어냅니다.',
+            narration_en: 'X-ray vision into the plant veins. Reading the movement of chlorophyll.',
+            bgm: '🎵 Medical Scan Sound',
+            video_prompt: 'X-ray MRI scan visualization of a wasabi leaf, internal veins glowing neon green on black background, medical imaging style, scientific analysis data UI overlay, 8k --ar 16:9',
+            image: '/images/studio/tech_scene_2.png',
+            video: '/videos/tech_scene2.mp4'
         },
         {
-            // Force redeploy for scene3
-            time: '0:25 - 0:45',
-            title: 'Scene 3: The Product',
-            visual: 'Close up of fresh green Wasabi leaves, thick Rhizomes. Water droplets.',
-            narration_kr: '흙 한 톨 없이, 오직 물과 기술로 빚어낸... 100% 무결점 와사비.',
-            narration_en: 'Zero soil. Pure water. 100% Flawless Wasabi crafted by technology.',
-            bgm: '🎵 Grand orchestral swelling. Drums kicking in.',
-            video_prompt: 'Macro extreme close-up of fresh green Wasabi leaves and thick rhizome root, water droplets on surface, vibrant lush green, advertising product photography style, 8k, sharp focus --ar 16:9',
-            image: '/images/studio/scene3.png',
-            video: '/videos/scene3_fixed.mp4'
+            time: '0:30 - 0:45',
+            title: 'Scene 3: Laser Mist',
+            visual: 'Blue laser sheet lighting cutting through aeroponic fog.',
+            narration_kr: '나노 단위의 미스트, 레이저로 제어되는 완벽한 타격.',
+            narration_en: 'Nano-mist controlled by lasers. Perfect impact on the roots.',
+            bgm: '🎵 Laser Hum',
+            video_prompt: 'Blue laser sheet lighting cutting through thick white fog in a dark room, slow motion water particles suspended in air, sci-fi containment chamber aesthetic, 8k --ar 16:9',
+            image: '/images/studio/tech_scene_3.png',
+            video: '/videos/tech_scene3.mp4'
         },
         {
-            time: '0:45 - 0:55',
-            title: 'Scene 4: The Control',
-            visual: 'Advanced IoT sensors, dashboard UI overlay, climate control activation.',
-            narration_kr: '보이지 않는 곳까지 완벽하게. AI는 24시간 식물의 호흡과 맥박을 듣습니다.',
-            narration_en: 'Perfection in the unseen. AI listens to the pulse and respiration of the plants, 24/7.',
-            bgm: '🎵 Digital pulse sound, futuristic tech ambiance.',
-            video_prompt: 'Futuristic smart farm control room, holographic dashboard monitoring plant vitals, close up of IoT sensors on aeroponic pipes, data flowing, clean white and blue aesthetic, 8k --ar 16:9',
-            image: '/images/studio/scene4.png',
-            video: '/videos/scene4.mp4'
-        },
-        {
-            time: '0:55 - 1:10',
-            title: 'Scene 5: The Harvest',
-            visual: 'Robotic arm harvesting, clean room processing, final product packaging.',
-            narration_kr: '가장 순수한 자연이, 기술의 손길로 완성됩니다. K-Farm 프리미엄 와사비.',
-            narration_en: 'Nature in its purest form, perfected by technology. K-Farm Premium Wasabi.',
-            bgm: '🎵 Emotional orchestral climax, triumphant finale.',
-            video_prompt: 'Cinematic robotic arm gently harvesting green wasabi plant in a clean white room, bright lighting, high tech future farm, 4k resolution, clear details --ar 16:9',
-            image: '/images/studio/scene5.png',
-            video: '/videos/scene5.mp4'
+            time: '0:45 - 1:00',
+            title: 'Scene 4: The Algorithm',
+            visual: 'Floating mathematical equations surrounding a levitating wasabi.',
+            narration_kr: '수확은 노동이 아닌, 알고리즘의 결과값입니다.',
+            narration_en: 'Harvest is not labor. It is the result of an algorithm.',
+            bgm: '🎵 Digital Climax',
+            video_prompt: 'A perfect wasabi root levitating in a void, surrounded by floating gold mathematical equations and geometry, magical realism mixed with high tech, clean 3d render, 8k --ar 16:9',
+            image: '/images/studio/tech_scene_4.png',
+            video: '/videos/tech_scene4.mp4'
         }
     ];
 
@@ -125,7 +112,6 @@ export default function StudioPage() {
             }
         };
 
-        // Small delay between scenes
         setTimeout(() => window.speechSynthesis.speak(utterance), 300);
     };
 
@@ -139,7 +125,7 @@ export default function StudioPage() {
         } else {
             window.speechSynthesis.cancel();
             setPlaying(true);
-            playScene(0, true); // True = Auto Advance
+            playScene(0, true);
         }
     };
 
@@ -153,7 +139,7 @@ export default function StudioPage() {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
         setPlaying(true);
-        playScene(idx, false); // False = Play Once
+        playScene(idx, false);
     }
 
     const currentLangVoices = voices.filter(v => v.lang.includes(lang === 'en-US' ? 'en' : 'ko'));
@@ -177,7 +163,7 @@ export default function StudioPage() {
                         <Card shadow="sm" radius="md" p="xl" withBorder>
                             <Group mb="md" justify="space-between" align="flex-start">
                                 <Stack gap="xs">
-                                    <Title order={3}>📼 Script: The Green Revolution</Title>
+                                    <Title order={3}>📼 Script: Smart Control Tech Deep Dive</Title>
                                     <Group>
                                         <IconSettings size={16} color="gray" />
                                         <Select
