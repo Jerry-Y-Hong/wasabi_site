@@ -16,7 +16,6 @@ export function Header() {
         { link: '/products/seedlings', label: t('nav_seedlings') },
         { link: '/cultivation', label: t('nav_cultivation') },
         { link: '/products/fresh', label: t('nav_products') },
-        { link: '/video', label: t('nav_video') },
         { link: '/insights', label: t('nav_revolution') },
         { link: '/news', label: t('nav_news') },
         { link: '/partnership', label: t('nav_partnership') },

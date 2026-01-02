@@ -1,119 +1,103 @@
 [
   {
-    "topic": "Wasabi Tissue Culture",
-    "seriesType": "process",
-    "specs": "121C Autoclave, 15 min, Clean Bench",
+    "topic": "AUTO SEEDING: The Code of Life",
+    "seriesType": "seeding",
+    "specs": "Sterility: 99.9%, Protocol: Tissue Culture, Growth: 1.5x/month",
     "scenes": [
       {
         "scene_number": 1,
-        "visual_description": "Close up shot of gloved hands carefully placing a petri dish containing a small, green wasabi plantlet into a metal basket.",
-        "voiceover": "Wasabi, prized for its unique flavor, is notoriously difficult to cultivate. But through tissue culture, we're unlocking its potential.",
-        "on_screen_text": "Wasabi: The Code of Life",
-        "technical_note": "Warm, diffused lighting. Emphasize the precision of the hand movements. Focus on the green of the wasabi."
+        "visual_description": "Macro shot of a tiny, vibrant green wasabi plantlet inside a sterile glass petri dish with holographic DNA icons.",
+        "voiceover": "Everything begins with the code of life. Through tissue culture, we select only the strongest genetic blueprints.",
+        "on_screen_text": "MICROSCOPIC ORIGIN",
+        "technical_note": "Focus on the vibrant green against the sterile lab environment.",
+        "image": "/images/studio/seeding_scene_1.png",
+        "bgm": "Ambient Science Synth",
+        "sfx": "Medical Scan Hum"
       },
       {
         "scene_number": 2,
-        "visual_description": "Medium shot of the metal basket being loaded into the chamber of a 121C Autoclave.",
-        "voiceover": "Sterilization is paramount. Every step must eliminate contamination.",
-        "on_screen_text": "Sterilization: 121C Autoclave",
-        "technical_note": "Show the steam rising from the autoclave after the process. Authentic sound of the autoclave closing."
+        "visual_description": "Futuristic stainless steel 121C Autoclave chamber with steam rising and digital temperature display.",
+        "voiceover": "Absolute sterility. Every element is purified at 121 degrees Celsius to ensure zero-contamination growth.",
+        "on_screen_text": "STERILE ARCHITECTURE",
+        "technical_note": "Slow camera zoom into the steam for cinematic effect.",
+        "image": "/images/studio/seeding_scene_2.png",
+        "bgm": "Steady Industrial Pulse",
+        "sfx": "Pneumatic Door Hiss"
       },
       {
         "scene_number": 3,
-        "visual_description": "Shot of the autoclave's display showing the temperature and timer counting down. Close up on the '15 min' mark.",
-        "voiceover": "We use a 121C Autoclave to ensure complete sterilization, running for 15 minutes.",
-        "on_screen_text": "Time: 15 min",
-        "technical_note": "Focus on the digital display. Steady shot to emphasize precision."
+        "visual_description": "Wide shot of a state-of-the-art clean bench in a bio-lab with blue sterile lighting.",
+        "voiceover": "Precision incubation. Our bio-engineers work within an optimized environment to nurture the future of agriculture.",
+        "on_screen_text": "BIO-LAB CONTROL",
+        "technical_note": "Wide angle to show the scale of the facility.",
+        "image": "/images/studio/seeding_scene_3.png",
+        "bgm": "Discovery & Innovation Piano",
+        "sfx": "Filtered Air Flow Sound"
       },
       {
         "scene_number": 4,
-        "visual_description": "Wide shot of a scientist in lab coat and gloves working meticulously inside a Clean Bench. Petri dishes and sterile equipment are neatly arranged.",
-        "voiceover": "All work is conducted within a sterile Clean Bench, creating an environment free from unwanted microbes.",
-        "on_screen_text": "Clean Bench: Sterile Environment",
-        "technical_note": "Soft, even lighting within the clean bench. Focus on maintaining a sense of sterile order."
-      },
-      {
-        "scene_number": 5,
-        "visual_description": "Close-up shot of a scientist carefully using sterile instruments to divide a single wasabi plantlet into multiple smaller pieces on a petri dish.",
-        "voiceover": "Here, explants – small pieces of the original plant – are carefully prepared for propagation.",
-        "on_screen_text": "Explants: New Beginnings",
-        "technical_note": "Extreme close-up. Highlight the delicate nature of the process. Stable camera."
-      },
-      {
-        "scene_number": 6,
-        "visual_description": "Time-lapse shot showing multiple petri dishes with small wasabi plantlets growing larger over time in a controlled environment chamber. Temperature and humidity readouts are briefly visible.",
-        "voiceover": "These explants, nurtured in controlled conditions, will eventually yield thousands of identical wasabi plants.",
-        "on_screen_text": "Tissue Culture: Scalable Production",
-        "technical_note": "Subtle shift in lighting to indicate the passage of time. Focus on the growth progression."
-      },
-      {
-        "scene_number": 7,
-        "visual_description": "Final shot: A wide shot of a wasabi farm with lush green plants growing in neat rows. The lab building is visible in the background.",
-        "voiceover": "From a single plant, to a thriving harvest. This is the power of smart farming and biotechnology.",
-        "on_screen_text": "K-Farm: Cultivating the Future",
-        "technical_note": "Bright, natural lighting. Show a sense of scale and connection between the lab and the farm."
+        "visual_description": "Time-lapse montage of wasabi tissue culture growth with luminous green leaves multiplying.",
+        "voiceover": "Infinite expansion. From a single cell to a thriving harvest, we are scaling the future of wasabi.",
+        "on_screen_text": "SCALABLE BIO-PROPAGATION",
+        "technical_note": "Fast-paced cross-fades to show rapid growth.",
+        "image": "/images/studio/seeding_scene_4.png",
+        "bgm": "Uplifting Orchestral Finale",
+        "sfx": "Sparkling Digital Chimes"
       }
     ],
-    "id": 1766895204581,
-    "timestamp": "2025-12-28T04:13:24.581Z"
+    "id": 1767337950000,
+    "timestamp": "2026-01-02T16:12:30.000Z"
   },
   {
-    "topic": "Wasabi Tissue Culture",
+    "topic": "SUCCESS CYCLE: The Hyper-Loop",
     "seriesType": "process",
-    "specs": "121C Autoclave, 15 min, Clean Bench",
+    "specs": "Steps: 6, Tech: Aeroponics, Cycle: 100% Sustainable",
     "scenes": [
       {
         "scene_number": 1,
-        "visual_description": "Close up shot of gloved hands carefully placing a petri dish containing a small, green wasabi plantlet into a metal basket.",
-        "voiceover": "Wasabi, prized for its unique flavor, is notoriously difficult to cultivate. But through tissue culture, we're unlocking its potential.",
-        "on_screen_text": "Wasabi: The Code of Life",
-        "technical_note": "Warm, diffused lighting. Emphasize the precision of the hand movements. Focus on the green of the wasabi."
+        "visual_description": "Robotic arm precisely transplanting seedlings into vertical modules.",
+        "voiceover": "1단계 파종. 자동화 암이 정밀하게 묘를 안착시킵니다.",
+        "on_screen_text": "STEP 1: PRECISION SEEDING",
+        "image": "/images/studio/process_scene_1.png"
       },
       {
         "scene_number": 2,
-        "visual_description": "Medium shot of the metal basket being loaded into the chamber of a 121C Autoclave.",
-        "voiceover": "Sterilization is paramount. Every step must eliminate contamination.",
-        "on_screen_text": "Sterilization: 121C Autoclave",
-        "technical_note": "Show the steam rising from the autoclave after the process. Authentic sound of the autoclave closing."
+        "visual_description": "High-pressure mist cleaning tower modules.",
+        "voiceover": "2단계 세척. 고압 분무로 실시간 위생을 확보합니다.",
+        "on_screen_text": "STEP 2: HIGH-PRESSURE WASH",
+        "image": "/images/studio/process_scene_2.png"
       },
       {
         "scene_number": 3,
-        "visual_description": "Shot of the autoclave's display showing the temperature and timer counting down. Close up on the '15 min' mark.",
-        "voiceover": "We use a 121C Autoclave to ensure complete sterilization, running for 15 minutes.",
-        "on_screen_text": "Time: 15 min",
-        "technical_note": "Focus on the digital display. Steady shot to emphasize precision."
+        "visual_description": "Vibrant wasabi leaves growing in multiple layers.",
+        "voiceover": "3단계 성장. 에어로포닉스 기술이 성장을 25배 가속합니다.",
+        "on_screen_text": "STEP 3: ACCELERATED GROWTH",
+        "image": "/images/studio/process_scene_3.png"
       },
       {
         "scene_number": 4,
-        "visual_description": "Wide shot of a scientist in lab coat and gloves working meticulously inside a Clean Bench. Petri dishes and sterile equipment are neatly arranged.",
-        "voiceover": "All work is conducted within a sterile Clean Bench, creating an environment free from unwanted microbes.",
-        "on_screen_text": "Clean Bench: Sterile Environment",
-        "technical_note": "Soft, even lighting within the clean bench. Focus on maintaining a sense of sterile order."
+        "visual_description": "AI control center with glowing green data.",
+        "voiceover": "4단계 제어. AI가 24시간 환경 수치를 최적화합니다.",
+        "on_screen_text": "STEP 4: INTELLIGENT CONTROL",
+        "image": "/images/studio/process_scene_4.png"
       },
       {
         "scene_number": 5,
-        "visual_description": "Close-up shot of a scientist carefully using sterile instruments to divide a single wasabi plantlet into multiple smaller pieces on a petri dish.",
-        "voiceover": "Here, explants – small pieces of the original plant – are carefully prepared for propagation.",
-        "on_screen_text": "Explants: New Beginnings",
-        "technical_note": "Extreme close-up. Highlight the delicate nature of the process. Stable camera."
+        "visual_description": "Final washing of whole wasabi roots.",
+        "voiceover": "5단계 최종 세척. 수확 전 마지막 순수 정화 공정입니다.",
+        "on_screen_text": "STEP 5: HARVEST PURIFICATION",
+        "image": "/images/studio/process_scene_5.png"
       },
       {
         "scene_number": 6,
-        "visual_description": "Time-lapse shot showing multiple petri dishes with small wasabi plantlets growing larger over time in a controlled environment chamber. Temperature and humidity readouts are briefly visible.",
-        "voiceover": "These explants, nurtured in controlled conditions, will eventually yield thousands of identical wasabi plants.",
-        "on_screen_text": "Tissue Culture: Scalable Production",
-        "technical_note": "Subtle shift in lighting to indicate the passage of time. Focus on the growth progression."
-      },
-      {
-        "scene_number": 7,
-        "visual_description": "Final shot: A wide shot of a wasabi farm with lush green plants growing in neat rows. The lab building is visible in the background.",
-        "voiceover": "From a single plant, to a thriving harvest. This is the power of smart farming and biotechnology.",
-        "on_screen_text": "K-Farm: Cultivating the Future",
-        "technical_note": "Bright, natural lighting. Show a sense of scale and connection between the lab and the farm."
+        "visual_description": "Empty modules returning to the start of the line.",
+        "voiceover": "6단계 회송. 자원 가동 효율을 위해 사이클이 재시작됩니다.",
+        "on_screen_text": "STEP 6: CLOSED-LOOP RETURN",
+        "image": "/images/studio/process_scene_6.png"
       }
     ],
-    "id": 1766900883617,
-    "timestamp": "2025-12-28T05:48:03.617Z"
+    "id": 1767342150000,
+    "timestamp": "2026-01-02T17:19:10.000Z"
   },
   {
     "topic": "Wasabi Tissue Culture Process (Micro-propagation)",
@@ -285,5 +269,64 @@
     ],
     "id": 1767178769008,
     "timestamp": "2025-12-31T10:59:29.008Z"
+  },
+  {
+    "topic": "GLOBAL STANDARD: The Future of Ag-Trust",
+    "seriesType": "global",
+    "specs": "- Market Expansion: North America, EU, Asia\n- Logistics: Smart Cold-Chain Tracking\n- Trust: Blockchain-based Traceability\n- Value: Michelin-tier Premium Wasabi",
+    "scenes": [
+      {
+        "scene_number": 1,
+        "visual_description": "Cinematic extreme close-up of a premium fresh wasabi root with holographic quality data overlays (99.9% Purity, Lab Certified).",
+        "voiceover": "Quality is not a compromise. It is a proof. K-Farm defines the absolute standard of premium wasabi.",
+        "on_screen_text": "THE ABSOLUTE PROOF (99.9% Purity)",
+        "technical_note": "Focus on the vibrant green texture and the futuristic feel of data overlays.",
+        "image": "/images/studio/global_scene_1.png",
+        "bgm": "Deep Orchestral Cello",
+        "sfx": "Digital Data Scan Pulse"
+      },
+      {
+        "scene_number": 2,
+        "visual_description": "Futuristic logistics montage: vacuum-packed boxes in a high-tech refrigerator, a sleek truck on a glowing highway, and a cargo plane taking off.",
+        "voiceover": "Zero-delay freshness. Our integrated cold-chain system seamlessly connects the heart of Hwacheon to global tables.",
+        "on_screen_text": "GLOBAL COLD-CHAIN: ZERO DELAY",
+        "technical_note": "Fast-paced editing guide. Motion blur and lens flares for high energy.",
+        "image": "/images/studio/global_scene_2.png",
+        "bgm": "Fast Cinematic Percussion",
+        "sfx": "Jet Engine Whoosh (High-pass)"
+      },
+      {
+        "scene_number": 3,
+        "visual_description": "A high-tech digital world globe showing golden particles flowing from Korea to New York, London, and Tokyo.",
+        "voiceover": "From Hwacheon to the world. Our Ag-tech breaks all borders, redefining global food connectivity.",
+        "on_screen_text": "CONNECTING HWACHEON TO THE WORLD",
+        "technical_note": "Cinematic camera sweep across the digital globe. Epic scale.",
+        "image": "/images/studio/global_scene_3.png",
+        "bgm": "Uplifting Corporate Tech",
+        "sfx": "Cybernetic Connectivity Pings"
+      },
+      {
+        "scene_number": 4,
+        "visual_description": "A Michelin-starred chef in a luxury kitchen respectfully grating fresh K-WASABI on a traditional sharkskin grater.",
+        "voiceover": "The ultimate choice of world-class professionals. K-Farm is the soul of gourmet innovation.",
+        "on_screen_text": "THE MASTER'S CHOICE: K-WASABI",
+        "technical_note": "Moody, warm lighting. Focus on the chef's precise hand movements and the texture of the wasabi.",
+        "image": "/images/studio/global_scene_4.png",
+        "bgm": "Elegant Piano & Strings",
+        "sfx": "Natural Grating Sound (Crisp)"
+      },
+      {
+        "scene_number": 5,
+        "visual_description": "A wide, epic shot of a futuristic K-Farm complex in the snowy mountains of Hwacheon at dusk, with holographic partner logos.",
+        "voiceover": "Breaking the borders of agriculture. We are planting the future of humanity. K-WASABI: Connecting the Soul of Taste.",
+        "on_screen_text": "K-WASABI: PLANTING THE FUTURE",
+        "technical_note": "Stunning architectural shot. Final corporate branding sting music.",
+        "image": "/images/studio/global_scene_5.png",
+        "bgm": "Heroic Symphony Outro",
+        "sfx": "Logo Sting Impact (Deep)"
+      }
+    ],
+    "id": 1767335750000,
+    "timestamp": "2026-01-02T15:35:50.000Z"
   }
 ]

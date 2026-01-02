@@ -5,21 +5,49 @@ import { Container, Title, Text, Stack, Card, Group, Button, Badge, ThemeIcon, T
 import { IconMovie, IconPlayerPlay, IconMusic, IconBrandYoutube, IconCopy, IconCheck, IconSettings } from '@tabler/icons-react';
 
 export default function StudioPage() {
+    const [allScripts, setAllScripts] = useState<any[]>([]);
+    const [selectedScriptId, setSelectedScriptId] = useState<string | null>(null);
     const [playing, setPlaying] = useState(false);
     const [activeScene, setActiveScene] = useState<number>(-1);
-    const [lang, setLang] = useState<'ko-KR' | 'en-US'>('en-US'); // Default English
+    const [lang, setLang] = useState<'ko-KR' | 'en-US'>('en-US');
+
+    // Fetch scripts on mount
+    useEffect(() => {
+        fetch('/api/scripts')
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setAllScripts(data);
+                    if (data.length > 0) setSelectedScriptId(data[0].id.toString());
+                }
+            });
+    }, []);
+
+    const currentScript = allScripts.find(s => s.id.toString() === selectedScriptId);
+    const scenes = currentScript ? currentScript.scenes.map((s: { scene_number: number; on_screen_text: string; visual_description: string; voiceover: string; technical_note: string; image_prompt?: string; image?: string; video?: string; bgm?: string; sfx?: string; }) => ({
+        time: `Scene ${s.scene_number}`,
+        title: s.on_screen_text || `Scene ${s.scene_number}`,
+        visual: s.visual_description,
+        narration_kr: s.voiceover,
+        narration_en: s.voiceover,
+        bgm_guide: s.bgm || 'Cinematic Ambient',
+        sfx_guide: s.sfx || 'Soft UI Beep',
+        video_prompt: s.image_prompt || s.visual_description,
+        image: s.image || '',
+        video: s.video || '',
+        technical_note: s.technical_note
+    })) : [];
 
     // Voice Settings
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [selectedVoiceURI, setSelectedVoiceURI] = useState<string | null>(null);
-    const [pitch, setPitch] = useState(1.1); // Default slightly higher for 'younger' tone
+    const [pitch, setPitch] = useState(1.1);
     const [rate] = useState(0.9);
 
     useEffect(() => {
         const loadVoices = () => {
             const availVoices = window.speechSynthesis.getVoices();
             setVoices(availVoices);
-            // Auto-select a female voice if possible, or any voice for the current language
             if (!selectedVoiceURI) {
                 const defaultVoice = availVoices.find(v =>
                     v.lang.includes(lang) &&
@@ -28,61 +56,10 @@ export default function StudioPage() {
                 if (defaultVoice) setSelectedVoiceURI(defaultVoice.voiceURI);
             }
         };
-
         loadVoices();
         window.speechSynthesis.onvoiceschanged = loadVoices;
-
-        return () => {
-            window.speechSynthesis.onvoiceschanged = null;
-        };
+        return () => { window.speechSynthesis.onvoiceschanged = null; };
     }, [lang, selectedVoiceURI]);
-
-    const scenes = [
-        {
-            time: '0:00 - 0:15',
-            title: 'Scene 1: Neural Data Core',
-            visual: 'Dark Server Room with glowing blue data cables looking like roots.',
-            narration_kr: 'K-Farm의 심장은 흙이 아닌 데이터로 뜁니다.',
-            narration_en: 'The heart of K-Farm beats not with soil, but with data.',
-            bgm: '🎵 Dark Synthwave',
-            video_prompt: 'Cinematic dark server room, glowing blue fiber optic cables tangling like plant roots, cybernetic atmosphere, matrix style code raining in background, 8k, unreal engine 5 render --ar 16:9',
-            image: '',
-            video: '/videos/tech_scene1.mp4'
-        },
-        {
-            time: '0:15 - 0:30',
-            title: 'Scene 2: X-Ray Vision',
-            visual: 'X-ray style scan of a Wasabi leaf showing internal veins.',
-            narration_kr: '식물의 혈관까지 보는 투시력. 엽록소의 움직임까지 읽어냅니다.',
-            narration_en: 'X-ray vision into the plant veins. Reading the movement of chlorophyll.',
-            bgm: '🎵 Medical Scan Sound',
-            video_prompt: 'X-ray MRI scan visualization of a wasabi leaf, internal veins glowing neon green on black background, medical imaging style, scientific analysis data UI overlay, 8k --ar 16:9',
-            image: '/images/studio/tech_scene_2.png',
-            video: '/videos/tech_scene2.mp4'
-        },
-        {
-            time: '0:30 - 0:45',
-            title: 'Scene 3: Laser Mist',
-            visual: 'Blue laser sheet lighting cutting through aeroponic fog.',
-            narration_kr: '나노 단위의 미스트, 레이저로 제어되는 완벽한 타격.',
-            narration_en: 'Nano-mist controlled by lasers. Perfect impact on the roots.',
-            bgm: '🎵 Laser Hum',
-            video_prompt: 'Blue laser sheet lighting cutting through thick white fog in a dark room, slow motion water particles suspended in air, sci-fi containment chamber aesthetic, 8k --ar 16:9',
-            image: '/images/studio/tech_scene_3.png',
-            video: '/videos/tech_scene3.mp4'
-        },
-        {
-            time: '0:45 - 1:00',
-            title: 'Scene 4: The Algorithm',
-            visual: 'Floating mathematical equations surrounding a levitating wasabi.',
-            narration_kr: '수확은 노동이 아닌, 알고리즘의 결과값입니다.',
-            narration_en: 'Harvest is not labor. It is the result of an algorithm.',
-            bgm: '🎵 Digital Climax',
-            video_prompt: 'A perfect wasabi root levitating in a void, surrounded by floating gold mathematical equations and geometry, magical realism mixed with high tech, clean 3d render, 8k --ar 16:9',
-            image: '/images/studio/tech_scene_4.png',
-            video: '/videos/tech_scene4.mp4'
-        }
-    ];
 
     const playScene = (index: number, autoAdvance: boolean = true) => {
         if (index >= scenes.length) {
@@ -90,28 +67,20 @@ export default function StudioPage() {
             setActiveScene(-1);
             return;
         }
-
         setActiveScene(index);
         const utterance = new SpeechSynthesisUtterance();
         utterance.text = lang === 'en-US' ? scenes[index].narration_en : scenes[index].narration_kr;
         utterance.lang = lang;
         utterance.pitch = pitch;
         utterance.rate = rate;
-
         if (selectedVoiceURI) {
             const voice = voices.find(v => v.voiceURI === selectedVoiceURI);
             if (voice) utterance.voice = voice;
         }
-
         utterance.onend = () => {
-            if (autoAdvance) {
-                playScene(index + 1, true);
-            } else {
-                setPlaying(false);
-                setActiveScene(-1);
-            }
+            if (autoAdvance) playScene(index + 1, true);
+            else { setPlaying(false); setActiveScene(-1); }
         };
-
         setTimeout(() => window.speechSynthesis.speak(utterance), 300);
     };
 
@@ -130,7 +99,7 @@ export default function StudioPage() {
     };
 
     const handleCopyScript = () => {
-        const fullScript = scenes.map(s => lang === 'en-US' ? s.narration_en : s.narration_kr).join('\n\n');
+        const fullScript = scenes.map((s: any) => lang === 'en-US' ? s.narration_en : s.narration_kr).join('\n\n');
         navigator.clipboard.writeText(fullScript);
         alert('Script copied to clipboard! You can paste this into ElevenLabs/Typecast.');
     };
@@ -163,7 +132,16 @@ export default function StudioPage() {
                         <Card shadow="sm" radius="md" p="xl" withBorder>
                             <Group mb="md" justify="space-between" align="flex-start">
                                 <Stack gap="xs">
-                                    <Title order={3}>📼 Script: Smart Control Tech Deep Dive</Title>
+                                    <Title order={3}>📼 Script Selection</Title>
+                                    <Select
+                                        placeholder="Choose a script to work on"
+                                        data={allScripts.map(s => ({ value: s.id.toString(), label: s.topic }))}
+                                        value={selectedScriptId}
+                                        onChange={setSelectedScriptId}
+                                        mb="md"
+                                        size="md"
+                                        style={{ borderBottom: '2px solid #51cf66' }}
+                                    />
                                     <Group>
                                         <IconSettings size={16} color="gray" />
                                         <Select
@@ -209,7 +187,7 @@ export default function StudioPage() {
                             </Group>
 
                             <Timeline active={activeScene >= 0 ? activeScene : -1} bulletSize={24} lineWidth={2}>
-                                {scenes.map((scene, idx) => (
+                                {scenes.map((scene: any, idx: number) => (
                                     <Timeline.Item
                                         key={idx}
                                         bullet={<IconMovie size={12} />}
@@ -266,6 +244,11 @@ export default function StudioPage() {
                                             </Group>
                                         </Card>
 
+                                        <Group gap="xs" mt="sm">
+                                            <Badge variant="light" color="blue" leftSection={<IconMusic size={12} />}>{scene.bgm_guide}</Badge>
+                                            <Badge variant="light" color="teal" leftSection={<IconSettings size={12} />}>{scene.sfx_guide}</Badge>
+                                        </Group>
+
                                         <Text size="xs" fw={700} mt="sm">🤖 AI Video Prompt:</Text>
                                         <Group gap={5} mb="xs">
                                             <Code block style={{ flex: 1, whiteSpace: 'normal' }} color="blue">
@@ -291,15 +274,24 @@ export default function StudioPage() {
 
                     <Grid.Col span={4}>
                         <Card shadow="sm" radius="md" p="xl" withBorder h="100%">
-                            <Title order={4} mb="md">🎵 BGM Cue Sheet</Title>
+                            <Title order={4} mb="md">🎵 Active Script Cues</Title>
                             <Stack>
-                                <Group>
-                                    <ThemeIcon variant="light" color="blue"><IconMusic size={16} /></ThemeIcon>
-                                    <Stack gap={0}>
-                                        <Text size="sm" fw={700}>Hans Zimmer Style</Text>
-                                        <Text size="xs" c="dimmed">Main Theme (Epic)</Text>
-                                    </Stack>
-                                </Group>
+                                <Text size="sm" fw={700} c="dimmed">Overall Mood</Text>
+                                <Code block color="gray">
+                                    {currentScript?.specs || 'No specific cues provided.'}
+                                </Code>
+                                <Divider my="xs" />
+                                <Text size="sm" fw={700} c="dimmed">Scene-by-Scene Cues</Text>
+                                {scenes.map((s: any, i: number) => (
+                                    <Group key={i} gap="xs" wrap="nowrap">
+                                        <Badge variant="filled" color="dark" size="sm">{i + 1}</Badge>
+                                        <Stack gap={0} style={{ flex: 1 }}>
+                                            <Text size="xs" fw={700}>{s.bgm_guide}</Text>
+                                            <Text size="xs" c="dimmed">{s.sfx_guide}</Text>
+                                        </Stack>
+                                    </Group>
+                                ))}
+                                <Divider mt="xl" />
                                 <Divider />
                                 <Group>
                                     <ThemeIcon variant="light" color="teal"><IconMusic size={16} /></ThemeIcon>

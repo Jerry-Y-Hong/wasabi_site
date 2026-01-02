@@ -59,38 +59,6 @@ export default function Home() {
         </SimpleGrid>
       </Container>
 
-      {/* Restore Process Videos: Seeding & Cultivation */}
-      <Box mt={100} py={80} style={{ borderTop: '1px solid #eee', borderBottom: '1px solid #eee' }}>
-        <Container size="lg">
-          <Title order={2} ta="center" mb="xl" fw={900} style={{ fontSize: '2.5rem' }}>
-            OUR SMART PROCESS
-          </Title>
-          <SimpleGrid cols={{ base: 1, md: 2 }} spacing={40}>
-            <Box>
-              <Paper shadow="md" radius="lg" p="md" withBorder>
-                <Text fw={900} size="lg" mb="sm" c="wasabi.9">🌱 Process 1: Seeding</Text>
-                <Text size="sm" c="dimmed" mb="md">와사비의 시작, 최적화된 자동 파종 시스템</Text>
-                <video
-                  src="/videos/video_2.mp4"
-                  controls
-                  style={{ width: '100%', borderRadius: '12px', display: 'block' }}
-                />
-              </Paper>
-            </Box>
-            <Box>
-              <Paper shadow="md" radius="lg" p="md" withBorder>
-                <Text fw={900} size="lg" mb="sm" c="wasabi.9">🌿 Process 2: Cultivation</Text>
-                <Text size="sm" c="dimmed" mb="md">화천의 눈과 고도의 알고리즘이 만난 정밀 재배</Text>
-                <video
-                  src="/videos/video_1.mp4"
-                  controls
-                  style={{ width: '100%', borderRadius: '12px', display: 'block' }}
-                />
-              </Paper>
-            </Box>
-          </SimpleGrid>
-        </Container>
-      </Box>
 
 
 
