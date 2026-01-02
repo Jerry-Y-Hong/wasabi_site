@@ -1,11 +1,21 @@
 'use client';
 
-import { Container, Title, Text, TextInput, Button, Table, Badge, Card, Group, Stack, ActionIcon, Modal, Select, Textarea, CopyButton, Tooltip, Tabs, Menu, Divider } from '@mantine/core';
+import { Container, Title, Text, TextInput, Button, Group, Stack, Badge, Card, ActionIcon, Table, Modal, Select, Tabs, Tooltip, Textarea, Menu, CopyButton, Divider, Checkbox } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { IconSearch, IconExternalLink, IconRobot, IconDownload, IconCheck, IconMail, IconArrowLeft, IconPlus, IconEdit, IconWorld, IconTrash, IconX, IconScan, IconCopy, IconRocket } from '@tabler/icons-react';
 import pptxgen from 'pptxgenjs';
 import { notifications } from '@mantine/notifications';
-import { saveHunterResult, getHunterResults, updateHunterStatus, searchPartners, updateHunterInfo, deleteHunterResult, scanWebsite, sendProposalEmail } from '@/lib/actions';
+import {
+    saveHunterResult,
+    getHunterResults,
+    updateHunterStatus,
+    searchPartners,
+    updateHunterInfo,
+    deleteHunterResult,
+    scanWebsite,
+    sendProposalEmail,
+    sendBulkProposals
+} from '@/lib/actions';
 import { generateProposalEmail } from '@/lib/ai';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
@@ -26,6 +36,11 @@ interface HunterResult {
     lastContacted?: string;
     isMock?: boolean;
     country?: string; // Added Country
+    aiSummary?: {
+        score: number;
+        analysis: string;
+        angle: string;
+    };
 }
 
 const APP_STATUS: Record<string, string> = {
@@ -47,6 +62,7 @@ const COUNTRY_CODES = [
     { value: 'VN', label_key: 'hunter_country_vn' },
     { value: 'FR', label_key: 'hunter_country_fr' },
     { value: 'AE', label_key: 'hunter_country_ae' },
+    { value: 'TH', label_key: 'hunter_country_th' },
     { value: 'DE', label_key: 'hunter_country_de' },
     { value: 'ES', label_key: 'hunter_country_es' }
 ];
@@ -63,37 +79,47 @@ export default function HunterPage() {
     // Smart Targets Definition
     const TARGET_PRESETS = [
         {
-            label: '💎 VIP: KR High-end Dining',
-            icon: '🍽️',
+            label: '🇯🇵 JP: Toyosu Market & High-end Wholesalers',
+            icon: '🏮',
             keywords: {
-                'KR': '"오마카세" OR "파인다이닝" "지배인" OR "헤드셰프" OR "구매" -블로그 -후기 -리뷰',
-                'JP': '"高級寿司" OR "和食" "仕入れ" "担当" -review',
-                'Global': 'Premium Sushi Omakase Purchasing Manager'
+                'JP': '("豊洲市場" OR "大田市場") ("わさび" OR "生わさび") "卸売" OR "仲卸" "担当" "お問い合わせ" -blog',
+                'Global': 'Toyosu Market Wasabi Wholesaler Contact'
+            }
+        },
+        {
+            label: '🍱 JP: Premium Omakase & Kaiseki Group',
+            icon: '🍣',
+            keywords: {
+                'JP': '("ミシュラン" OR "食べログ4.0") ("寿司" OR "和食") "多店舗展開" "商品開発" "仕入れ" -review',
+                'Global': 'Michelin Star Sushi Group Japan Purchasing'
+            }
+        },
+        {
+            label: '🧪 JP: Agritech & Aeroponic R&D',
+            icon: '🌱',
+            keywords: {
+                'JP': '("エアロポニックス" OR "噴霧耕") ("わさび" OR "ワサビ") "共同研究" OR "技術提携" "研究所" -youtube',
+                'Global': 'Japan Aeroponics Wasabi Research Partnership'
+            }
+        },
+        {
+            label: '🏭 JP: Food Tech & Extract Processing',
+            icon: '🥣',
+            keywords: {
+                'JP': '("サプリメント" OR "健康食品") ("わさびエキス" OR "6-MSITC") "原材料" "供給" "メーカー"',
+                'Global': 'Japan Health Food Wasabi Extract Supplier Search'
             }
         },
         {
             label: '🐋 Global Big Fish: Wholesalers',
             icon: '🌍',
             keywords: {
-                // Smart Multi-lingual Support
                 'KR': '"와사비" "도매" "유통" "납품문의" -쿠팡 -스마트스토어',
                 'JP': '"わさび" ("卸売" OR "商社" OR "問屋") "会社概要" -recipe',
                 'CN': '芥末 批发商 "联系方式"',
-                'FR': '"Wasabi" (Grossiste OR Distributeur OR Importateur) "Contact" -recette',
-                'AE': '"وسابي" (جملة OR موزع OR مستورد) "اتصال" -وصفة',
-                'DE': '"Wasabi" (Großhandel OR Distributor OR Importeur) "Kontakt" -rezept',
-                'ES': '"Wasabi" (Mayorista OR Distribuidor OR Importador) "Contacto" -receta',
-                // For US, EU, and others, use English B2B terms + Country Filter
+                'VN': '"Wasabi" (Bán buôn OR Nhà phân phối OR Nhập khẩu) "Liên hệ"',
+                'TH': '"วาซาบิ" (ขายส่ง OR ตัวแทนจำหน่าย OR ผู้นำเข้า) "ติดต่อ"',
                 'Global': '"Wasabi" ("Wholesale" OR "Distributor" OR "Importer") -recipe -blog -amazon'
-            }
-        },
-        {
-            label: '🏭 Factory: Food Processors',
-            icon: '🍱',
-            keywords: {
-                'KR': '"식품제조" OR "소스제조" "구매팀" OR "품질관리" "와사비" "HACCP"',
-                'JP': '"食品加工" "わさび" "仕入れ" "工場長"',
-                'Global': 'Food Processing Plant Purchasing Manager Wasabi'
             }
         },
         {
@@ -107,11 +133,11 @@ export default function HunterPage() {
         },
         {
             label: '📂 Hunt: Excel/PDF Lists',
-            icon: '🕵️',
+            icon: '📄',
             keywords: {
-                'KR': 'filetype:xls OR filetype:xlsx OR filetype:pdf "식품업체 현황" OR "유통업체 리스트"',
-                'JP': 'filetype:pdf "食品卸売業者" "名簿" OR "一覧"',
-                'Global': 'filetype:pdf "Food Distributors List" contact email'
+                'KR': 'filetype:xlsx OR filetype:pdf "와사비" "업체리스트" OR "회원명단"',
+                'JP': 'filetype:xlsx OR filetype:pdf "わさび" "業者名簿" OR "会員リスト"',
+                'Global': 'filetype:xlsx OR filetype:pdf "Wasabi" "Company List" "Directory"'
             }
         }
     ];
@@ -132,7 +158,9 @@ export default function HunterPage() {
     const [opened, setOpened] = useState(false);
     const [editOpened, setEditOpened] = useState(false); // Edit Modal
     const [selectedPartner, setSelectedPartner] = useState<HunterResult | null>(null);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [emailMode, setEmailMode] = useState(false);
+    const [bulkSending, setBulkSending] = useState(false);
 
     // Edit Form State
     const [editForm, setEditForm] = useState<Partial<HunterResult>>({});
@@ -161,6 +189,53 @@ export default function HunterPage() {
         } catch (error) {
             console.error('Failed to load partners:', error);
             notifications.show({ title: 'Connection Error', message: 'Could not fetch data.', color: 'red' });
+        }
+    };
+
+    const toggleSelect = (id: number) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === savedPartners.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(savedPartners.map((p: any) => p.id));
+        }
+    };
+
+    const handleBulkSend = async () => {
+        if (selectedIds.length === 0) return;
+
+        const targetPartners = savedPartners.filter((p: any) => selectedIds.includes(p.id));
+        const partnersWithEmail = targetPartners.filter((p: any) => p.email && p.email.includes('@'));
+
+        if (partnersWithEmail.length === 0) {
+            notifications.show({ title: 'No Emails Found', message: 'Selected partners do not have valid emails.', color: 'orange' });
+            return;
+        }
+
+        if (!confirm(`🚀 Bulk Launch: Send personalized AI proposals to ${partnersWithEmail.length} partners?\n\n(Wait: ~1s per email)`)) return;
+
+        setBulkSending(true);
+        try {
+            const result = await sendBulkProposals(partnersWithEmail);
+            if (result.success) {
+                notifications.show({
+                    title: 'Bulk Launch Complete! 🚀',
+                    message: `Successfully sent ${result.sent} / ${result.total} emails.`,
+                    color: 'green',
+                    autoClose: 10000
+                });
+                loadSavedPartners();
+                setSelectedIds([]);
+            }
+        } catch (err) {
+            notifications.show({ title: 'Bulk Error', message: 'System interrupted.', color: 'red' });
+        } finally {
+            setBulkSending(false);
         }
     };
 
@@ -405,6 +480,40 @@ export default function HunterPage() {
                 slide3_p2: '하이퍼 사이클 에어로포닉스 (9개월 주기)',
                 slide3_p3: 'ESG & 고효율 LED 재배 기술'
             };
+        } else if (lang === 'Thailand' || lang === 'TH') {
+            text = {
+                title: 'ข้อเสนอพันธมิตรทางยุทธศาสตร์',
+                subtitle: `K-Farm International  x  ${partner.name}`,
+                prepared: 'จัดเตรียมสำหรับ:',
+                confidential: 'ความลับ',
+                slide2_title: 'ความเป็นมาของข้อเสนอ',
+                slide2_sub: `วิเคราะห์ ${partner.name}`,
+                slide2_rel: 'ความเกี่ยวข้อง:',
+                slide2_type: 'ประเภทองค์กร:',
+                slide2_syn: 'การทำงานร่วมกัน: เป้าหมายการวิจัยและพัฒนาในเกษตรอัจฉริยะ',
+                slide3_title: 'ขีดความสามารถหลัก',
+                slide3_sub: 'K-Farm สมาร์ทโซลูชั่น',
+                slide3_p1: 'ต้นกล้าปลอดเชื้อ (Tissue Culture)',
+                slide3_p2: 'ระบบแอโรโพนิกส์ (รอบการผลิต 9 เดือน)',
+                slide3_p3: 'เทคโนโลยี LED ประหยัดพลังงานและ ESG'
+            };
+        } else if (lang === 'Vietnam' || lang === 'VN') {
+            text = {
+                title: 'Đề xuất Đối tác Chiến lược',
+                subtitle: `K-Farm International  x  ${partner.name}`,
+                prepared: 'Chuẩn bị cho:',
+                confidential: 'Bảo mật',
+                slide2_title: 'Bối cảnh Đề xuất',
+                slide2_sub: `Phân tích ${partner.name}`,
+                slide2_rel: 'Sự liên quan:',
+                slide2_type: 'Loại hình tổ chức:',
+                slide2_syn: 'Tiềm năng hợp tác: Mục tiêu R&D chung trong nông nghiệp thông minh',
+                slide3_title: 'Năng lực Cốt lõi',
+                slide3_sub: 'Giải pháp K-Farm Smart',
+                slide3_p1: 'Cây giống sạch bệnh (Nuôi cấy mô)',
+                slide3_p2: 'Hệ thống khí canh (Chu kỳ 9 tháng)',
+                slide3_p3: 'Công nghệ LED tiết kiệm năng lượng & ESG'
+            };
         }
 
         const slide1 = pres.addSlide();
@@ -613,7 +722,8 @@ export default function HunterPage() {
                                                     if (scanRes.success) {
                                                         enrichedItem.email = (scanRes.emails && scanRes.emails.length > 0) ? scanRes.emails[0] : enrichedItem.email;
                                                         enrichedItem.phone = (scanRes.phones && scanRes.phones.length > 0) ? scanRes.phones[0] : enrichedItem.phone;
-                                                        enrichedItem.status = 'Contact Found';
+                                                        enrichedItem.aiSummary = scanRes.aiSummary; // Store AI Analysis
+                                                        enrichedItem.status = 'AI Analyzed';
                                                     }
                                                 }
                                             } catch (e) {
@@ -665,7 +775,19 @@ export default function HunterPage() {
                                             </Table.Td>
                                             <Table.Td><Badge variant="light" color="blue">{element.type}</Badge></Table.Td>
                                             <Table.Td style={{ maxWidth: 300 }}>
-                                                <Text size="xs" lineClamp={2}>{element.relevance}</Text>
+                                                {element.aiSummary ? (
+                                                    <Stack gap={4}>
+                                                        <Group gap={4}>
+                                                            <Badge color={element.aiSummary.score >= 8 ? 'green' : element.aiSummary.score >= 5 ? 'blue' : 'gray'} size="xs">
+                                                                AI Score: {element.aiSummary.score}/10
+                                                            </Badge>
+                                                        </Group>
+                                                        <Text size="xs" fw={700} c="grape">{element.aiSummary.angle}</Text>
+                                                        <Text size="xs" lineClamp={2} c="dimmed" fs="italic">"{element.aiSummary.analysis}"</Text>
+                                                    </Stack>
+                                                ) : (
+                                                    <Text size="xs" lineClamp={2}>{element.relevance}</Text>
+                                                )}
                                             </Table.Td>
                                             <Table.Td>
                                                 {element.email ? (
@@ -718,20 +840,17 @@ export default function HunterPage() {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="pipeline">
-                    <Stack>
+                    <Stack gap="md">
                         <Group justify="space-between">
                             <Title order={3}>My Pipeline <Text span size="sm" c="dimmed">({savedPartners.length})</Text></Title>
                             <Button
-                                variant="subtle"
-                                color="gray"
-                                size="sm"
-                                leftSection={<IconCheck size={14} />}
-                                onClick={() => {
-                                    notifications.show({ title: 'Syncing', message: 'Checking for updates...', color: 'blue', autoClose: 1000 });
-                                    loadSavedPartners();
-                                }}
+                                leftSection={<IconRocket size={16} />}
+                                color="blue"
+                                disabled={selectedIds.length === 0}
+                                loading={bulkSending}
+                                onClick={handleBulkSend}
                             >
-                                Sync Data
+                                Mass Send AI Proposals ({selectedIds.length})
                             </Button>
                         </Group>
 
@@ -741,6 +860,13 @@ export default function HunterPage() {
                             <Table striped highlightOnHover withTableBorder withColumnBorders>
                                 <Table.Thead>
                                     <Table.Tr>
+                                        <Table.Th w={40}>
+                                            <Checkbox
+                                                checked={selectedIds.length === savedPartners.length && savedPartners.length > 0}
+                                                indeterminate={selectedIds.length > 0 && selectedIds.length < savedPartners.length}
+                                                onChange={toggleSelectAll}
+                                            />
+                                        </Table.Th>
                                         <Table.Th w={60}>Cntry</Table.Th>
                                         <Table.Th>Status</Table.Th>
                                         <Table.Th>Organization</Table.Th>
@@ -752,6 +878,12 @@ export default function HunterPage() {
                                 <Table.Tbody>
                                     {savedPartners.map((element: HunterResult) => (
                                         <Table.Tr key={element.id} style={{ fontSize: '0.85rem' }}>
+                                            <Table.Td>
+                                                <Checkbox
+                                                    checked={selectedIds.includes(element.id)}
+                                                    onChange={() => toggleSelect(element.id)}
+                                                />
+                                            </Table.Td>
                                             <Table.Td>
                                                 <Menu shadow="md" width={150}>
                                                     <Menu.Target>

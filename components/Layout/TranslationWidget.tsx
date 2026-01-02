@@ -5,14 +5,16 @@ import { IconLanguage } from '@tabler/icons-react';
 import { useTranslation } from '@/lib/i18n';
 
 const LANGUAGES = [
-    { value: 'ko', label: '한국어' },
+    { value: 'ko', label: 'Korean' },
     { value: 'en', label: 'English' },
-    { value: 'ja', label: '日本語' },
-    { value: 'zh-CN', label: '中文' },
-    { value: 'fr', label: 'Français' },
-    { value: 'de', label: 'Deutsch' },
-    { value: 'es', label: 'Español' },
+    { value: 'ja', label: 'Japanese' },
+    { value: 'zh-CN', label: 'Chinese' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'es', label: 'Spanish' },
     { value: 'ar', label: 'Arabic' },
+    { value: 'th', label: 'Thai' },
+    { value: 'vi', label: 'Vietnamese' },
 ];
 
 export function TranslationWidget() {

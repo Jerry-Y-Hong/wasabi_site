@@ -515,7 +515,9 @@ export async function updateHunterInfo(id: number, data: any) {
     return { success: false };
 }
 
-export async function scanWebsite(url: string) {
+import { analyzeLeadQuality } from '@/lib/ai';
+
+export async function scanWebsite(url: string, name?: string) {
     try {
         console.log(`[Scan] Action Triggered for: ${url}`);
 
@@ -523,11 +525,24 @@ export async function scanWebsite(url: string) {
         console.log(`[Scan] Result:`, result.success ? 'Success' : 'Fail');
 
         if (result.success && result.data) {
+            // AI Analysis Integration
+            let aiAnalysis = null;
+            try {
+                aiAnalysis = await analyzeLeadQuality(
+                    name || result.data.title || "Unknown Company",
+                    result.data.summary || "",
+                    result.data.metaDescription || ""
+                );
+            } catch (aiErr) {
+                console.error("[Scan] AI Analysis Error:", aiErr);
+            }
+
             return {
                 success: true,
                 emails: result.data.emails,
                 phones: result.data.phones,
-                message: `Found ${result.data.emails.length} emails, ${result.data.phones.length} phones.`
+                aiSummary: aiAnalysis,
+                message: `Found ${result.data.emails.length} emails, ${result.data.phones.length} phones. AI Analysis complete.`
             };
         } else {
             return { success: false, error: result.error || 'Could not access website.' };
@@ -880,4 +895,60 @@ export async function sendProposalEmail(to: string, partnerName: string, subject
 
     const result = await sendEmail({ to, subject: emailSubject, html: emailHtml });
     return result;
+}
+
+import { generateProposalEmail } from './ai';
+
+// Bulk Email Dispatcher
+export async function sendBulkProposals(partners: any[]) {
+    const results = [];
+
+    for (const partner of partners) {
+        try {
+            if (!partner.email || !partner.email.includes('@')) {
+                results.push({ id: partner.id, name: partner.name, success: false, error: 'No Email Found' });
+                continue;
+            }
+
+            // 1. Generate Personalized AI Content
+            const aiContent = await generateProposalEmail({
+                partnerName: partner.name,
+                partnerType: partner.type,
+                relevance: partner.relevance,
+                contactPerson: partner.contact || 'Manager',
+                country: partner.country || 'Global'
+            });
+
+            // 2. Send Email
+            const emailResult = await sendProposalEmail(
+                partner.email,
+                partner.name,
+                aiContent.subject,
+                aiContent.body
+            );
+
+            if (emailResult.success) {
+                // 3. Update Status in DB
+                await updateHunterStatus(partner.id, 'Proposal Sent');
+                results.push({ id: partner.id, name: partner.name, success: true });
+            } else {
+                results.push({ id: partner.id, name: partner.name, success: false, error: 'Email Failed' });
+            }
+
+            // 4. Slight delay to avoid SMTP throttling (1s)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+        } catch (error) {
+            console.error(`Bulk send error for ${partner.name}:`, error);
+            results.push({ id: partner.id, name: partner.name, success: false, error: 'System Error' });
+        }
+    }
+
+    revalidatePath('/admin/hunter');
+    return {
+        success: true,
+        total: partners.length,
+        sent: results.filter(r => r.success).length,
+        details: results
+    };
 }

@@ -53,6 +53,28 @@ export async function generateProposalEmail(data: ProposalRequest) {
             - My Name: 홍영희 (Jerry Y. Hong)
             - My Title: 영업 이사 (Sales Director)
             `;
+        } else if (country === 'TH') {
+            languageInstruction = '**LANGUAGE: THAI (Formal Business)**';
+            contextInstruction = '- Tone: Highly polite (using Khrub/Kha if appropriate, but generally business formal), respectful.\n- Cultural Nuance: Emphasize "partnership" and "mutual growth", polite business greetings.';
+            companyContext = `
+            - Location: Hwacheon-gun, Gangwon-do (Mecca of Korean Wasabi).
+            - Role: Exclusive National Distributor for high-tech smart farm Wasabi.
+            - Products: Leaves, Stems, Rhizomes, and Smart Farm Seedlings.
+            - USP: Zero-pesticide, Aeroponic technology, 9-month growth cycle.
+            - My Name: Jerry Y. Hong
+            - My Title: Sales Director
+            `;
+        } else if (country === 'VN') {
+            languageInstruction = '**LANGUAGE: VIETNAMESE (Formal Business)**';
+            contextInstruction = '- Tone: Professional, sincere, using proper honorifics (Ông/Bà/Công ty).\n- Cultural Nuance: Respectful business etiquette, emphasizing quality and advanced Korean technology.';
+            companyContext = `
+            - Location: Hwacheon-gun, Gangwon-do (Mecca of Korean Wasabi).
+            - Role: Leading Korean Smart Farm company specializing in Wasabi.
+            - Products: Premium Rhizomes, virus-free Seedlings, and Aeroponic systems.
+            - USP: 25x higher productivity than traditional farming, eco-friendly.
+            - My Name: Jerry Y. Hong
+            - My Title: Sales Director
+            `;
         } else {
             // Default to English (US, Global, etc.)
             languageInstruction = '**LANGUAGE: ENGLISH (Professional Business)**';
@@ -72,7 +94,7 @@ export async function generateProposalEmail(data: ProposalRequest) {
         
         Write a personalized partnership proposal email to a potential partner in ${country}.
         ${languageInstruction}
-        IMPORTANT rule: Do NOT use English words unless they are specific proper nouns (like brand names). Translate all concepts into natural business ${country === 'JP' ? 'Japanese' : (country === 'KR' ? 'Korean' : 'English')}.
+        IMPORTANT rule: Do NOT use English words unless they are specific proper nouns (like brand names). Translate all concepts into natural business ${country === 'JP' ? 'Japanese' : (country === 'KR' ? 'Korean' : (country === 'TH' ? 'Thai' : (country === 'VN' ? 'Vietnamese' : 'English')))}.
         
         Partner Info:
         - Name: ${data.partnerName}
@@ -271,5 +293,41 @@ export async function generateVideoScript(topic: string, seriesType: string = 'p
     } catch (e) {
         console.error(e);
         return { error: "Failed" };
+    }
+}
+
+export async function analyzeLeadQuality(companyName: string, websiteSummary: string, metaDescription: string) {
+    if (!process.env.GEMINI_API_KEY) return { score: 5, analysis: "AI Analysis Unavailable", angle: "Standard Partnership" };
+
+    const prompt = `
+    Act as a Senior Business Development Manager for K-Farm, a leading Korean Smart Farm (Wasabi focus).
+    
+    Analyze this potential partner based on their website data:
+    Company Name: ${companyName}
+    Meta Description: ${metaDescription}
+    Website Summary: ${websiteSummary}
+    
+    Task:
+    1. Score this lead from 1-10 based on how relevant they are to K-Farm's business (Wasabi seedling sales, Smart Farm tech export, fresh wasabi supply).
+    2. Write a 1-sentence analysis of why they are or are not a good fit.
+    3. Suggest the "Best Angle" for a sales pitch.
+    
+    Output Format (Strict JSON):
+    {
+        "score": number, 
+        "analysis": "string",
+        "angle": "string"
+    }
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) return JSON.parse(jsonMatch[0]);
+        return { score: 5, analysis: "Analysis failed to parse", angle: "Standard" };
+    } catch (e) {
+        console.error("AI Qualification Error:", e);
+        return { score: 0, analysis: "AI Error", angle: "Unknown" };
     }
 }

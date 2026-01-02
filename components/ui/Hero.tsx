@@ -81,6 +81,76 @@ const narrations: Record<string, Record<string, string[]>> = {
             "6단계 회송. 자원 가동 효율을 위해 사이클이 재시작됩니다."
         ]
     },
+    th: {
+        brand: [
+            "ที่ซึ่งความลึกลับแห่งโบราณกาลของฮวาชอนพบกับเทคโนโลยีล้ำสมัยของมนุษยชาติ เค-วาซาบิ กำลังกลายเป็นงานศิลปะที่เหนือกว่าการเกษตรแบบเดิม",
+            "คุณค่าที่เหนือยิ่งกว่าบรรจุภัณฑ์ที่หรูหรา แก่นแท้ของ เค-วาซาบิ ถูกทำให้สมบูรณ์แบบในรายละเอียดที่มองไม่เห็นซึ่งเราใส่ใจอย่างพิถีพิถัน",
+            "แบรนด์วาซาบิระดับพรีเมียมเพียงหนึ่งเดียวที่ได้รับการพิสูจน์และไว้วางใจจากมิชลินเชฟระดับโลก ผู้ยืนอยู่บนจุดสูงสุดของศิลปะการทำอาหาร",
+            "ความสดชื่นที่บริสุทธิ์จากเกาหลีถูกส่งตรงแบบเรียลไทม์ไปยังศูนย์กลางอาหารชั้นนำทั่วโลก วาดแผนที่อาหารเลิศรสของมนุษยชาติขึ้นใหม่"
+        ],
+        tech: [
+            "ข้อมูลไม่เคยโกหก เราถอดรหัสภาษาที่ละเอียดอ่อนของสิ่งมีชีวิตให้เป็นตัวเลขที่ชาญฉลาด เพื่อสร้างระบบนิเวศทางชีวภาพที่สมบูรณ์แบบที่สุด",
+            "ศูนย์บัญชาการ AI ทำงานตลอด 24 ชั่วโมงด้วยอัลกอริทึมที่ชาญฉลาด วิเคราะห์สถานะการเติบโตและพยากรณ์อนาคตของวาซาบิในทุกวินาที",
+            "ระบบพ่นละอองละเอียดแอโรโพนิกส์ จำลองสภาพบรรยากาศที่ดีที่สุดในโลก เพื่อให้วาซาบิสามารถหายใจและเติบโตได้อย่างสบายที่สุด",
+            "อัลกอริทึมการเรียนรู้เชิงลึกที่เรียนรู้และพัฒนาได้ด้วยตนเอง นี่คือมาตรฐานและเทคโนโลยีหลักของการเกษตรแห่งอนาคตที่ เค-วาซาบิ นำเสนอ"
+        ],
+        global: [
+            "สำหรับ เค-วาซาบิ คุณภาพไม่ใช่เรื่องของการประนีประนอม แต่เป็นผลลัพธ์ของความอดทนและการพิสูจน์ผ่านข้อมูลและการวิจัยอย่างเข้มงวด",
+            "เวทมนตร์ที่เปลี่ยนอากาศยามเช้าที่หนาวเหน็บของฮวาชอน ให้กลายเป็นมื้อค่ำที่หรูหราในเมืองใหญ่ทั่วโลก โดยมีเทคโนโลยีโคลด์เชนรักษาความสดใหม่ไว้",
+            "ทุกขั้นตอนถูกบันทึกเป็นข้อมูลและเปิดเผยอย่างโปร่งใส เราเป็นมาตรฐานเดียวที่ให้คำมั่นสัญญาด้วยข้อมูลและพิสูจน์ด้วยความไว้วางใจ",
+            "ตั้งแต่นิวยอร์ก โตเกียว ไปจนถึงปารีส เชฟระดับปรมาจารย์ของโลกต่างเลือก เค-วาซาบิ เป็นสัญลักษณ์ของจุดสูงสุดแห่งรสชาติ",
+            "เราจะทลายพรมแดนทางการเกษตร และปลูกฝังมาตรฐานใหม่ของการเกษตรเพื่อสุขภาพที่ดีและอนาคตที่รุ่งเรืองของมนุษยชาติไปทั่วโลก"
+        ],
+        seeding: [
+            "ทุกชีวิตที่ยิ่งใหญ่เริ่มต้นจากพิมพ์เขียวทางพันธุกรรมที่แม่นยำ เราคัดเลือกเฉพาะจีโนมที่แข็งแกร่งและสมบูรณ์แบบที่สุดจากเซลล์นับล้าน",
+            "ห้องแล็บชีวภาพที่รักษาความสะอาดปราศจากเชื้ออย่างสมบูรณ์ ป้องกันการปนเปื้อนจากภายนอกเพื่อปกป้องการกำเนิดของชีวิตที่บริสุทธิ์",
+            "นักวิศวกรรมชีวภาพผู้เชี่ยวชาญดูแลการเติบโตของวาซาบิภายใต้ระบบควบคุมการเพาะเลี้ยงที่แม่นยำ ทุกการเคลื่อนไหวของเซลล์ถูกบันทึกไว้",
+            "โซลูชันแห่งอนาคตเพื่อมวลมนุษยชาติ ชีวิตที่เริ่มต้นจากเซลล์เดียวจะนำไปสู่การเก็บเกี่ยวที่ยิ่งใหญ่ เรากำลังเพิ่มพูนอนาคตของการเกษตรอย่างไม่หยุดยั้ง"
+        ],
+        process: [
+            "ขั้นตอนที่ 1 การหว่านเมล็ด แขนกลอัตโนมัติวางกล้าไม้อย่างแม่นยำ",
+            "ขั้นตอนที่ 2 การชำระล้าง การฉีดพ่นแรงดันสูงช่วยรักษาความสะอาดแบบเรียลไทม์",
+            "ขั้นตอนที่ 3 การเติบโต เทคโนโลยีแอโรโพนิกส์ช่วยเร่งการเติบโตเร็วขึ้น 25 เท่า",
+            "ขั้นตอนที่ 4 การควบคุม AI ปรับค่าสภาพแวดล้อมให้เหมาะสมที่สุดตลอด 24 ชั่วโมง",
+            "ขั้นตอนที่ 5 การทำความสะอาดขั้นสุดท้าย กระบวนการฟอกบริสุทธิ์ก่อนการเก็บเกี่ยว",
+            "ขั้นตอนที่ 6 การหมุนเวียน วงจรเริ่มต้นใหม่เพื่อประสิทธิภาพการใช้ทรัพยากรสูงสุด"
+        ]
+    },
+    vi: {
+        brand: [
+            "Nơi vẻ đẹp bí ẩn cổ xưa của Hwacheon gặp gỡ công nghệ tiên tiến nhất của nhân loại, K-Wasabi trở thành một tác phẩm nghệ thuật vượt xa nông nghiệp thông thường.",
+            "Giá trị vượt xa cả bao bì sang trọng. Tinh hoa thực sự của K-Wasabi được hoàn thiện trong những chi tiết vô hình mà chúng tôi chăm chút tỉ mỉ.",
+            "Thương hiệu Wasabi cao cấp duy nhất được các đầu bếp Michelin hàng đầu thế giới tin dùng, đứng trên đỉnh cao của nghệ thuật ẩm thực toàn cầu.",
+            "Sự tươi ngon thuần khiết từ Hàn Quốc được chuyển giao thời gian thực đến các trung tâm ẩm thực lớn trên thế giới, vẽ lại bản đồ ẩm thực cao cấp."
+        ],
+        tech: [
+            "Dữ liệu không bao giờ nói dối. Chúng tôi giải mã ngôn ngữ tinh tế của sự sống thành những con số thông minh để xây dựng hệ sinh thái sinh học tối ưu.",
+            "Trung tâm chỉ huy AI hoạt động 24/7 với thuật toán thông minh, phân tích trạng thái tăng trưởng và dự đoán tương lai của Wasabi trong từng khoảnh khắc.",
+            "Hệ thống phun sương Aeroponics mô phỏng môi trường khí quyển tốt nhất trên trái đất để Wasabi có thể hít thở và phát triển thoải mái nhất.",
+            "Thuật toán Deep Learning tự học hỏi và tiến hóa - đây là tiêu chuẩn và công nghệ cốt lõi của nông nghiệp tương lai mà K-Wasabi mang lại."
+        ],
+        global: [
+            "Đối với K-Wasabi, chất lượng không bao giờ là sự thỏa hiệp. Đó là kết quả của sự kiên trì và chứng minh qua dữ liệu từ những nghiên cứu khắt khe.",
+            "Phép màu biến không khí lạnh giá của bình minh Hwacheon thành bữa tối sang trọng tại các thành phố lớn, được bảo vệ bởi công nghệ chuỗi cung ứng lạnh.",
+            "Mọi quy trình đều được ghi lại dưới dạng dữ liệu và công khai minh bạch. Chúng tôi là tiêu chuẩn duy nhất cam kết bằng dữ liệu và chứng minh bằng niềm tin.",
+            "Từ New York, Tokyo đến Paris, những đầu bếp bậc thầy thế giới đều chọn K-Wasabi là biểu tượng của đỉnh cao hương vị ẩm thực.",
+            "Chúng tôi sẽ xóa bỏ ranh giới vật lý của nông nghiệp và gieo mầm tiêu chuẩn nông nghiệp mới vì cuộc sống khỏe mạnh và tương lai thịnh vượng toàn cầu."
+        ],
+        seeding: [
+            "Mọi sự sống vĩ đại đều bắt đầu từ một bản thiết kế di truyền chính xác. Chúng tôi nghiêm ngặt lựa chọn những bộ gen mạnh mẽ và hoàn hảo nhất.",
+            "Phòng thí nghiệm sinh học duy trì trạng thái vô trùng tuyệt đối, ngăn chặn mọi khả năng ô nhiễm để bảo vệ sự ra đời của sự sống thuần khiết.",
+            "Các kỹ sư sinh học chuyên nghiệp nuôi dưỡng tương lai của Wasabi trong hệ thống kiểm soát chính xác. Mọi chuyển động tế bào đều được ghi lại.",
+            "Giải pháp tương lai cho nhân loại qua khả năng mở rộng vô hạn. Sự sống bắt đầu từ một tế bào sẽ dẫn đến những vụ mùa bội thu."
+        ],
+        process: [
+            "Bước 1 Gieo hạt. Cánh tay tự động đặt cây con một cách chính xác.",
+            "Bước 2 Làm sạch. Phun áp lực cao đảm bảo vệ sinh theo thời gian thực.",
+            "Bước 3 Tăng trưởng. Công nghệ Aeroponics giúp tăng tốc độ trưởng thành gấp 25 lần.",
+            "Bước 4 Kiểm soát. AI tối ưu hóa các chỉ số môi trường suốt 24 giờ.",
+            "Bước 5 Làm sạch cuối cùng. Quy trình tinh lọc tinh khiết trước khi thu hoạch.",
+            "Bước 6 Tái chế. Chu kỳ bắt đầu lại để đạt hiệu quả sử dụng tài nguyên tối đa."
+        ]
+    },
     en: {
         brand: [
             "Where Hwacheon's ancient mystery meets humanity's cutting-edge technology, K-Wasabi becomes more than just farming—it's an art form.",
@@ -227,7 +297,12 @@ export function Hero() {
             utterancesRef.current.push(utterance);
 
             const langMap: Record<string, string> = {
-                ko: 'ko-KR', en: 'en-US', ja: 'ja-JP', zh: 'zh-CN'
+                ko: 'ko-KR',
+                en: 'en-US',
+                ja: 'ja-JP',
+                zh: 'zh-CN',
+                th: 'th-TH',
+                vi: 'vi-VN'
             };
             utterance.lang = langMap[language] || 'en-US';
             utterance.rate = 1.0;

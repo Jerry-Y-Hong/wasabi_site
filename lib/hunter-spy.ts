@@ -38,6 +38,14 @@ export async function spyOnCompany(targetUrl: string) {
         const foundPhones = new Set<string>();
         const foundKeyPeople = new Set<string>();
 
+        // New: Meta data for AI analysis
+        const title = $('title').text().trim();
+        const metaDescription = $('meta[name="description"]').attr('content') || '';
+
+        // Extract main text (strip scripts and styles)
+        $('script, style, nav, footer').remove();
+        const mainText = $('body').text().replace(/\s+/g, ' ').substring(0, 2000).trim();
+
         // A. Extract Eggs (Emails)
         // From mailto links
         $('a[href^="mailto:"]').each((_, el) => {
@@ -58,8 +66,7 @@ export async function spyOnCompany(targetUrl: string) {
         // Look for +81, +82, or standard formats
         const phoneRegex = /(\+\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
         // Don't scan entire body for phones, too much noise. Scan Header/Footer/Contact sections.
-        const contactSection = $('footer, #contact, .contact, header').text();
-        const phoneMatches = contactSection.match(phoneRegex);
+        const phoneMatches = $.root().text().match(phoneRegex); // Search whole text for phones as it's less noisy than emails
         if (phoneMatches) {
             phoneMatches.forEach(p => {
                 if (p.length > 8) foundPhones.add(p.trim());
@@ -67,7 +74,6 @@ export async function spyOnCompany(targetUrl: string) {
         }
 
         // C. Look for "Contact" or "Team" page link for Deep Scan
-        // (For now, we just return the link suggestion)
         let deepLink = '';
         $('a').each((_, el) => {
             const text = $(el).text().toLowerCase();
@@ -80,9 +86,12 @@ export async function spyOnCompany(targetUrl: string) {
         return {
             success: true,
             data: {
+                title,
+                metaDescription,
+                summary: mainText,
                 emails: Array.from(foundEmails),
                 phones: Array.from(foundPhones),
-                potentialPeople: Array.from(foundKeyPeople), // Hard to extract names via regex, leaving empty for now
+                potentialPeople: Array.from(foundKeyPeople),
                 deepLink: deepLink ? new URL(deepLink, targetUrl).toString() : null
             }
         };
