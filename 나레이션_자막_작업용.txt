@@ -1,0 +1,41 @@
+=== K-WASABI 공식 홍보영상 제작 대본 (5편 세트) ===
+
+영상 1: The Origin (화천의 자연)
+---------------------------------------
+[원본 파일명] public/videos/scene1.mp4
+[나레이션] "가장 차갑고, 가장 깨끗한 곳, 강원도 화천."
+[영문자막] "Hwacheon. The coldest, purest sanctuary."
+[BGM 가이드] 아주 잔잔한 피아노, 새벽 공기 바람 소리 사운드
+[캡컷 오디오 검색] "Ambient Piano Nature"
+
+영상 2: The Innovation (스마트 팩토리)
+---------------------------------------
+[원본 파일명] public/videos/scene2.mp4
+[나레이션] "이곳에 태양이 아닌, 빛의 과학이 숨 쉬고 있습니다."
+[영문자막] "Here, we replace the sun with the science of light."
+[BGM 가이드] 긴박한 첼로 현악기, 테크니컬한 비트
+[캡컷 오디오 검색] "Hybrid Tech Cello"
+
+영상 3: The Product (무결점 품질)
+---------------------------------------
+[원본 파일명] public/videos/scene3_fixed.mp4 (수정된 버전)
+[나레이션] "흙 한 톨 없이, 오직 물과 기술로 빚어낸... 100% 무결점 와사비."
+[영문자막] "Zero soil. Pure water. 100% Flawless Wasabi crafted by technology."
+[BGM 가이드] 오케스트라 클라이맥스, 웅장한 드럼 소리
+[캡컷 오디오 검색] "Epic Cinematic Drum"
+
+영상 4: The Vision (전문성 및 가치)
+---------------------------------------
+[원본 파일명] public/videos/scene4.mp4
+[나레이션] "자연을 통제하여, 자연 그 이상을 만듭니다."
+[영문자막] "Controlling nature to create something beyond nature."
+[BGM 가이드] 신뢰감 있고 웅장한 심포니 합주
+[캡컷 오디오 검색] "Inspirational Symphony"
+
+영상 5: Outro (브랜드 엔딩)
+---------------------------------------
+[원본 파일명] public/videos/scene5.mp4
+[나레이션] "K-와사비 스마트팜."
+[영문자막] "K-Wasabi Smart Farm."
+[BGM 가이드] 여운이 남는 깔끔한 피아노 엔딩 노트
+[캡컷 오디오 검색] "Clean Corporate Piano"
