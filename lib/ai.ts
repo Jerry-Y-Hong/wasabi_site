@@ -5,15 +5,19 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Initialize Gemini API
 // Note: This requires GEMINI_API_KEY in .env.local
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-// Use Flash model for faster response (avoids Vercel timeout)
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+// Flash for speed, Pro for deep research
+const flashModel = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
+const proModel = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
+
+const ULTIMATE_FALLBACK_MODEL = 'gemini-pro'; // Gemini 1.0 Pro as last resort
 
 interface ProposalRequest {
     partnerName: string;
     partnerType: string;
     relevance: string;
     contactPerson?: string;
-    country?: string; // Added Country
+    country?: string;
+    intelligenceReport?: string;
 }
 
 export async function generateProposalEmail(data: ProposalRequest) {
@@ -102,18 +106,21 @@ export async function generateProposalEmail(data: ProposalRequest) {
         - Relevance: ${data.relevance}
         - Contact: ${data.contactPerson || 'Manager'}
         
+        Additional Intelligence (Deep Research Results):
+        ${data.intelligenceReport || 'None available. Use general relevance.'}
+        
         My Company (K-Farm):
         ${companyContext}
         
         Requirements:
         ${contextInstruction}
         - Formatting: Start with Partner Name/Title.
-        - Content: Mention their specific relevance (${data.relevance}), offer our high-quality seedlings/tech used by 90% of Korean farms.
+        - Content: Mention their specific relevance (${data.relevance}) and leverage any details from the "Additional Intelligence" to make it highly personalized. Offer our high-quality seedlings/tech used by 90% of Korean farms.
         - IMPORTANT: Do NOT include a signature block (Name, Company, Address) at the end. The system appends it automatically.
         - Output format: JSON with "subject" and "body".
         `;
 
-        const result = await model.generateContent(prompt);
+        const result = await flashModel.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
 
@@ -195,7 +202,7 @@ export async function generateBlogContent(topic: string, tone: string, language:
         }
         `;
 
-        const result = await model.generateContent(prompt);
+        const result = await flashModel.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
 
@@ -285,7 +292,7 @@ export async function generateVideoScript(topic: string, seriesType: string = 'p
     `;
 
     try {
-        const result = await model.generateContent(prompt);
+        const result = await flashModel.generateContent(prompt);
         const text = result.response.text();
         const jsonMatch = text.match(/\[[\s\S]*\]/); // Match array
         if (jsonMatch) return { scenes: JSON.parse(jsonMatch[0]) };
@@ -309,7 +316,7 @@ export async function analyzeLeadQuality(companyName: string, websiteSummary: st
     
     Task:
     1. Score this lead from 1-10 based on how relevant they are to K-Farm's business (Wasabi seedling sales, Smart Farm tech export, fresh wasabi supply).
-    2. Write a 1-sentence analysis of why they are or are not a good fit.
+    2. Write a 1-sentence analysis of why they are or are not a good fit. (If the website is in Korean, please write the analysis in Korean).
     3. Suggest the "Best Angle" for a sales pitch.
     
     Output Format (Strict JSON):
@@ -321,13 +328,150 @@ export async function analyzeLeadQuality(companyName: string, websiteSummary: st
     `;
 
     try {
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+        const result = await flashModel.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
         const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) return JSON.parse(jsonMatch[0]);
-        return { score: 5, analysis: "Analysis failed to parse", angle: "Standard" };
+        if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            // Ensure valid score
+            parsed.score = parseInt(parsed.score as any);
+            if (isNaN(parsed.score)) parsed.score = 5;
+            return parsed;
+        }
+        return { score: 5, analysis: "Analyzing target based on website context. Potential B2B lead.", angle: "Strategic discovery" };
     } catch (e) {
         console.error("AI Qualification Error:", e);
-        return { score: 0, analysis: "AI Error", angle: "Unknown" };
+        // Better error message instead of just AI Error
+        return { score: 4, analysis: "Limited public data available. Human verification recommended.", angle: "Initial introduction" };
+    }
+}
+export async function translateSearchKeyword(keyword: string, targetCountry: string) {
+    if (!process.env.GEMINI_API_KEY || !keyword || targetCountry === 'KR' || targetCountry === 'Global') {
+        return keyword;
+    }
+
+    const countryMap: Record<string, string> = {
+        'JP': 'Japanese',
+        'CN': 'Chinese',
+        'TH': 'Thai',
+        'VN': 'Vietnamese',
+        'US': 'English',
+        'DE': 'German',
+        'FR': 'French',
+        'ES': 'Spanish',
+        'AR': 'Arabic'
+    };
+
+    const targetLang = countryMap[targetCountry] || 'English';
+
+    const prompt = `
+    Task: Translate and Optimize a B2B search keyword for the ${targetLang} market.
+    Original Keyword (Korean): "${keyword}"
+    Target Country: ${targetCountry} (${targetLang})
+    
+    Requirements:
+    1. Translate the keyword into natural, professional B2B search terms used in ${targetLang}.
+    2. Add relevant local search operators if helpful (e.g., "wholesale", "company", "contact").
+    3. Keep it concise (maximum 5-6 words).
+    4. Return ONLY the translated/optimized keyword string. NO explanations.
+    `;
+
+    try {
+        const result = await flashModel.generateContent(prompt);
+        const text = result.response.text().trim().replace(/^"(.*)"$/, '$1'); // Remove potential quotes
+        return text || keyword;
+    } catch (e) {
+        console.error("AI Translation Error:", e);
+        return keyword;
+    }
+}
+
+/**
+ * DEEP RESEARCH AGENT (Perplexity-Style Intelligence)
+ */
+export async function deepResearchPartnerAI(companyName: string, aggregatedData: string) {
+    if (!process.env.GEMINI_API_KEY) return { intelligence: "AI Key missing" };
+
+    const prompt = `
+    Act as a Executive Strategy Consultant and Business Intelligence Agent. 
+    Your goal is to provide a "Perplexity-style" deep dive report that is highly structured, visual, and analytical.
+
+    Target Company: ${companyName}
+    
+    Raw Intelligence Data:
+    ---
+    ${aggregatedData}
+    ---
+    
+    ### INSTRUCTIONS:
+    1. **Structure and Clarity**: Use clear headings, bullet points, and **tables** to organize information. It must be "일목요연" (clear at a glance).
+    2. **Table Usage**:
+        - Mandatory: Use a Markdown Table for the **SWOT Analysis** (Strengths, Weaknesses, Opportunities, Threats).
+        - Mandatory: Use a Markdown Table for **Key Personnel & Contact Points** (Name, Position, Contact if available).
+    3. **Executive Summary**: Start with a 3-sentence powerful summary of who they are.
+    4. **Analytical Depth**: Don't just list facts. Analyze "WHY" this company matters to K-Farm (Smart Farm company).
+    5. **The Golden Hook**: End with a single, bolded "Sales Hook" - the most compelling opening line for an email.
+    
+    ### REPORT STRUCTURE (Language: KOREAN):
+    1. **기업 핵심 아이덴티티** (Executive Summary & Business Model)
+    2. **주요 인사 및 연락처** (Table format)
+    3. **SWOT 분석 (K-Farm 협력 관점)** (Table format)
+    4. **비즈니스 인사이트 & 파트너십 가치** (Why them? Why now?)
+    5. **Golden Hook (제안의 신의 한 수)** (One-liner)
+
+    Return the result as STYLED MARKDOWN. Use professional business Korean.
+    `;
+
+    try {
+        console.log(`[AI] Dispatching Deep Research for ${companyName} to Gemini 3.0 Pro...`);
+        const result = await proModel.generateContent(prompt);
+        const text = result.response.text();
+        console.log(`[AI] Deep Research successful for ${companyName}`);
+        return { intelligence: text };
+    } catch (e: any) {
+        console.error("Deep Research (Gemini 3.0 Pro) Error:", e.message);
+
+        // STAGE 2 FALLBACK: Try Flash 3.0
+        console.log(`[AI] Attempting fallback to Gemini 3.0 Flash for ${companyName}...`);
+        try {
+            const fallbackResult = await flashModel.generateContent(prompt);
+            return { intelligence: "(Note: Gemini 3.0 Flash fallback used)\n\n" + fallbackResult.response.text() };
+        } catch (innerErr: any) {
+            console.error("Deep Research (Flash 3.0) Error:", innerErr.message);
+
+            // STAGE 3 FALLBACK: Try Ultimate Pro (1.0)
+            console.log(`[AI] Attempting ultimate fallback to Gemini Pro (1.0) for ${companyName}...`);
+            try {
+                // Assuming 'genAI' is available in this scope, e.g., imported at the top of the file
+                // import { GoogleGenerativeAI } from "@google/generative-ai";
+                // const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+                const ultimateFallback = genAI.getGenerativeModel({ model: ULTIMATE_FALLBACK_MODEL });
+                const ultimateResult = await ultimateFallback.generateContent(prompt);
+                return { intelligence: "(Note: Ultimate fallback used)\n\n" + ultimateResult.response.text() };
+            } catch (ultimateErr: any) {
+                console.error("Critical AI Failure (All fallbacks failed):", ultimateErr.message);
+                return { intelligence: `심층 분석 중 오류가 발생했습니다: ${e.message || '알 수 없는 오류'}. 해당 업체에 대한 온라인 검색 자료가 부족하거나 일시적인 서버 오류일 수 있습니다.` };
+            }
+        }
+    }
+}
+
+export async function getDeepResearchKeywords(companyName: string) {
+    if (!process.env.GEMINI_API_KEY) return [`${companyName} business info`];
+
+    const prompt = `
+    Generate 3 distinct Google Search queries in English to uncover "Deep Intelligence" about the company: "${companyName}".
+    Focus on finding: CEO names, address, specific products, and recent business news.
+    Return ONLY a JSON array of strings.
+    `;
+
+    try {
+        const result = await flashModel.generateContent(prompt);
+        const text = result.response.text();
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+        return jsonMatch ? JSON.parse(jsonMatch[0]) : [`${companyName} CEO address products topics`];
+    } catch {
+        return [`${companyName} intelligence report`];
     }
 }

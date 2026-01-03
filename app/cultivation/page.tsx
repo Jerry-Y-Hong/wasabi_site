@@ -66,7 +66,7 @@ export default function CultivationPage() {
                             title={t('cult_stage_3_title')}
                             subtitle={t('cult_stage_3_subtitle')}
                             description={t('cult_stage_3_desc')}
-                            image="/images/tech-blueprint.jpg"
+                            image="/images/smart_farm_control_room.png"
                             features={[
                                 t('cult_stage_1_feat_1'),
                                 t('cult_stage_1_feat_2'),
@@ -81,7 +81,7 @@ export default function CultivationPage() {
                             title={t('cult_stage_4_title')}
                             subtitle={t('cult_stage_4_subtitle')}
                             description={t('cult_stage_4_desc')}
-                            image="/images/wasabi_food_processing_detailed.jpg"
+                            image="/images/smart_farm_processing_plant.png"
                             features={[
                                 t('cult_stage_1_feat_1'),
                                 t('cult_stage_1_feat_2'),
@@ -99,8 +99,22 @@ export default function CultivationPage() {
 function ProcessStage({ title, subtitle, description, image, features }: { title: string, subtitle: string, description: string, image: string, features: string[] }) {
     const { t } = useTranslation();
     return (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing={60} py="xl">
-            <Box>
+        <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start', flexWrap: 'wrap', padding: 'var(--mantine-spacing-xl) 0' }}>
+            {/* Left Column: Image (Fixed 300px) */}
+            <div style={{ flex: '0 0 300px' }}>
+                <Paper shadow="xl" radius="lg" withBorder style={{ overflow: 'hidden' }}>
+                    <Image
+                        src={image}
+                        alt={title}
+                        fallbackSrc="https://placehold.co/600x400?text=K-Farm+Technology"
+                        w="100%"
+                        h="auto"
+                    />
+                </Paper>
+            </div>
+
+            {/* Right Column: Content */}
+            <div style={{ flex: 1, minWidth: '300px' }}>
                 <Badge color="wasabi" variant="light" mb="xs">{subtitle}</Badge>
                 <Title order={2} mb="md">{title}</Title>
                 <Text c="dimmed" size="lg" mb="xl" style={{ lineHeight: 1.6 }}>
@@ -121,15 +135,7 @@ function ProcessStage({ title, subtitle, description, image, features }: { title
                         <List.Item key={i}><Text fw={500}>{f}</Text></List.Item>
                     ))}
                 </List>
-            </Box>
-            <Paper shadow="xl" radius="lg" withBorder style={{ overflow: 'hidden' }}>
-                <Image
-                    src={image}
-                    alt={title}
-                    fallbackSrc="https://placehold.co/600x400?text=K-Farm+Technology"
-                    style={{ transition: 'transform 0.5s ease' }}
-                />
-            </Paper>
-        </SimpleGrid>
+            </div>
+        </div>
     )
 }

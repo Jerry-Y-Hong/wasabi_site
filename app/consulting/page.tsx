@@ -84,17 +84,17 @@ export default function ConsultingPage() {
                     <ProcessStep
                         step="01"
                         title={t('cons_label_arch')}
-                        desc="Climate and feasibility analysis for optimal farm type."
+                        desc={t("cons_process_step_1_desc")}
                     />
                     <ProcessStep
                         step="02"
                         title={t('cons_label_sys')}
-                        desc="Customized blueprint from nutrient systems to AI robotics."
+                        desc={t("cons_process_step_2_desc")}
                     />
                     <ProcessStep
                         step="03"
                         title={t('cons_label_robotics')}
-                        desc="Professional construction and operational training."
+                        desc={t("cons_process_step_3_desc")}
                     />
                 </SimpleGrid>
             </Container>

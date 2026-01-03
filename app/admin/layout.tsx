@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Loader, Center, Stack, Text } from '@mantine/core';
+import { useTranslation } from '@/lib/i18n';
 
 import { checkAuthStatus } from '@/lib/checkAuth';
 
@@ -12,6 +13,7 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     const router = useRouter();
+    const { t } = useTranslation();
     const pathname = usePathname();
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [checking, setChecking] = useState(true);
@@ -34,7 +36,7 @@ export default function AdminLayout({
             <Center h="100vh">
                 <Stack align="center">
                     <Loader color="wasabi" />
-                    <Text size="sm" c="dimmed">Verifying Security Credentials...</Text>
+                    <Text size="sm" c="dimmed">{t('admin_verifying_auth')}</Text>
                 </Stack>
             </Center>
         );

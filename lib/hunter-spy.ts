@@ -17,10 +17,23 @@ export async function spyOnCompany(targetUrl: string) {
         const headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5'
+            'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
         };
 
-        const response = await fetch(targetUrl, {
+        let targetFetchUrl = targetUrl;
+
+        // --- NAVER BLOG HANDLER ---
+        // Naver blogs use a frameset, we need to bypass it to get the real content
+        if (targetUrl.includes('blog.naver.com')) {
+            const blogIdMatch = targetUrl.match(/blog\.naver\.com\/([^/]+)\/(\d+)/) || targetUrl.match(/blog\.naver\.com\/([^/]+)\?.*logNo=(\d+)/);
+            if (blogIdMatch) {
+                const blogId = blogIdMatch[1];
+                const logNo = blogIdMatch[2];
+                targetFetchUrl = `https://blog.naver.com/PostView.naver?blogId=${blogId}&logNo=${logNo}`;
+            }
+        }
+
+        const response = await fetch(targetFetchUrl, {
             signal: controller.signal,
             headers
         });
@@ -36,50 +49,57 @@ export async function spyOnCompany(targetUrl: string) {
         // 3. Information Extraction
         const foundEmails = new Set<string>();
         const foundPhones = new Set<string>();
-        const foundKeyPeople = new Set<string>();
+        const sns: any = {};
 
-        // New: Meta data for AI analysis
-        const title = $('title').text().trim();
-        const metaDescription = $('meta[name="description"]').attr('content') || '';
-
-        // Extract main text (strip scripts and styles)
-        $('script, style, nav, footer').remove();
-        const mainText = $('body').text().replace(/\s+/g, ' ').substring(0, 2000).trim();
-
-        // A. Extract Eggs (Emails)
-        // From mailto links
+        // A. Extract Emails
         $('a[href^="mailto:"]').each((_, el) => {
             const email = $(el).attr('href')?.replace('mailto:', '').split('?')[0].trim();
             if (email && isValidEmail(email)) foundEmails.add(email.toLowerCase());
         });
-
-        // From text content (Regex)
         const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]{2,}/g;
-        const textMatches = $.root().text().match(emailRegex);
-        if (textMatches) {
-            textMatches.forEach(email => {
-                if (isValidEmail(email)) foundEmails.add(email.toLowerCase());
-            });
-        }
+        ($.root().text().match(emailRegex) || []).forEach(email => {
+            if (isValidEmail(email)) foundEmails.add(email.toLowerCase());
+        });
 
-        // B. Extract Phones (Basic Regex for global format)
-        // Look for +81, +82, or standard formats
-        const phoneRegex = /(\+\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
-        // Don't scan entire body for phones, too much noise. Scan Header/Footer/Contact sections.
-        const phoneMatches = $.root().text().match(phoneRegex); // Search whole text for phones as it's less noisy than emails
-        if (phoneMatches) {
-            phoneMatches.forEach(p => {
-                if (p.length > 8) foundPhones.add(p.trim());
-            });
-        }
+        // B. Extract Phones
+        const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
+        ($.root().text().match(phoneRegex) || []).forEach(p => {
+            if (p.length > 8) foundPhones.add(p.trim());
+        });
 
-        // C. Look for "Contact" or "Team" page link for Deep Scan
+        // C. Extract SNS Links (Tailored Extraction)
+        $('a[href]').each((_, el) => {
+            const href = $(el).attr('href') || '';
+            if (href.includes('instagram.com/')) sns.instagram = href;
+            if (href.includes('facebook.com/')) sns.facebook = href;
+            if (href.includes('youtube.com/')) sns.youtube = href;
+            if (href.includes('linkedin.com/')) sns.linkedin = href;
+        });
+
+        // D. Extract Address (Korean & Global Pattern)
+        const addressMatch = $.root().text().match(/[가-힣]+[시도]\s+[가-힣]+[구군]\s+[가-힣\d-]+[길로]\s*\d+/) ||
+            $.root().text().match(/\d+\s+[A-Z][a-z]+\s+(St|Ave|Rd|Blvd|Lane),?\s+[A-Z][a-z]+,?\s+[A-Z]{2}\s+\d{5}/);
+        const foundAddress = addressMatch ? addressMatch[0] : null;
+
+        // 4. Content Cleanup for AI
+        const title = $('title').text().trim() || $('meta[property="og:title"]').attr('content') || '';
+        const metaDescription = $('meta[name="description"]').attr('content') ||
+            $('meta[property="og:description"]').attr('content') ||
+            $('meta[name="twitter:description"]').attr('content') || '';
+
+        $('script, style, nav, footer, iframe, noscript').remove();
+
+        // Target common Korean blog content areas if body text is too generic
+        let mainText = $('.se-main-container, .post-view, #postListBody, .contents_area').text() || $('body').text();
+        mainText = mainText.replace(/\s+/g, ' ').substring(0, 3000).trim();
+
+        // E. Deep Link identification
         let deepLink = '';
         $('a').each((_, el) => {
             const text = $(el).text().toLowerCase();
             const href = $(el).attr('href');
-            if (href && (text.includes('contact') || text.includes('about') || text.includes('team'))) {
-                if (!deepLink && !href.startsWith('mailto')) deepLink = href;
+            if (href && (text.includes('contact') || text.includes('about') || text.includes('team') || text.includes('회사소개') || text.includes('오시는길'))) {
+                if (!deepLink && !href.startsWith('mailto') && !href.startsWith('tel')) deepLink = href;
             }
         });
 
@@ -91,7 +111,8 @@ export async function spyOnCompany(targetUrl: string) {
                 summary: mainText,
                 emails: Array.from(foundEmails),
                 phones: Array.from(foundPhones),
-                potentialPeople: Array.from(foundKeyPeople),
+                sns,
+                address: foundAddress,
                 deepLink: deepLink ? new URL(deepLink, targetUrl).toString() : null
             }
         };

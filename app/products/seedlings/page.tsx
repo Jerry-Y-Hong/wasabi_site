@@ -1,7 +1,8 @@
 'use client';
 
-import { Container, Title, Text, Image, Card, SimpleGrid, ThemeIcon, List } from '@mantine/core';
-import { IconCheck, IconFlask, IconPlant, IconShieldCheck } from '@tabler/icons-react';
+import { Container, Title, Text, Image, Card, SimpleGrid, ThemeIcon, List, Stack, Button } from '@mantine/core';
+import { IconCheck, IconFlask, IconPlant, IconShieldCheck, IconArrowLeft } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 
 export default function SeedlingsPage() {
@@ -50,34 +51,48 @@ export default function SeedlingsPage() {
             </SimpleGrid>
 
             <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl" mt={80}>
-                <Feature
+                <FeatureCard
                     icon={IconFlask}
                     title={t('prod_seed_card_1_title')}
                     description={t('prod_seed_card_1_desc')}
+                    link="/products/seedlings/lab"
+                    btnText={t('prod_seed_btn_detail')}
+                    color="wasabi"
                 />
-                <Feature
+                <FeatureCard
                     icon={IconPlant}
                     title={t('prod_seed_card_2_title')}
                     description={t('prod_seed_card_2_desc')}
+                    link="/products/seedlings/acclimatization"
+                    btnText={t('prod_seed_btn_detail')}
+                    color="cyan"
                 />
-                <Feature
+                <FeatureCard
                     icon={IconShieldCheck}
                     title={t('prod_seed_card_3_title')}
                     description={t('prod_seed_card_3_desc')}
+                    link="/products/seedlings/qc"
+                    btnText={t('prod_seed_btn_detail')}
+                    color="grape"
                 />
             </SimpleGrid>
         </Container>
     );
 }
 
-function Feature({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
+function FeatureCard({ icon: Icon, title, description, link, btnText, color }: { icon: any, title: string, description: string, link: string, btnText: string, color: string }) {
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <ThemeIcon variant="light" size={40} radius="md" color="wasabi">
+        <Card shadow="sm" padding="lg" radius="md" withBorder style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <ThemeIcon variant="light" size={40} radius="md" color={color} mb="md">
                 <Icon style={{ width: 24, height: 24 }} stroke={1.5} />
             </ThemeIcon>
-            <Text mt="md" fw={500}>{title}</Text>
-            <Text c="dimmed" size="sm" mt="sm">{description}</Text>
+            <Title order={3} mb="xs" size="h4">{title}</Title>
+            <Text c="dimmed" size="sm" mb="md" style={{ flex: 1, lineHeight: 1.5 }}>
+                {description}
+            </Text>
+            <Button component={Link} href={link} variant="light" color={color} fullWidth mt="auto" size="sm" rightSection={<IconArrowLeft style={{ transform: 'rotate(180deg)' }} size={14} />}>
+                {btnText}
+            </Button>
         </Card>
     );
 }

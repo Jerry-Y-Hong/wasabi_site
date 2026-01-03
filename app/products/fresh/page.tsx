@@ -3,6 +3,8 @@
 import { Container, Title, Text, SimpleGrid, Card, Image, Badge, Group, Button, Box, Paper, Grid, List, Stack } from '@mantine/core';
 import { EcosystemDiagram } from '@/components/ui/EcosystemDiagram';
 import { useTranslation } from '@/lib/i18n';
+import Link from 'next/link';
+import { IconArrowRight } from '@tabler/icons-react';
 
 export default function FreshProductsPage() {
     const { t } = useTranslation();
@@ -11,23 +13,23 @@ export default function FreshProductsPage() {
         {
             title: t('prod_fresh_p1_title'),
             description: t('prod_fresh_p1_desc'),
-            price: '₩250,000 - ₩500,000 / kg',
             image: '/images/wasabi-rhizomes.jpg',
             badge: t('prod_fresh_p1_badge'),
+            link: '/products/fresh/rhizome',
         },
         {
             title: t('prod_fresh_p2_title'),
             description: t('prod_fresh_p2_desc'),
-            price: '₩20,000 - ₩30,000 / kg',
             image: '/images/wasabi-leaves.jpg',
             badge: t('prod_fresh_p2_badge'),
+            link: '/products/fresh/leaf',
         },
         {
             title: t('prod_fresh_p3_title'),
             description: t('prod_fresh_p3_desc'),
-            price: '₩20,000 - ₩30,000 / kg',
             image: '/images/wasabi-stems.jpg',
             badge: t('prod_fresh_p3_badge'),
+            link: '/products/fresh/stem',
         },
     ];
 
@@ -38,32 +40,37 @@ export default function FreshProductsPage() {
                 {t('prod_fresh_desc')}
             </Text>
 
-            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
                 {products.map((product) => (
                     <Card key={product.title} shadow="sm" padding="lg" radius="md" withBorder>
                         <Card.Section>
                             <Image
                                 src={product.image}
-                                height={200}
+                                height={240}
                                 alt={product.title}
                             />
                         </Card.Section>
 
                         <Group justify="space-between" mt="md" mb="xs">
-                            <Text fw={500}>{product.title}</Text>
-                            {product.badge && <Badge color="wasabi">{product.badge}</Badge>}
+                            <Text fw={700} size="lg">{product.title}</Text>
+                            {product.badge && <Badge color="wasabi" variant="light">{product.badge}</Badge>}
                         </Group>
 
-                        <Text size="sm" c="dimmed" h={50}>
+                        <Text size="sm" c="dimmed" h={50} mb="md">
                             {product.description}
                         </Text>
 
-                        <Group mt="md" justify="space-between" align="center">
-                            <Text fw={700} size="xl" c="wasabi">{product.price}</Text>
-                            <Button variant="light" color="wasabi" radius="md">
-                                {t('prod_fresh_btn_order')}
-                            </Button>
-                        </Group>
+                        <Button
+                            component={Link}
+                            href={product.link}
+                            variant="light"
+                            color="wasabi"
+                            fullWidth
+                            mt="auto"
+                            rightSection={<IconArrowRight size={16} />}
+                        >
+                            {t('prod_fresh_btn_detail')}
+                        </Button>
                     </Card>
                 ))}
             </SimpleGrid>

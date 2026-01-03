@@ -1,0 +1,96 @@
+﻿
+> wasabi-smart-farm@0.1.0 build
+> next build
+
+node.exe : ??Invalid next.config.ts options detect
+ed: 
+위치 C:\Program Files\nodejs\npm.ps1:29 문자:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (??In 
+   valid next....ions detected: :String) [], Rem  
+  oteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+??    Unrecognized key(s) in object: 'outputFileTr
+acingIncludes' at "experimental"
+??    Unrecognized key(s) in object: 'serverAction
+s'
+??See more info here: https://nextjs.org/docs/mess
+ages/invalid-next-config
+??`experimental.outputFileTracingIncludes` has bee
+n moved to `outputFileTracingIncludes`. Please upd
+ate your next.config.ts file accordingly.
+??Warning: Next.js inferred your workspace root, b
+ut it may not be correct.
+ We detected multiple lockfiles and selected the d
+irectory of C:\Users\car13\package-lock.json as th
+e root directory.
+ To silence this warning, set `turbopack.root` in 
+your Next.js config, or consider removing one of t
+he lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/c
+onfig/next-config-js/turbopack#root-directory for 
+more information.
+ Detected additional lockfiles: 
+   * C:\Users\car13\.gemini\antigravity\scratch\wa
+sabi-smart-farm\package-lock.json
+
+??Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  ? outputFileTracingIncludes (invalid experimental key)
+
+??The "middleware" file convention is deprecated. 
+Please use "proxy" instead. Learn more: https://ne
+xtjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+??Compiled successfully in 2.4s
+  Running TypeScript ...
+  Collecting page data using 31 workers ...
+  Generating static pages using 31 workers (0/28) ...
+  Generating static pages using 31 workers (7/28) 
+  Generating static pages using 31 workers (14/28) 
+  Generating static pages using 31 workers (21/28) 
+??Generating static pages using 31 workers (28/28) in 711.1ms
+  Finalizing page optimization ...
+
+Route (app)
+????/
+????/_not-found
+????/admin
+????/admin/blog
+????/admin/hunter
+????/admin/marketing
+????/admin/studio
+????/admin/video
+??? /api/posts
+??? /api/scripts
+??? /api/test-spy
+??? /api/upload
+??? /api/uploads/[filename]
+??? /blog
+??? /blog/[slug]
+????/consulting
+????/consulting/inquiry
+????/contact
+????/cultivation
+????/insights
+????/invest
+????/login
+????/news
+????/news/[id]
+????/news/1
+????/news/2
+????/partnership
+????/privacy
+????/products/fresh
+????/products/seedlings
+
+
+? Proxy (Middleware)
+
+?? (Static)   prerendered as static content
+?? (SSG)      prerendered as static HTML (uses generateStaticParams)
+?  (Dynamic)  server-rendered on demand
+

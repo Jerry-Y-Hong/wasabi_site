@@ -6,6 +6,7 @@ import pathLib from 'path';
 import { revalidatePath } from 'next/cache';
 import { put, list } from '@vercel/blob';
 import { spyOnCompany } from '@/lib/hunter-spy';
+import { analyzeLeadQuality, getDeepResearchKeywords, deepResearchPartnerAI } from '@/lib/ai';
 
 // Use /tmp only on Vercel deployment
 // Use /tmp only on Vercel deployment, otherwise use strict absolute path for local
@@ -510,12 +511,106 @@ export async function updateHunterInfo(id: number, data: any) {
     if (index !== -1) {
         currentData[index] = { ...currentData[index], ...data };
         await writeDb('hunter.json', currentData);
+        revalidatePath('/admin/hunter');
         return { success: true };
     }
     return { success: false };
 }
 
-import { analyzeLeadQuality } from '@/lib/ai';
+export async function updateHunterInfoBulk(ids: number[], data: any) {
+    try {
+        const currentData = await readDb('hunter.json');
+        let updatedCount = 0;
+
+        const newData = currentData.map((item: any) => {
+            if (ids.includes(item.id)) {
+                updatedCount++;
+                return { ...item, ...data };
+            }
+            return item;
+        });
+
+        if (updatedCount > 0) {
+            await writeDb('hunter.json', newData);
+            revalidatePath('/admin/hunter');
+            return { success: true, updated: updatedCount };
+        }
+        return { success: false, error: 'No matching items found.' };
+    } catch (error) {
+        console.error('Bulk update error:', error);
+        return { success: false, error: 'Failed to update partners.' };
+    }
+}
+
+export async function runDeepResearch(id: number) {
+    const currentData = await readDb('hunter.json');
+    const partner = currentData.find((item: any) => item.id === id);
+    if (!partner) return { success: false, error: 'Partner not found' };
+
+    try {
+        console.log(`[Deep Research] Starting for: ${partner.name}`);
+
+        // 1. Get Targeted Keywords
+        const keywords = await getDeepResearchKeywords(partner.name);
+        console.log(`[Deep Research] Keywords: ${keywords.join(', ')}`);
+
+        let aggregatedData = `Company: ${partner.name}\nMain URL: ${partner.url}\n\n`;
+
+        // 2. Perform Research Searches (Google)
+        const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
+        const cx = process.env.GOOGLE_CX;
+
+        if (apiKey && cx) {
+            for (const kw of keywords) {
+                try {
+                    const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(kw)}&num=3`);
+                    const data = await res.json();
+
+                    if (data.error) {
+                        console.error(`[Deep Research] Google Search API Error for "${kw}":`, data.error.message);
+                        continue;
+                    }
+
+                    if (data.items) {
+                        data.items.forEach((item: any) => {
+                            aggregatedData += `Search Snippet (${kw}): ${item.title} - ${item.snippet}\n`;
+                        });
+                    } else {
+                        console.log(`[Deep Research] No search results for "${kw}"`);
+                    }
+                } catch (e: any) {
+                    console.error(`Search failed for ${kw}:`, e.message);
+                }
+            }
+        }
+
+        // 3. Scrape Main & Deep Link
+        const scanRes = await spyOnCompany(partner.url);
+        if (scanRes.success && scanRes.data) {
+            aggregatedData += `Website Summary: ${scanRes.data.summary}\n`;
+            if (scanRes.data.deepLink) {
+                const deepRes = await spyOnCompany(scanRes.data.deepLink);
+                if (deepRes.success && deepRes.data) {
+                    aggregatedData += `Internal Page (${scanRes.data.deepLink}): ${deepRes.data.summary}\n`;
+                }
+            }
+        }
+
+        // 4. Call Pro Model for Analysis
+        const aiReport = await deepResearchPartnerAI(partner.name, aggregatedData);
+
+        // 5. Save Report
+        await updateHunterInfo(id, {
+            intelligenceReport: aiReport.intelligence,
+            status: 'AI Analyzed'
+        });
+
+        return { success: true, report: aiReport.intelligence };
+    } catch (error) {
+        console.error(`[Deep Research] Error:`, error);
+        return { success: false, error: 'Failed to complete deep research.' };
+    }
+}
 
 export async function scanWebsite(url: string, name?: string) {
     try {
@@ -525,6 +620,8 @@ export async function scanWebsite(url: string, name?: string) {
         console.log(`[Scan] Result:`, result.success ? 'Success' : 'Fail');
 
         if (result.success && result.data) {
+            console.log(`[Scan] Metadata Found: Title="${result.data.title}", MetaLen=${result.data.metaDescription.length}, SummaryLen=${result.data.summary.length}`);
+
             // AI Analysis Integration
             let aiAnalysis = null;
             try {
@@ -533,6 +630,7 @@ export async function scanWebsite(url: string, name?: string) {
                     result.data.summary || "",
                     result.data.metaDescription || ""
                 );
+                console.log(`[Scan] AI Analysis Result: Score=${aiAnalysis?.score}`);
             } catch (aiErr) {
                 console.error("[Scan] AI Analysis Error:", aiErr);
             }
@@ -541,8 +639,10 @@ export async function scanWebsite(url: string, name?: string) {
                 success: true,
                 emails: result.data.emails,
                 phones: result.data.phones,
+                sns: result.data.sns,
+                address: result.data.address,
                 aiSummary: aiAnalysis,
-                message: `Found ${result.data.emails.length} emails, ${result.data.phones.length} phones. AI Analysis complete.`
+                message: `Found ${result.data.emails?.length || 0} emails. AI Analysis complete.`
             };
         } else {
             return { success: false, error: result.error || 'Could not access website.' };
@@ -730,40 +830,78 @@ export async function saveAnimatorImage(base64Data: string, fileName: string) {
     }
 }
 
+/**
+ * Uploads a file (PDF, Image, etc.) for a Hunter partner (Catalog, etc.)
+ */
+export async function uploadHunterFile(formData: FormData) {
+    try {
+        const file = formData.get('file') as File;
+        if (!file) return { success: false, error: 'No file provided' };
+
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+
+        if (IS_VERCEL) {
+            if (!process.env.BLOB_READ_WRITE_TOKEN) {
+                return { success: false, error: 'Cloud storage not configured (Missing BLOB Token)' };
+            }
+            const blob = await put(`catalogs/${fileName}`, buffer, {
+                access: 'public',
+                contentType: file.type
+            });
+            return { success: true, url: blob.url };
+        } else {
+            // Local fallback
+            const uploadDir = pathLib.join(BUILD_DATA_PATH, 'uploads');
+            try { await fsp.access(uploadDir); } catch { await fsp.mkdir(uploadDir, { recursive: true }); }
+
+            const filePath = pathLib.join(uploadDir, fileName);
+            await fsp.writeFile(filePath, buffer);
+
+            // Note: Localserver needs to serve static /api/uploads/
+            return { success: true, url: `/api/uploads/${fileName}` };
+        }
+    } catch (error) {
+        console.error('File upload error:', error);
+        return { success: false, error: 'Failed to upload file' };
+    }
+}
+
 // ENHANCED REAL-WORLD DATA (Sourced via AI Research)
 const MOCK_DATA = [
     // --- CORE: WASABI SPECIALISTS (KR) ---
-    { id: 101, name: 'Nokmiwon Food (녹미원)', type: 'Manufacturer', relevance: 'High (Wasabi Specialist)', contact: 'Sales', phone: '010-2613-6256', url: 'http://www.wasabi.co.kr', country: 'KR' },
-    { id: 102, name: 'Cheorwon Saemtong Wasabi', type: 'Farm/Distributor', relevance: 'High (Fresh Wasabi Competitor/Partner)', contact: 'Office', phone: '033-455-1140', url: 'http://saemtongwasabi.com', country: 'KR' },
-    { id: 103, name: 'Wasabi Farm Theme Park', type: 'Farm', relevance: 'Medium (Tourism/Farm)', contact: 'Manager', phone: '010-5414-6669', url: 'https://www.youtube.com/channel/UC...', country: 'KR' },
-    { id: 104, name: 'Kou Wasabi (Life Dried Fish)', type: 'Distributor', relevance: 'High (B2B Wholesaler)', contact: 'Sales Rep', phone: '010-5892-3165', url: 'https://foodspring.co.kr', country: 'KR' },
+    { id: 101, name: 'Nokmiwon Food (녹미원)', type: 'Sales: Wholesale/B2B', relevance: 'High (Wasabi Specialist)', contact: 'Sales', phone: '010-2613-6256', url: 'http://www.wasabi.co.kr', country: 'KR' },
+    { id: 102, name: 'Cheorwon Saemtong Wasabi', type: 'Sales: Wholesale/B2B', relevance: 'High (Fresh Wasabi Competitor/Partner)', contact: 'Office', phone: '033-455-1140', url: 'http://saemtongwasabi.com', country: 'KR' },
+    { id: 103, name: 'Wasabi Farm Theme Park', type: 'Partner: R&D/Tech', relevance: 'Medium (Tourism/Farm)', contact: 'Manager', phone: '010-5414-6669', url: 'https://www.youtube.com/channel/UC...', country: 'KR' },
+    { id: 104, name: 'Kou Wasabi (Life Dried Fish)', type: 'Sales: Wholesale/B2B', relevance: 'High (B2B Wholesaler)', contact: 'Sales Rep', phone: '010-5892-3165', url: 'https://foodspring.co.kr', country: 'KR' },
 
     // --- CORE: JAPANESE FOOD DISTRIBUTORS (KR) ---
-    { id: 110, name: 'Mono Mart (Global Food)', type: 'Distributor', relevance: 'High (Largest Izakaya Supplier)', contact: 'B2B Center', phone: '1544-6689', url: 'https://www.monomart.co.kr', country: 'KR' },
-    { id: 111, name: 'JY Food / Hoodream', type: 'Distributor', relevance: 'High (Izakaya Ingredients)', contact: 'Sales', phone: '02-1234-5678', url: 'http://www.jyfood.com', country: 'KR' },
-    { id: 112, name: 'Tokyo Mart', type: 'Distributor', relevance: 'Medium (Japanese Imports)', contact: 'Office', phone: '02-555-1234', url: 'http://www.tokyomart.co.kr', country: 'KR' },
-    { id: 113, name: 'Ichiban House', type: 'Distributor', relevance: 'Medium (Sauces & Ingredients)', contact: 'Sales', phone: '070-1234-5678', url: 'http://www.ichibanhouse.com', country: 'KR' },
-    { id: 114, name: 'Kowoo Mall', type: 'Distributor', relevance: 'Medium (Food Materials)', contact: 'CS', phone: '1600-0000', url: 'http://kowoomall.com', country: 'KR' },
-    { id: 115, name: 'Food En (Busan)', type: 'Distributor', relevance: 'High (Direct Import/Wholesale)', contact: 'Busan HQ', phone: '051-123-4567', url: 'http://fooden.com', country: 'KR' },
+    { id: 110, name: 'Mono Mart (Global Food)', type: 'Sales: Wholesale/B2B', relevance: 'High (Largest Izakaya Supplier)', contact: 'B2B Center', phone: '1544-6689', url: 'https://www.monomart.co.kr', country: 'KR' },
+    { id: 111, name: 'JY Food / Hoodream', type: 'Sales: Wholesale/B2B', relevance: 'High (Izakaya Ingredients)', contact: 'Sales', phone: '02-1234-5678', url: 'http://www.jyfood.com', country: 'KR' },
+    { id: 112, name: 'Tokyo Mart', type: 'Sales: Wholesale/B2B', relevance: 'Medium (Japanese Imports)', contact: 'Office', phone: '02-555-1234', url: 'http://www.tokyomart.co.kr', country: 'KR' },
+    { id: 113, name: 'Ichiban House', type: 'Sales: Wholesale/B2B', relevance: 'Medium (Sauces & Ingredients)', contact: 'Sales', phone: '070-1234-5678', url: 'http://www.ichibanhouse.com', country: 'KR' },
+    { id: 114, name: 'Kowoo Mall', type: 'Sales: Wholesale/B2B', relevance: 'Medium (Food Materials)', contact: 'CS', phone: '1600-0000', url: 'http://kowoomall.com', country: 'KR' },
+    { id: 115, name: 'Food En (Busan)', type: 'Sales: Wholesale/B2B', relevance: 'High (Direct Import/Wholesale)', contact: 'Busan HQ', phone: '051-123-4567', url: 'http://fooden.com', country: 'KR' },
 
     // --- SMART FARM & TECH PARTNERS (KR) ---
-    { id: 120, name: 'Green Plus', type: 'Company', relevance: 'High (Greenhouse Construction)', contact: 'HQ', phone: '041-332-6421', url: 'http://www.greenplus.co.kr', country: 'KR' },
-    { id: 121, name: 'Woodeumji Farm', type: 'Company', relevance: 'High (Start-of-art Farm)', contact: 'Sales', phone: '041-835-3006', url: 'http://www.wdgfarm.com', country: 'KR' },
-    { id: 122, name: 'N.THING', type: 'Startup', relevance: 'High (Vertical Farm Tech)', contact: 'Partnership', phone: '02-1234-0000', url: 'https://nthing.net', country: 'KR' },
-    { id: 123, name: 'Green Labs', type: 'Startup', relevance: 'Medium (Agtech Platform)', contact: 'Support', phone: '1644-7901', url: 'https://greenlabs.co.kr', country: 'KR' },
-    { id: 124, name: 'KIST Gangneung Institute', type: 'Research', relevance: 'High (Natural Products)', contact: 'Admin', phone: '033-650-3400', url: 'https://gn.kist.re.kr', country: 'KR' },
+    { id: 120, name: 'Green Plus', type: 'Vendor: Procurement', relevance: 'High (Greenhouse Construction)', contact: 'HQ', phone: '041-332-6421', url: 'http://www.greenplus.co.kr', country: 'KR' },
+    { id: 121, name: 'Woodeumji Farm', type: 'Sales: Wholesale/B2B', relevance: 'High (Start-of-art Farm)', contact: 'Sales', phone: '041-835-3006', url: 'http://www.wdgfarm.com', country: 'KR' },
+    { id: 122, name: 'N.THING', type: 'Vendor: Procurement', relevance: 'High (Vertical Farm Tech)', contact: 'Partnership', phone: '02-1234-0000', url: 'https://nthing.net', country: 'KR' },
+    { id: 123, name: 'Green Labs', type: 'Partner: R&D/Tech', relevance: 'Medium (Agtech Platform)', contact: 'Support', phone: '1644-7901', url: 'https://greenlabs.co.kr', country: 'KR' },
+    { id: 124, name: 'KIST Gangneung Institute', type: 'Partner: R&D/Tech', relevance: 'High (Natural Products)', contact: 'Admin', phone: '033-650-3400', url: 'https://gn.kist.re.kr', country: 'KR' },
 
     // --- GLOBAL TARGETS (JP/US/EU) ---
-    { id: 201, name: 'Kubota Corporation', type: 'Company', relevance: 'High (Agri-Machinery)', contact: 'Global Sales', phone: '+81-6-6648-2111', url: 'https://www.kubota.com', country: 'JP' },
-    { id: 202, name: 'Kameya Foods', type: 'Manufacturer', relevance: 'High (Premium Wasabi JP)', contact: 'Export', phone: '+81-55-975-0233', url: 'https://kameya-foods.co.jp', country: 'JP' },
-    { id: 203, name: 'Kinjirushi Wasabi', type: 'Manufacturer', relevance: 'High (Market Leader)', contact: 'Biz Dev', phone: '+81-52-123-4567', url: 'https://www.kinjirushi.co.jp', country: 'JP' },
-    { id: 301, name: 'Plenty', type: 'Startup', relevance: 'High (Vertical Farming US)', contact: 'Partnerships', phone: '+1-650-123-4567', url: 'https://www.plenty.ag', country: 'US' },
-    { id: 302, name: 'AeroFarms', type: 'Startup', relevance: 'High (Aeroponics US)', contact: 'Sales', phone: '+1-973-242-2495', url: 'https://www.aerofarms.com', country: 'US' },
-    { id: 401, name: 'Wageningen University & Research', type: 'University/Research', relevance: 'Extreme (World #1 Ag-Tech)', contact: 'Plant Science Dept', phone: '+31-317-480100', url: 'https://www.wur.nl', country: 'NL' },
-    { id: 402, name: 'UC Davis (Plant Sciences)', type: 'University/Research', relevance: 'High (Top Tier Ag-Science)', contact: 'Director', phone: '+1-530-752-1011', url: 'https://www.ucdavis.edu', country: 'US' },
-    { id: 403, name: 'Infarm', type: 'Startup', relevance: 'High (European Vertical Farm)', contact: 'Retail Partners', phone: '+49-30-1234567', url: 'https://www.infarm.com', country: 'DE' },
-    { id: 404, name: 'Suntory Flowers', type: 'Manufacturer', relevance: 'Medium (Plant Bio-Tech)', contact: 'Inquiry', phone: '+81-3-1234-5678', url: 'https://suntoryflowers.com', country: 'JP' },
-    { id: 405, name: 'Global AgInvesting', type: 'Investor/Corporate', relevance: 'High (Ag-Tech Venture)', contact: 'Event Team', phone: '+1-212-123-4567', url: 'https://www.globalaginvesting.com', country: 'US' }
+    { id: 201, name: 'Kubota Corporation', type: 'Vendor: Procurement', relevance: 'High (Agri-Machinery)', contact: 'Global Sales', phone: '+81-6-6648-2111', url: 'https://www.kubota.com', country: 'JP' },
+    { id: 202, name: 'Kameya Foods', type: 'Sales: Wholesale/B2B', relevance: 'High (Premium Wasabi JP)', contact: 'Export', phone: '+81-55-975-0233', url: 'https://kameya-foods.co.jp', country: 'JP' },
+    { id: 203, name: 'Kinjirushi Wasabi', type: 'Sales: Wholesale/B2B', relevance: 'High (Market Leader)', contact: 'Biz Dev', phone: '+81-52-123-4567', url: 'https://www.kinjirushi.co.jp', country: 'JP' },
+    { id: 301, name: 'Plenty', type: 'Vendor: Procurement', relevance: 'High (Vertical Farming US)', contact: 'Partnerships', phone: '+1-650-123-4567', url: 'https://www.plenty.ag', country: 'US' },
+    { id: 302, name: 'AeroFarms', type: 'Vendor: Procurement', relevance: 'High (Aeroponics US)', contact: 'Sales', phone: '+1-973-242-2495', url: 'https://www.aerofarms.com', country: 'US' },
+    { id: 401, name: 'Wageningen University & Research', type: 'Partner: R&D/Tech', relevance: 'Extreme (World #1 Ag-Tech)', contact: 'Plant Science Dept', phone: '+31-317-480100', url: 'https://www.wur.nl', country: 'NL' },
+    { id: 402, name: 'UC Davis (Plant Sciences)', type: 'Partner: R&D/Tech', relevance: 'High (Top Tier Ag-Science)', contact: 'Director', phone: '+1-530-752-1011', url: 'https://www.ucdavis.edu', country: 'US' },
+    { id: 403, name: 'Infarm', type: 'Vendor: Procurement', relevance: 'High (European Vertical Farm)', contact: 'Retail Partners', phone: '+49-30-1234567', url: 'https://www.infarm.com', country: 'DE' },
+    { id: 404, name: 'Suntory Flowers', type: 'Partner: R&D/Tech', relevance: 'Medium (Plant Bio-Tech)', contact: 'Inquiry', phone: '+81-3-1234-5678', url: 'https://suntoryflowers.com', country: 'JP' },
+    { id: 405, name: 'Global AgInvesting', type: 'Investor', relevance: 'High (Ag-Tech Venture)', contact: 'Event Team', phone: '+1-212-123-4567', url: 'https://www.globalaginvesting.com', country: 'US' }
 ];
 
 export async function searchPartners(keyword: string, page: number = 1, country: string = 'KR') {
@@ -800,16 +938,25 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                     const emailMatch = snippet.match(emailRegex);
                     const contact = emailMatch ? emailMatch[0] : '-';
 
-                    let type = 'Web Result';
+                    let type = 'Sales: Wholesale/B2B';
                     const lowerUrl = item.link.toLowerCase();
                     const lowerSnippet = snippet.toLowerCase();
                     const lowerTitle = item.title.toLowerCase();
+                    const combined = (lowerTitle + ' ' + lowerSnippet).toLowerCase();
 
-                    if (lowerUrl.includes('.edu') || lowerUrl.includes('.ac.kr')) type = 'University/Research';
-                    else if (lowerUrl.includes('.gov') || lowerUrl.includes('.go.kr')) type = 'Government';
-                    else if (lowerUrl.includes('.org')) type = 'Organization';
-                    else if (lowerSnippet.includes('invest') || lowerSnippet.includes('vc ')) type = 'Investor/Corporate';
-                    else if (lowerSnippet.includes('wholesale') || lowerSnippet.includes('distributor') || lowerSnippet.includes('supplier') || lowerSnippet.includes('유통') || lowerSnippet.includes('도매')) type = 'Distributor/Wholesaler';
+                    if (combined.includes('equipment') || combined.includes('machinery') || combined.includes('system') || combined.includes('solution') || combined.includes('automation')) {
+                        type = 'Vendor: Procurement';
+                    } else if (lowerUrl.includes('.edu') || lowerUrl.includes('.ac.kr') || lowerUrl.includes('.go.kr') || combined.includes('research') || combined.includes('lab')) {
+                        type = 'Partner: R&D/Tech';
+                    } else if (combined.includes('invest') || combined.includes('capital') || combined.includes('vc')) {
+                        type = 'Investor';
+                    } else if (combined.includes('wholesale') || combined.includes('distributor') || combined.includes('supplier') || combined.includes('유통') || combined.includes('도매')) {
+                        type = 'Sales: Wholesale/B2B';
+                    } else if (combined.includes('restaurant') || combined.includes('chef') || combined.includes('dining') || combined.includes('식당')) {
+                        type = 'Sales: Direct/F&B';
+                    } else {
+                        type = 'Other';
+                    }
 
                     return {
                         id: Date.now() + index, // Ensure unique key
@@ -951,4 +1098,27 @@ export async function sendBulkProposals(partners: any[]) {
         sent: results.filter(r => r.success).length,
         details: results
     };
+}
+
+export async function importPartnersBulk(partners: any[]) {
+    try {
+        const currentData = await readDb('hunter.json');
+        const enriched = partners.map((p, index) => ({
+            ...p,
+            id: p.id || Date.now() + index,
+            addedAt: p.addedAt || new Date().toISOString(),
+            status: p.status || 'Imported',
+            country: p.country || 'South Korea'
+        }));
+
+        const newData = [...currentData, ...enriched];
+        await writeDb('hunter.json', newData);
+        revalidatePath('/admin/hunter');
+        revalidatePath('/admin');
+
+        return { success: true, count: enriched.length };
+    } catch (error) {
+        console.error('Bulk import error:', error);
+        return { success: false, error: 'Failed to import partners.' };
+    }
 }

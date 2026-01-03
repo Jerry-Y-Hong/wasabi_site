@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
                 </Text>
                 <Paper withBorder p="md" bg="gray.0">
                     <Text fw={700}>K-Farm Inc.</Text>
-                    <Text>Email: contact@k-farm.or.kr</Text>
+                    <Text>Email: info@k-wasabi.kr</Text>
                     <Text>Phone: +82-2-123-4567</Text>
                     <Text>Address: Seoul, Republic of Korea</Text>
                 </Paper>

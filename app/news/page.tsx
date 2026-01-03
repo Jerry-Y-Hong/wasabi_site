@@ -55,10 +55,10 @@ export default function NewsPage() {
                             <Card key={`${language}-${post.id || Math.random()}`} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                                 <Group justify="space-between" mb="xs" wrap="nowrap">
                                     <Badge color="wasabi" variant="light" style={{ maxWidth: '65%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        {post.topic || 'News'}
+                                        {post.topic || t('news_label')}
                                     </Badge>
                                     <Text size="xs" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
-                                        {post.timestamp ? new Date(post.timestamp).toLocaleDateString() : 'Date'}
+                                        {post.timestamp ? new Date(post.timestamp).toLocaleDateString() : t('date_label')}
                                     </Text>
                                 </Group>
 
