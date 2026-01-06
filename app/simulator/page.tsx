@@ -151,11 +151,17 @@ const useNutrientSimulator = () => {
     const setSolar = (v: number) => { engine.current.physics.solarRad = v; };
     const setAuto = (v: boolean) => { engine.current.autoMode = v; };
     const toggleHvac = (key: keyof typeof engine.current.hvac) => { engine.current.hvac[key] = !engine.current.hvac[key]; };
+    const toggleActuator = (key: keyof typeof engine.current.actuators) => {
+        const val = engine.current.actuators[key];
+        if (typeof val === 'boolean') {
+            (engine.current.actuators as any)[key] = !val;
+        }
+    };
 
     // Return the Immutable Snapshot for React Rendering
     return {
         ...engine.current,
-        setSolar, setAuto, toggleHvac
+        setSolar, setAuto, toggleHvac, toggleActuator
     };
 };
 
@@ -278,7 +284,7 @@ const SmartBedMonitor = ({ sim }: any) => {
                 </Group>
 
                 {/* Data Strip */}
-                <Group gap="lg" style={{ flexGrow: 1, justifyContent: 'center' }}>
+                <Group gap="xl" style={{ flexGrow: 1, justifyContent: 'center' }}>
 
                     {/* Air Section */}
                     <Group gap="xs">
@@ -289,23 +295,21 @@ const SmartBedMonitor = ({ sim }: any) => {
                                 <Text size="xs" c="dimmed" fw={700}>{sim.env.airHum.toFixed(0)}%</Text>
                             </Group>
                         </div>
-                        {/* Tiny Controls */}
-                        <Group gap={2}>
-                            <ActionIcon
-                                variant={sim.hvac.fan_circ ? "filled" : "light"}
-                                color="blue" size="xs" radius="xl"
-                                onClick={() => sim.toggleHvac('fan_circ')} title="Circulation Fan"
+                        {/* CONTROLS: Air */}
+                        <Button.Group>
+                            <Button
+                                size="compact-xs" variant={sim.hvac.fan_circ ? "filled" : "default"} color="blue"
+                                onClick={() => sim.toggleHvac('fan_circ')}
                             >
-                                <Fan size={10} />
-                            </ActionIcon>
-                            <ActionIcon
-                                variant={sim.hvac.fan_exh ? "filled" : "light"}
-                                color="orange" size="xs" radius="xl"
-                                onClick={() => sim.toggleHvac('fan_exh')} title="Exhaust Fan"
+                                Circ
+                            </Button>
+                            <Button
+                                size="compact-xs" variant={sim.hvac.fan_exh ? "filled" : "default"} color="orange"
+                                onClick={() => sim.toggleHvac('fan_exh')}
                             >
-                                <ArrowDown size={10} />
-                            </ActionIcon>
-                        </Group>
+                                Exh
+                            </Button>
+                        </Button.Group>
                     </Group>
 
                     {/* Delta Pill */}
@@ -325,14 +329,14 @@ const SmartBedMonitor = ({ sim }: any) => {
                                 <Text size="xs" c="dimmed" fw={700}>{sim.env.bedHum.toFixed(0)}%</Text>
                             </Group>
                         </div>
-                        {/* Tiny Heater Control */}
-                        <ActionIcon
-                            variant={sim.hvac.heater_bed ? "filled" : "light"}
-                            color="red" size="xs" radius="xl"
-                            onClick={() => sim.toggleHvac('heater_bed')} title="Bed Heater"
+                        {/* CONTROLS: Bed */}
+                        <Button
+                            size="compact-xs" variant={sim.hvac.heater_bed ? "filled" : "default"} color="red" radius="xl"
+                            leftSection={<Zap size={10} />}
+                            onClick={() => sim.toggleHvac('heater_bed')}
                         >
-                            <Zap size={10} />
-                        </ActionIcon>
+                            Heat
+                        </Button>
                     </Group>
 
                 </Group>
