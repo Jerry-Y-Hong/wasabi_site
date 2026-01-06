@@ -149,24 +149,6 @@ const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
     </div>
 );
 
-const VerticalBezel = ({ children }: { children: React.ReactNode }) => (
-    <div style={{
-        position: 'relative', width: '60px', height: '110px', margin: '0 auto',
-        padding: '10px',
-        background: '#151515',
-        borderRadius: '30px',
-        boxShadow: `
-            inset 0 2px 5px rgba(255,255,255,0.2), 
-            0 5px 15px rgba(0,0,0,0.8),
-            0 0 0 4px #2c3e50, 
-            0 0 0 6px #555
-        `,
-        overflow: 'hidden'
-    }}>
-        {children}
-    </div>
-);
-
 const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: any) => {
     const range = max - min;
     const pct = Math.max(0, Math.min(1, (value - min) / range));
@@ -265,43 +247,70 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
     const pct = Math.max(0, Math.min(1, (value - min) / range));
 
     return (
-        <div style={{ width: 60, margin: '0 auto', textAlign: 'center' }}>
-            <VerticalBezel>
+        <div style={{ width: 180, margin: '0 auto' }}>
+            <GaugeBezel>
+                {/* Face Background */}
+                <div style={{
+                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
+                    background: 'radial-gradient(circle, #222 0%, #000 90%)',
+                    boxShadow: 'inset 0 0 20px #000'
+                }} />
+
+                {/* Side Grills (Decoration) */}
+                <div style={{
+                    position: 'absolute', top: 40, left: 30, width: 30, height: 2, background: '#333',
+                    boxShadow: '0 10px 0 #333, 0 20px 0 #333'
+                }} />
+                <div style={{
+                    position: 'absolute', top: 40, right: 30, width: 30, height: 2, background: '#333',
+                    boxShadow: '0 10px 0 #333, 0 20px 0 #333'
+                }} />
+
                 {/* Background Track */}
                 <div style={{
-                    position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-                    width: 16, height: 90, borderRadius: 10,
+                    position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+                    width: 16, height: 85, borderRadius: '10px 10px 0 0',
                     background: '#222',
-                    boxShadow: 'inset 0 0 5px #000'
+                    boxShadow: 'inset 0 0 5px #000',
+                    zIndex: 10
                 }} />
 
                 {/* Liquid */}
                 <div style={{
-                    position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
-                    width: 10, height: `${pct * 70}px`, borderRadius: 10,
+                    position: 'absolute', bottom: 15, left: '50%', transform: 'translateX(-50%)',
+                    width: 10, height: `${pct * 65}px`, borderRadius: 10,
                     background: 'linear-gradient(to top, #3498db, #e74c3c)',
                     transition: 'height 0.5s',
-                    boxShadow: '0 0 10px rgba(231, 76, 60, 0.5)'
-                }} />
-
-                {/* Tube Glare */}
-                <div style={{
-                    position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-                    width: 4, height: 90, borderRadius: 10,
-                    background: 'rgba(255,255,255,0.1)', pointerEvents: 'none'
+                    boxShadow: '0 0 10px rgba(231, 76, 60, 0.5)',
+                    zIndex: 11
                 }} />
 
                 {/* Bulb */}
                 <div style={{
-                    position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)',
-                    width: 24, height: 24, borderRadius: '50%',
+                    position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)',
+                    width: 30, height: 30, borderRadius: '50%',
                     background: 'radial-gradient(circle at 30% 30%, #e74c3c, #c0392b)',
                     boxShadow: '0 0 10px rgba(231, 76, 60, 0.6), inset 0 2px 5px rgba(255,255,255,0.4)',
                     zIndex: 20
                 }} />
-            </VerticalBezel>
-            <div style={{ marginTop: 5 }}>
-                <Text size="lg" fw={900} c="white" style={{ textShadow: "0 0 10px rgba(231, 76, 60, 0.5)", fontFamily: "Impact, sans-serif" }}>{value.toFixed(1)}</Text>
+
+                {/* Tube Glare */}
+                <div style={{
+                    position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+                    width: 4, height: 85, borderRadius: 10,
+                    background: 'rgba(255,255,255,0.1)', pointerEvents: 'none', zIndex: 15
+                }} />
+
+                {/* Top Bezel Glare */}
+                <div style={{
+                    position: 'absolute', top: 0, left: 0, width: '100%', height: '50%',
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)',
+                    borderRadius: '90px 90px 0 0', pointerEvents: 'none', zIndex: 100
+                }} />
+            </GaugeBezel>
+
+            <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 70 }}>
+                <Text size={rem(24)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(231, 76, 60, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(1)}</Text>
                 <Text size="xs" c="dimmed" fw={700}>{unit}</Text>
             </div>
         </div>
