@@ -97,15 +97,43 @@ const useNutrientSimulator = () => {
             // --- 2. Control Logic ---
             if (e.autoMode) {
                 // Solar Modes
-                if (p.solarRad > 700) { t.ec = 2.4; e.logMsg = "Mode: Sunny (High EC)"; }
-                else if (p.solarRad > 300) { t.ec = 2.0; e.logMsg = "Mode: Normal"; }
-                else { t.ec = 1.6; e.logMsg = "Mode: Low Light"; }
+                if (p.solarRad > 700) { t.ec = 2.4; }
+                else if (p.solarRad > 300) { t.ec = 2.0; }
+                else { t.ec = 1.6; }
 
                 // Water Level
                 if (p.rawWaterLevel < 200) act.rawPump = true; else if (p.rawWaterLevel > 900) act.rawPump = false;
 
-                // Temp Control
+                // Nutrient Temp Control
                 if (p.displayTemp > t.temp + t.tolTemp) act.chiller = true; else if (p.displayTemp < t.temp - 0.5) act.chiller = false;
+
+                // [NEW] HVAC Automation
+                // 1. Air Control (Cooling / Ventilation)
+                // If Air Temp > Target + 5 (Hot) -> Exh Fan ON
+                if (env.airTemp > t.temp + 5.0) {
+                    hvac.fan_exh = true;
+                } else if (env.airTemp < t.temp + 2.0) {
+                    hvac.fan_exh = false; // Turn off with hysteresis
+                }
+
+                // 2. Bed Control (Heating)
+                // If Bed Temp < Target - 2 (Cold) -> Heater ON
+                if (env.bedTemp < t.temp - 2.0) {
+                    hvac.heater_bed = true;
+                } else if (env.bedTemp > t.temp) {
+                    hvac.heater_bed = false;
+                }
+
+                // 3. Humidity Control (Circulation)
+                // If Hum > 80% -> Circ Fan ON
+                if (env.airHum > 80.0) hvac.fan_circ = true;
+                else if (env.airHum < 70.0) hvac.fan_circ = false;
+
+                // Update Log Message for HVAC
+                if (hvac.fan_exh) e.logMsg = "Auto: Cooling Air (Fan ON)";
+                else if (hvac.heater_bed) e.logMsg = "Auto: Warming Bed (Heat ON)";
+                else if (act.chiller) e.logMsg = "Auto: Chilling Nutrient";
+                else e.logMsg = "System Stable (Auto)";
 
                 // State Machine
                 act.valveA = 0; act.valveB = 0; act.acidValve = 0;
@@ -139,6 +167,8 @@ const useNutrientSimulator = () => {
                     act.mixingPump = true; act.supplyPump = true;
                     if (p.tankLevel < 20) e.state = "IDLE";
                 }
+            } else {
+                e.logMsg = "Manual Control Mode";
             }
 
             // Trigger Render
@@ -273,14 +303,18 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
 // --- Minimal Smart Bed Monitor (One-Line) ---
 const SmartBedMonitor = ({ sim }: any) => {
     const deltaTemp = sim.env.airTemp - sim.env.bedTemp;
+    const isAuto = sim.autoMode;
 
     return (
         <Paper p="xs" bg="#25262B" radius="md" withBorder style={{ borderColor: '#373A40' }}>
             <Group justify="space-between" wrap="nowrap">
                 {/* Label */}
                 <Group gap="xs">
-                    <ThemeIcon color="teal" variant="light" size="sm"><LayoutDashboard size={14} /></ThemeIcon>
-                    <Text fw={700} c="gray.5" size="sm" style={{ whiteSpace: 'nowrap' }}>Zone A</Text>
+                    <ThemeIcon color={isAuto ? "green" : "teal"} variant="light" size="sm"><LayoutDashboard size={14} /></ThemeIcon>
+                    <Stack gap={0}>
+                        <Text fw={700} c="gray.5" size="sm" style={{ whiteSpace: 'nowrap' }}>Zone A</Text>
+                        {isAuto && <Text size={rem(9)} c="green">AUTO ACTIVE</Text>}
+                    </Stack>
                 </Group>
 
                 {/* Data Strip */}
@@ -298,13 +332,21 @@ const SmartBedMonitor = ({ sim }: any) => {
                         {/* CONTROLS: Air */}
                         <Button.Group>
                             <Button
-                                size="compact-xs" variant={sim.hvac.fan_circ ? "filled" : "default"} color="blue"
+                                size="compact-xs"
+                                variant={sim.hvac.fan_circ ? "filled" : "default"}
+                                color="blue"
+                                disabled={isAuto}
+                                style={{ opacity: isAuto ? 0.6 : 1 }}
                                 onClick={() => sim.toggleHvac('fan_circ')}
                             >
                                 Circ
                             </Button>
                             <Button
-                                size="compact-xs" variant={sim.hvac.fan_exh ? "filled" : "default"} color="orange"
+                                size="compact-xs"
+                                variant={sim.hvac.fan_exh ? "filled" : "default"}
+                                color="orange"
+                                disabled={isAuto}
+                                style={{ opacity: isAuto ? 0.6 : 1 }}
                                 onClick={() => sim.toggleHvac('fan_exh')}
                             >
                                 Exh
@@ -331,8 +373,12 @@ const SmartBedMonitor = ({ sim }: any) => {
                         </div>
                         {/* CONTROLS: Bed */}
                         <Button
-                            size="compact-xs" variant={sim.hvac.heater_bed ? "filled" : "default"} color="red" radius="xl"
+                            size="compact-xs"
+                            variant={sim.hvac.heater_bed ? "filled" : "default"}
+                            color="red" radius="xl"
                             leftSection={<Zap size={10} />}
+                            disabled={isAuto}
+                            style={{ opacity: isAuto ? 0.6 : 1 }}
                             onClick={() => sim.toggleHvac('heater_bed')}
                         >
                             Heat
