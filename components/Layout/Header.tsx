@@ -29,6 +29,7 @@ export function Header() {
         },
         { link: '/partnership', label: t('nav_partnership') },
         { link: '/consulting', label: t('nav_consulting') },
+        { link: '/simulator', label: 'Simulator' },
         { link: 'https://k-hamp-div.vercel.app', label: 'Hemp Div.', external: true },
         { link: '/contact', label: t('nav_contact') },
     ];
