@@ -156,18 +156,24 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
 const RainbowGauge = ({ value, target, tol }: any) => {
     const angle = -90 + (Math.max(0, Math.min(1, value / 14)) * 180);
     return (
-        <div style={{ position: 'relative', width: '220px', height: '110px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', margin: '0 auto' }}>
-            <div style={{
-                position: 'absolute', width: '220px', height: '220px', borderRadius: '50%',
-                background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
-                clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.8
-            }}></div>
-            <div style={{ position: 'absolute', bottom: 0, width: '160px', height: '80px', backgroundColor: '#1A1B1E', borderRadius: '100px 100px 0 0' }}></div>
-            <div style={{
-                position: 'absolute', bottom: 0, width: 4, height: 100, backgroundColor: 'white',
-                transformOrigin: 'bottom center', transform: `rotate(${angle}deg)`, transition: 'transform 0.5s', zIndex: 10
-            }}></div>
-            <div style={{ textAlign: 'center', position: 'relative', zIndex: 20, marginBottom: 10 }}>
+        <div style={{ width: '220px', margin: '0 auto' }}>
+            <div style={{ position: 'relative', width: '220px', height: '110px', overflow: 'hidden' }}>
+                {/* Gradient Arc */}
+                <div style={{
+                    position: 'absolute', width: '220px', height: '220px', borderRadius: '50%',
+                    background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
+                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.8
+                }}></div>
+                {/* Inner Cover (Hole) */}
+                <div style={{ position: 'absolute', bottom: 0, left: '30px', width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0' }}></div>
+                {/* Needle */}
+                <div style={{
+                    position: 'absolute', bottom: 0, left: '108px', width: 4, height: 90, backgroundColor: 'white',
+                    transformOrigin: 'bottom center', transform: `rotate(${angle}deg)`, transition: 'transform 0.5s', zIndex: 10
+                }}></div>
+            </div>
+            {/* Text Value */}
+            <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 20 }}>
                 <Text size="xl" fw={900} c="white">{value.toFixed(2)}</Text>
                 <Text size="xs" c="dimmed">pH</Text>
             </div>
