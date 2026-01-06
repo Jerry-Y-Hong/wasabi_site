@@ -112,48 +112,91 @@ const useNutrientSimulator = () => {
 };
 
 // --- Gauges ---
+const MustangNeedle = ({ angle, color = "#e74c3c" }: { angle: number, color?: string }) => (
+    <>
+        <div style={{
+            position: 'absolute', bottom: 0, left: '50%', width: 0, height: 0,
+            borderLeft: '4px solid transparent', borderRight: '4px solid transparent',
+            borderBottom: `90px solid ${color}`,
+            transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
+            transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // Bouncy needle
+            zIndex: 50, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))'
+        }} />
+        <div style={{
+            position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
+            width: 20, height: 20, borderRadius: '50%',
+            background: 'radial-gradient(circle at 30% 30%, #555, #000)',
+            border: '2px solid #333', zIndex: 60, boxShadow: '0 2px 5px rgba(0,0,0,0.8)'
+        }}></div>
+    </>
+);
+
+const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
+    <div style={{
+        position: 'relative', width: '240px', height: '130px', margin: '0 auto',
+        padding: '10px',
+        background: '#151515',
+        borderRadius: '130px 130px 0 0',
+        boxShadow: `
+            inset 0 2px 5px rgba(255,255,255,0.2),
+            0 5px 15px rgba(0,0,0,0.8),
+            0 0 0 4px #2c3e50,
+            0 0 0 6px #555
+        `,
+        overflow: 'hidden'
+    }}>
+        {children}
+    </div>
+);
+
 const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: any) => {
     const range = max - min;
     const pct = Math.max(0, Math.min(1, (value - min) / range));
-    const angle = -90 + (pct * 180); // -90 (left) to 90 (right)
+    const angle = -90 + (pct * 180);
 
     return (
-        <div style={{ position: 'relative', width: '220px', height: '110px', margin: '0 auto' }}>
-            {/* Gauge Arc */}
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '220px', height: '220px', borderRadius: '50%',
-                background: `conic-gradient(from 270deg, #4dabf7 0deg 60deg, #40c057 60deg 120deg, #fa5252 120deg 180deg, transparent 180deg)`,
-                clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.9
-            }}></div>
+        <div style={{ width: 240, margin: '0 auto' }}>
+            <GaugeBezel>
+                {/* Face Background */}
+                <div style={{
+                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    background: 'radial-gradient(circle, #222 0%, #000 90%)',
+                    boxShadow: 'inset 0 0 20px #000'
+                }} />
 
-            {/* Inner Cover (Make it slightly smaller to show more arc color if needed, currently 160x80) */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-                width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0'
-            }}></div>
+                {/* Arc */}
+                <div style={{
+                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    background: `conic-gradient(from 270deg, #3498db 0deg 60deg, #2ecc71 60deg 120deg, #e74c3c 120deg 180deg, transparent 180deg)`,
+                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
+                    mask: "radial-gradient(transparent 55%, black 56%)",
+                    WebkitMask: "radial-gradient(transparent 55%, black 56%)",
+                    opacity: 0.9
+                }}></div>
 
-            {/* Needle - Made Red and higher z-index */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: '50%', width: 6, height: 100,
-                backgroundColor: '#FA5252', borderRadius: '4px 4px 0 0',
-                transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
-                transition: 'transform 0.3s ease-out', zIndex: 50,
-                boxShadow: '0 0 5px rgba(0,0,0,0.5)'
-            }}></div>
+                {/* Major Ticks */}
+                {[0, 1, 2, 3, 4].map(i => (
+                    <div key={i} style={{
+                        position: 'absolute', bottom: 0, left: '50%', width: 3, height: 110,
+                        background: 'linear-gradient(to bottom, #fff 10px, transparent 10px)',
+                        transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${-90 + (i / 4) * 180}deg)`,
+                        zIndex: 20, opacity: 0.8
+                    }} />
+                ))}
 
-            {/* Pivot Point */}
-            <div style={{
-                position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
-                width: 16, height: 16, borderRadius: '50%', backgroundColor: '#fff', border: '2px solid #FA5252', zIndex: 60
-            }}></div>
+                <MustangNeedle angle={angle} color="#e74c3c" />
 
-            {/* Text Value */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: 0, width: '100%',
-                textAlign: 'center', zIndex: 40
-            }}>
-                <Text size="xl" fw={900} c="white">{value.toFixed(2)}</Text>
-                <Text size="xs" c="dimmed">{unit}</Text>
+                {/* Glare/Reflection */}
+                <div style={{
+                    position: 'absolute', top: 0, left: 0, width: '100%', height: '50%',
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)',
+                    borderRadius: '130px 130px 0 0', pointerEvents: 'none', zIndex: 100
+                }} />
+            </GaugeBezel>
+
+            <div style={{ textAlign: 'center', marginTop: '-45px', position: 'relative', zIndex: 70 }}>
+                <Text size={rem(32)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(52, 152, 219, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
+                <Text size="sm" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>{unit}</Text>
             </div>
         </div>
     )
@@ -162,41 +205,38 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
 const RainbowGauge = ({ value, target, tol }: any) => {
     const angle = -90 + (Math.max(0, Math.min(1, value / 14)) * 180);
     return (
-        <div style={{ position: 'relative', width: '220px', height: '110px', margin: '0 auto' }}>
-            {/* Gradient Arc */}
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '220px', height: '220px', borderRadius: '50%',
-                background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
-                clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.8
-            }}></div>
+        <div style={{ width: 240, margin: '0 auto' }}>
+            <GaugeBezel>
+                {/* Face Background */}
+                <div style={{
+                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    background: 'radial-gradient(circle, #222 0%, #000 90%)',
+                    boxShadow: 'inset 0 0 20px #000'
+                }} />
 
-            {/* Inner Cover (Hole) */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-                width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0'
-            }}></div>
+                {/* Gradient Arc */}
+                <div style={{
+                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
+                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
+                    mask: "radial-gradient(transparent 55%, black 56%)",
+                    WebkitMask: "radial-gradient(transparent 55%, black 56%)",
+                    opacity: 0.9
+                }}></div>
 
-            {/* Needle */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: '50%', width: 4, height: 95,
-                backgroundColor: 'white', borderRadius: '4px',
-                transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
-                transition: 'transform 0.5s', zIndex: 10
-            }}></div>
+                <MustangNeedle angle={angle} color="#3498db" />
 
-            {/* Pivot Point */}
-            <div style={{
-                position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
-                width: 16, height: 16, borderRadius: '50%', backgroundColor: 'white', zIndex: 20
-            }}></div>
+                {/* Glare */}
+                <div style={{
+                    position: 'absolute', top: 0, left: 0, width: '100%', height: '50%',
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)',
+                    borderRadius: '130px 130px 0 0', pointerEvents: 'none', zIndex: 100
+                }} />
+            </GaugeBezel>
 
-            {/* Text Value */}
-            <div style={{
-                position: 'absolute', bottom: 0, left: 0, width: '100%',
-                textAlign: 'center', zIndex: 30
-            }}>
-                <Text size="xl" fw={900} c="white">{value.toFixed(2)}</Text>
-                <Text size="xs" c="dimmed">pH</Text>
+            <div style={{ textAlign: 'center', marginTop: '-45px', position: 'relative', zIndex: 70 }}>
+                <Text size={rem(32)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(46, 204, 113, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
+                <Text size="sm" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>pH</Text>
             </div>
         </div>
     )
