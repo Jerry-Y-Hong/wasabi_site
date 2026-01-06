@@ -29,6 +29,7 @@ export function Header() {
         },
         { link: '/partnership', label: t('nav_partnership') },
         { link: '/consulting', label: t('nav_consulting') },
+        { link: 'https://k-hamp-div.vercel.app', label: 'Hemp Div.', external: true },
         { link: '/contact', label: t('nav_contact') },
     ];
 
@@ -63,6 +64,29 @@ export function Header() {
                 </Menu>
             );
         }
+        if (link.label === 'Hemp Div.') {
+            return (
+                <Link
+                    key={idx}
+                    href={link.link}
+                    className={classes.link}
+                    target="_blank"
+                    style={{
+                        fontSize: '12px',
+                        padding: '8px 12px',
+                        fontWeight: 800,
+                        whiteSpace: 'nowrap',
+                        backgroundColor: '#4ade80', // Hamp Green
+                        color: 'black',
+                        borderRadius: '20px',
+                        marginLeft: '10px'
+                    }}
+                >
+                    {link.label}
+                </Link>
+            );
+        }
+
         return (
             <Link
                 key={idx}

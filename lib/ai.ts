@@ -21,11 +21,101 @@ interface ProposalRequest {
 }
 
 export async function generateProposalEmail(data: ProposalRequest) {
+    // --- SMART TEMPLATE MODE (No API Key) ---
     if (!process.env.GEMINI_API_KEY) {
-        return {
-            subject: `[Proposal] Strategic Partnership: K-Farm x ${data.partnerName}`,
-            body: `(AI Mode Unavailable - Missing GEMINI_API_KEY)\n\nDear ${data.contactPerson || 'Partner'},\n\nWe are interested in collaborating with ${data.partnerName} based on your work in ${data.relevance}.\n\nPlease check your .env.local file to enable AI generation.`
-        };
+        // Deterministic template based on country
+        const country = data.country || 'Global';
+        const partner = data.partnerName;
+        const relevance = data.relevance || 'Smart Farming';
+        const contact = data.contactPerson || 'Manager';
+
+        if (country === 'KR' || country === 'South Korea') {
+            return {
+                subject: `[제안] ${partner} 귀사와 K-WASABI(케이팜)의 전략적 파트너십 제안`,
+                body: `(Smart Template Mode)
+
+${contact} 님 귀하,
+
+안녕하십니까?
+대한민국 최고 품질의 스마트팜 와사비를 생산/유통하는 **K-Farm (케이팜) / K-WASABI** 사업부의 홍영희 이사입니다.
+
+귀사의 **"${relevance}"** 관련 활동을 깊이 있게 검토하였으며, 당사의 프리미엄 와사비 솔루션이 귀사의 비즈니스 가치를 한층 더 높여줄 수 있다고 확신하여 본 제안을 드립니다.
+
+**[Why K-Farm?]**
+1. **세계 최고 등급의 품질**: 철원/화천 청정 지역의 스마트팜 수직농장에서 생산된 깨끗하고 강력한 맛의 와사비.
+2. **사계절 안정 공급**: 기후 영향을 받지 않는 첨단 제어 시설로 365일 균일한 품질과 물량 보장.
+3. **독점 품종**: 조직배양 기술로 탄생한 무병묘(Virus-Free) 기반의 압도적인 생산성.
+
+귀사와의 협력을 통해 서로 윈윈(Win-Win)할 수 있는 구체적인 방안을 논의드리고 싶습니다.
+첨부된 제안서를 검토해 주시면 감사하겠습니다.
+
+긍정적인 회신 기다리겠습니다.
+
+감사합니다.
+
+홍영희 드림
+영업 이사 | K-Farm`
+            };
+        } else if (country === 'JP' || country === 'Japan') {
+            return {
+                subject: `【ご提案】${partner}様との戦略的パートナーシップについて (K-WASABI)`,
+                body: `(Smart Template Mode)
+
+${partner}
+${contact} 様
+
+拝啓
+
+貴社ますますご清栄のこととお慶び申し上げます。
+韓国のプレミアム・スマートファームわさび専門企業 **K-Farm (K-WASABI)** の営業責任者、洪(ホン)と申します。
+
+貴社の **"${relevance}"** における素晴らしい実績を拝見し、弊社の高品質なわさびソリューションが貴社の事業発展に貢献できると確信し、ご連絡差し上げました。
+
+**【弊社の強み】**
+1. **最高品質**: 独自の垂直農法で栽培された、香り高く辛味の強いプレミアムわさび。
+2. **安定供給**: 天候に左右されないスマートファーム技術により、年間を通じて安定した品質と供給をお約束します。
+3. **革新的な技術**: 組織培養技術を用いたウイルスフリー苗による高い生産性。
+
+是非一度、具体的な協業の可能性についてお話しさせて頂ければ幸いです。
+添付の提案書をご高覧頂けますようお願い申し上げます。
+
+ご検討のほど、何卒よろしくお願い申し上げます。
+
+敬具
+
+洪 泳喜 (Hong Young-hee)
+Sales Director | K-Farm`
+            };
+        } else {
+            // Default English
+            return {
+                subject: `Strategic Partnership Proposal: K-WASABI x ${partner}`,
+                body: `(Smart Template Mode)
+
+Dear ${contact},
+
+I hope this email finds you well.
+
+My name is Jerry Y. Hong, Sales Director at **K-Farm (K-WASABI)**, the leading Smart Farm Wasabi producer in Korea.
+
+We have been impressed by **${partner}**'s leadership in **${relevance}**, and I am writing to propose a strategic partnership that combines our premium supply capabilities with your market expertise.
+
+**Why Partner with K-Wasabi?**
+* **Premium Quality**: Aeroponically grown real wasabi with superior taste and pungency.
+* **Stable Supply**: Our high-tech vertical farms guarantee consistent volume and quality 365 days a year, regardless of climate.
+* **Innovation**: We utilize proprietary virus-free tissue culture technology for maximum safety and yield.
+
+We believe a collaboration could generate significant value for both parties. I have attached our brief introduction catalog for your review.
+
+Could we schedule a short call next week to discuss potential synergies?
+
+Best regards,
+
+**Jerry Y. Hong**
+Sales Director
+K-Farm International`
+            };
+        }
     }
 
     try {

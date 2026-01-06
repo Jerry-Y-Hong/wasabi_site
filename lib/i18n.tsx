@@ -21,6 +21,17 @@ export const dictionary = {
         nav_consulting: '컨설팅',
         nav_contact: '고객문의',
         nav_back_to_admin: '관리자 대시보드',
+
+        // Brand Story (Hero) - Cinematic Intro
+        story_s1_title: '와사비의 정체',
+        story_s1_desc: '알싸한 맛의 비밀, 뿌리가 아닌 "줄기(Rhizome)"에 있습니다.',
+        story_s2_title: '자연의 시련',
+        story_s2_desc: '1급수 차가운 물과 2년의 기다림. 자연재배는 너무나 까다롭습니다.',
+        story_s3_title: '기술로부터의 혁신',
+        story_s3_desc: 'K-Farm 에어로포닉스. 공기 중에서 뿌리에 생명을 불어넣습니다.',
+        story_s4_title: '완벽한 결과물',
+        story_s4_desc: '과학이 키운 프리미엄. 변함없는 최상의 맛과 향을 약속합니다.',
+
         contact_title: '고객 센터',
         contact_desc: '제품이나 컨설팅 서비스에 대해 궁금한 점이 있으신가요? 아래 양식을 작성해 주시면 곧 연락드리겠습니다.',
         contact_direct: '직접 연락',

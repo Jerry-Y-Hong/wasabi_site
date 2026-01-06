@@ -45,6 +45,7 @@ import {
     IconRocket,
     IconCircleCheck,
     IconFileDescription,
+    IconRefresh,
     IconPdf
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -253,6 +254,7 @@ export default function HunterAdmin() {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<HunterResult[]>([]);
     const [page, setPage] = useState(1);
+    const [autoScan, setAutoScan] = useState(false);
 
     // CRM State
     const [activeTab, setActiveTab] = useState<string | null>('search');
@@ -320,6 +322,7 @@ export default function HunterAdmin() {
     const [duplicateCount, setDuplicateCount] = useState(0);
     const [bulkSending, setBulkSending] = useState(false);
     const [bulkCategorizing, setBulkCategorizing] = useState(false);
+    const stopScanRef = useRef(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [researching, setResearching] = useState<number | null>(null);
     const [draftEmail, setDraftEmail] = useState<{ subject: string; body: string } | null>(null);
@@ -581,9 +584,17 @@ export default function HunterAdmin() {
         if (!confirm(`📡 AI Intelligence: Automatically categorize ${selectedIds.length} selected partners? This will visit their websites.`)) return;
 
         setBulkCategorizing(true);
+        stopScanRef.current = false;
         let successCount = 0;
 
+        notifications.show({ title: 'Bulk Scan Started', message: 'Scanning selected partners...', color: 'blue', loading: true });
+
         for (let i = 0; i < selectedIds.length; i++) {
+            if (stopScanRef.current) {
+                notifications.show({ title: 'Scan Stopped', message: 'Bulk scan operation cancelled.', color: 'orange' });
+                break;
+            }
+
             const id = selectedIds[i];
             const partner = savedPartners.find(p => p.id === id);
             if (!partner || !partner.url) continue;
@@ -610,6 +621,7 @@ export default function HunterAdmin() {
                     phone: result.phones?.[0] || partner.phone,
                     aiSummary: result.aiSummary,
                     type: autoType,
+                    country: result.detectedCountry || partner.country,
                     status: result.aiSummary ? 'AI Analyzed' : 'New'
                 });
                 successCount++;
@@ -618,14 +630,20 @@ export default function HunterAdmin() {
             await new Promise(r => setTimeout(r, 500));
         }
 
-        notifications.show({
-            title: 'Bulk Classification Complete!',
-            message: `Successfully categorized ${successCount} partners.`,
-            color: 'green'
-        });
+        if (!stopScanRef.current) {
+            notifications.show({
+                title: 'Bulk Classification Complete!',
+                message: `Successfully categorized ${successCount} partners.`,
+                color: 'green'
+            });
+        }
         setBulkCategorizing(false);
         setSelectedIds([]);
         loadSavedPartners();
+    };
+
+    const handleStopScan = () => {
+        stopScanRef.current = true;
     };
 
     const handlePresetClick = (preset: any) => {
@@ -662,6 +680,8 @@ export default function HunterAdmin() {
                     item.country = countryName;
                 });
             }
+            // DEBUG: Show raw count
+            // notifications.show({ title: 'Debug', message: `Server returned ${data.length} items`, color: 'gray' });
 
             const filteredData = data.filter((newItem: HunterResult) => {
                 if (!newItem.url) return true;
@@ -678,6 +698,58 @@ export default function HunterAdmin() {
 
             setDuplicateCount(data.length - filteredData.length);
             setResults(filteredData);
+
+            if (data.length > 0 && filteredData.length === 0) {
+                notifications.show({ title: 'Notice', message: 'All found items are already in your pipeline.', color: 'orange' });
+            }
+
+            // --- AUTO SCAN LOGIC ---
+            if (autoScan && filteredData.length > 0) {
+                const candidates = filteredData.slice(0, 5); // Limit to top 5 for speed
+                notifications.show({
+                    title: 'Auto-Scan Started',
+                    message: `Deep analyzing top ${candidates.length} results...`,
+                    color: 'blue',
+                    loading: true
+                });
+
+                // Run scans in parallel (limited batch)
+                await Promise.all(candidates.map(async (candidate: HunterResult) => {
+                    const scanRes = await scanWebsite(candidate.url, candidate.name);
+                    if (scanRes.success) {
+                        // Classify similar to handleScan
+                        let autoType = candidate.type;
+                        const analysisText = (scanRes.aiSummary?.analysis || '').toLowerCase();
+                        const angleText = (scanRes.aiSummary?.angle || '').toLowerCase();
+                        const combined = (analysisText + ' ' + angleText).toLowerCase();
+
+                        if (combined.includes('equipment') || combined.includes('machinery') || combined.includes('system') || combined.includes('automation')) {
+                            autoType = 'Vendor: Procurement';
+                        } else if (combined.includes('wholesale') || combined.includes('distributor') || combined.includes('supplier') || combined.includes('유통') || combined.includes('도매')) {
+                            autoType = 'Sales: Wholesale/B2B';
+                        } else if (combined.includes('restaurant') || combined.includes('chef') || combined.includes('dining') || combined.includes('식당')) {
+                            autoType = 'Sales: Direct/F&B';
+                        } else if (combined.includes('research') || combined.includes('lab') || combined.includes('university')) {
+                            autoType = 'Partner: R&D/Tech';
+                        }
+
+                        const updates = {
+                            email: scanRes.emails?.[0] || candidate.email,
+                            phone: scanRes.phones?.[0] || candidate.phone,
+                            sns: scanRes.sns || candidate.sns,
+                            address: scanRes.address || candidate.address,
+                            aiSummary: scanRes.aiSummary,
+                            type: autoType,
+                            status: scanRes.aiSummary ? 'AI Analyzed' : 'New'
+                        };
+
+                        setResults(prev => prev.map(p => p.id === candidate.id ? { ...p, ...updates } : p));
+                    }
+                }));
+
+                notifications.show({ title: 'Auto-Scan Complete', message: 'Intelligence gathered.', color: 'green' });
+            }
+
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to search partners.', color: 'red' });
         } finally {
@@ -781,6 +853,7 @@ export default function HunterAdmin() {
                 address: result.address || partner.address,
                 aiSummary: result.aiSummary,
                 type: autoType,
+                country: result.detectedCountry || partner.country,
                 status: result.aiSummary ? 'AI Analyzed' : 'New'
             };
             if (savedPartners.some(p => p.id === partner.id)) {
@@ -922,6 +995,108 @@ export default function HunterAdmin() {
         setResults(prev => prev.filter(p => p.id !== id));
     };
 
+    const handleScanAllVisible = async () => {
+        // Filter unscanned ones or just take top 5
+        const candidates = results.slice(0, 5);
+        if (candidates.length === 0) return;
+
+        notifications.show({
+            title: 'Bulk Scan Started',
+            message: `Analyzing top ${candidates.length} companies...`,
+            color: 'blue',
+            loading: true
+        });
+
+        await Promise.all(candidates.map(async (candidate) => {
+            // Skip if already has info (optional, but good for speed)
+            // if (candidate.aiSummary) return;
+
+            const scanRes = await scanWebsite(candidate.url, candidate.name);
+            if (scanRes.success) {
+                let autoType = candidate.type;
+                const analysisText = (scanRes.aiSummary?.analysis || '').toLowerCase();
+                const angleText = (scanRes.aiSummary?.angle || '').toLowerCase();
+                const combined = (analysisText + ' ' + angleText).toLowerCase();
+
+                if (combined.includes('equipment') || combined.includes('machinery') || combined.includes('system')) {
+                    autoType = 'Vendor: Procurement';
+                } else if (combined.includes('wholesale') || combined.includes('distributor') || combined.includes('supplier')) {
+                    autoType = 'Sales: Wholesale/B2B';
+                } else if (combined.includes('research') || combined.includes('university')) {
+                    autoType = 'Partner: R&D/Tech';
+                }
+
+                const updates = {
+                    email: scanRes.emails?.[0] || candidate.email,
+                    phone: scanRes.phones?.[0] || candidate.phone,
+                    sns: scanRes.sns || candidate.sns,
+                    address: scanRes.address || candidate.address,
+                    aiSummary: scanRes.aiSummary,
+                    type: autoType || candidate.type,
+                    country: scanRes.detectedCountry || candidate.country,
+                    status: scanRes.aiSummary ? 'AI Analyzed' : 'New'
+                };
+
+                setResults(prev => prev.map(p => p.id === candidate.id ? { ...p, ...updates } : p));
+            }
+        }));
+
+        notifications.show({ title: 'Bulk Scan Complete', message: 'Top results updated.', color: 'green' });
+    };
+
+    const handleSaveAllVisible = async () => {
+        if (results.length === 0) return;
+
+        let count = 0;
+        await Promise.all(results.map(async (partner) => {
+            // Check if already saved first to avoid unnecessary backend calls if possible,
+            // efficiently handled by handleSaveToList logic usually, but here we iterate
+            if (!savedPartners.some(p => p.id === partner.id)) {
+                const res = await saveHunterResult(partner);
+                if (res.success) count++;
+            }
+        }));
+
+        if (count > 0) {
+            notifications.show({ title: 'Bulk Save Success', message: `Added ${count} partners to pipeline.`, color: 'green' });
+            loadSavedPartners();
+            // Optional: Remove from search results after saving?
+            // setResults([]); 
+        } else {
+            notifications.show({ title: 'Notice', message: 'All items were already in your pipeline.', color: 'orange' });
+        }
+    };
+
+    const handleAutoRefreshCountries = async () => {
+        notifications.show({ title: 'Refreshing Countries', message: 'Updating country codes from URLs...', color: 'blue', loading: true });
+
+        let updateCount = 0;
+        await Promise.all(savedPartners.map(async (p) => {
+            if (!p.url) return;
+            let newCountry = p.country;
+            try {
+                const hostname = new URL(p.url).hostname;
+                if (hostname.endsWith('.kr')) newCountry = 'South Korea';
+                else if (hostname.endsWith('.jp')) newCountry = 'Japan';
+                else if (hostname.endsWith('.cn')) newCountry = 'China';
+                else if (hostname.endsWith('.vn')) newCountry = 'Vietnam';
+                else if (hostname.endsWith('.th')) newCountry = 'Thailand';
+                else if (hostname.endsWith('.de')) newCountry = 'Germany';
+                else if (hostname.endsWith('.fr')) newCountry = 'France';
+                else if (hostname.endsWith('.uk') || hostname.endsWith('.co.uk')) newCountry = 'United Kingdom';
+                else if (hostname.endsWith('.us') || hostname.endsWith('.edu') || hostname.endsWith('.gov')) newCountry = 'United States';
+            } catch (e) { }
+
+            if (newCountry !== p.country) {
+                await updateHunterInfo(p.id, { country: newCountry });
+                updateCount++;
+            }
+        }));
+
+        loadSavedPartners();
+        notifications.show({ title: 'Refresh Complete', message: `Updated countries for ${updateCount} partners.`, color: 'green' });
+    };
+
     return (
         <Container size="xl" py="xl">
             <Stack gap="xl">
@@ -983,13 +1158,38 @@ export default function HunterAdmin() {
                                             Search
                                         </Button>
                                     </Group>
+                                    <Checkbox
+                                        label="Auto-Scan Details (Visit sites to find Contact & Email)"
+                                        checked={autoScan}
+                                        onChange={(e) => setAutoScan(e.currentTarget.checked)}
+                                        size="xs"
+                                        c="dimmed"
+                                    />
                                 </Stack>
                             </Card>
 
                             {results.length > 0 && (
                                 <Stack gap="xs">
-                                    <Group justify="space-between">
+                                    <Group justify="space-between" align="center">
                                         <Text size="sm" c="dimmed">Found {results.length} new potential partners. {duplicateCount > 0 && `(${duplicateCount} hidden)`}</Text>
+                                        <Button
+                                            variant="light"
+                                            color="blue"
+                                            size="xs"
+                                            leftSection={<IconScan size={14} />}
+                                            onClick={handleScanAllVisible}
+                                        >
+                                            Scan Top 5 Candidates
+                                        </Button>
+                                        <Button
+                                            variant="light"
+                                            color="green"
+                                            size="xs"
+                                            leftSection={<IconPlus size={14} />}
+                                            onClick={handleSaveAllVisible}
+                                        >
+                                            Save All Visible
+                                        </Button>
                                     </Group>
                                     <Table verticalSpacing="sm" withTableBorder highlightOnHover>
                                         <Table.Thead>
@@ -1126,20 +1326,41 @@ export default function HunterAdmin() {
                                         leftSection={<IconPlus size={16} />}
                                         variant="outline"
                                         color="green"
+
                                         onClick={() => setManualOpened(true)}
                                     >
                                         Add Manual
                                     </Button>
                                     <Button
-                                        leftSection={<IconScan size={16} />}
-                                        variant="light"
-                                        color="grape"
-                                        loading={bulkCategorizing}
-                                        disabled={selectedIds.length === 0}
-                                        onClick={handleBulkCategorize}
+                                        leftSection={<IconRefresh size={16} />}
+                                        variant="outline"
+                                        color="orange"
+                                        size="sm"
+                                        onClick={handleAutoRefreshCountries}
                                     >
-                                        Bulk AI Categorize ({selectedIds.length})
+                                        Fix Countries
                                     </Button>
+                                    {bulkCategorizing ? (
+                                        <Button
+                                            leftSection={<IconX size={16} />}
+                                            variant="filled"
+                                            color="red"
+                                            onClick={handleStopScan}
+                                        >
+                                            Stop Scan
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            leftSection={<IconScan size={16} />}
+                                            variant="light"
+                                            color="grape"
+                                            loading={bulkCategorizing}
+                                            disabled={selectedIds.length === 0}
+                                            onClick={handleBulkCategorize}
+                                        >
+                                            Bulk AI Categorize ({selectedIds.length})
+                                        </Button>
+                                    )}
                                     <Group gap="sm">
                                         <Stack gap={0}>
                                             <Text size="xs" fw={700} c="blue.8">
@@ -1290,7 +1511,21 @@ export default function HunterAdmin() {
                                             <Table.Td>
                                                 <Menu shadow="md" width={150}>
                                                     <Menu.Target>
-                                                        <Badge variant="outline" color="gray" style={{ cursor: 'pointer' }}>{element.country || 'Global'}</Badge>
+                                                        <Tooltip label={element.country || 'Global'}>
+                                                            <Badge variant="outline" color="gray" style={{ cursor: 'pointer' }}>
+                                                                {(() => {
+                                                                    const name = (element.country || 'Global').toLowerCase();
+                                                                    if (name.includes('korea') || name === 'kr') return 'KR';
+                                                                    if (name.includes('japan') || name === 'jp') return 'JP';
+                                                                    if (name.includes('united states') || name.includes('usa') || name === 'us') return 'US';
+                                                                    if (name.includes('china') || name === 'cn') return 'CN';
+                                                                    if (name.includes('vietnam') || name === 'vn') return 'VN';
+                                                                    if (name.includes('thai') || name === 'th') return 'TH';
+                                                                    if (name === 'global') return 'GL';
+                                                                    return name.substring(0, 2).toUpperCase();
+                                                                })()}
+                                                            </Badge>
+                                                        </Tooltip>
                                                     </Menu.Target>
                                                     <Menu.Dropdown>
                                                         {['Japan', 'South Korea', 'United States', 'China', 'Global'].map(c => (

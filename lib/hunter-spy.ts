@@ -103,6 +103,27 @@ export async function spyOnCompany(targetUrl: string) {
             }
         });
 
+        // F. Detect Country (Simple TLD Check)
+        let detectedCountry = 'Global';
+        try {
+            const hostname = new URL(targetUrl).hostname;
+            if (hostname.endsWith('.kr')) detectedCountry = 'South Korea';
+            else if (hostname.endsWith('.jp')) detectedCountry = 'Japan';
+            else if (hostname.endsWith('.cn')) detectedCountry = 'China';
+            else if (hostname.endsWith('.vn')) detectedCountry = 'Vietnam';
+            else if (hostname.endsWith('.th')) detectedCountry = 'Thailand';
+            else if (hostname.endsWith('.de')) detectedCountry = 'Germany';
+            else if (hostname.endsWith('.fr')) detectedCountry = 'France';
+            else if (hostname.endsWith('.us') || hostname.endsWith('.edu') || hostname.endsWith('.gov')) detectedCountry = 'United States';
+            else if (addressMatch) {
+                // Fallback: Guess from address
+                if (/[가-힣]/.test(addressMatch[0])) detectedCountry = 'South Korea';
+                else if (addressMatch[0].includes('USA') || addressMatch[0].includes(' CA ') || addressMatch[0].includes(' NY ')) detectedCountry = 'United States';
+            }
+        } catch (e) {
+            // ignore URL parsing errors
+        }
+
         return {
             success: true,
             data: {
@@ -113,7 +134,8 @@ export async function spyOnCompany(targetUrl: string) {
                 phones: Array.from(foundPhones),
                 sns,
                 address: foundAddress,
-                deepLink: deepLink ? new URL(deepLink, targetUrl).toString() : null
+                deepLink: deepLink ? new URL(deepLink, targetUrl).toString() : null,
+                detectedCountry // Return the guess
             }
         };
 

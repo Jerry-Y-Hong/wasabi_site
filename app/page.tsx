@@ -7,12 +7,55 @@ import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 import { Carousel } from '@mantine/carousel';
 import Autoplay from 'embla-carousel-autoplay';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import '@mantine/carousel/styles.css';
+import { IconMovie, IconBook, IconCpu, IconChartBar, IconThumbUp, IconCertificate } from '@tabler/icons-react';
 
 export default function Home() {
   const { t } = useTranslation();
   const autoplay = useRef(Autoplay({ delay: 3000 }));
+  const [embla, setEmbla] = useState<any>(undefined);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [activeSection, setActiveSection] = useState('section-hero');
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const yOffset = -80; // Offset for header/padding
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      setActiveSection(id);
+    }
+  };
+
+  const navItems = [
+    { id: 'section-hero', label: 'Brand Film', icon: <IconMovie size={18} /> },
+    { id: 'section-story', label: 'Our Story', icon: <IconBook size={18} /> },
+    { id: 'section-tech', label: 'Core Tech', icon: <IconCpu size={18} /> },
+    { id: 'section-insight', label: 'Insight', icon: <IconChartBar size={18} /> },
+    { id: 'section-success', label: 'Success', icon: <IconThumbUp size={18} /> },
+    { id: 'section-standard', label: 'Standard', icon: <IconCertificate size={18} /> },
+  ];
+
+  /* Shared Navigation Component */
+  const ContextNav = ({ current }: { current: string }) => (
+    <SimpleGrid cols={3} spacing="xs" mb="lg">
+      {navItems.map((item) => (
+        <Button
+          key={item.id}
+          onClick={() => scrollToSection(item.id)}
+          variant={current === item.id ? 'filled' : 'outline'}
+          color={current === item.id ? 'wasabi' : 'gray'}
+          size="xs"
+          radius="xl"
+          leftSection={item.icon}
+          style={{ transition: 'all 0.3s ease', opacity: current === item.id ? 1 : 0.6 }}
+        >
+          {item.label}
+        </Button>
+      ))}
+    </SimpleGrid>
+  );
 
   const features = [
     {
@@ -43,94 +86,12 @@ export default function Home() {
 
   return (
     <>
-      <Hero />
-      <Container size="xl" py="xl">
-        <Title order={2} ta="center" mt="sm" fw={900} c="dark.9">
-          {t('section_title')}
-        </Title>
-        <Text c="gray.8" fw={500} ta="center" mt="md" mb={50}>
-          {t('section_subtitle')}
-        </Text>
-
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
-          {features.map((feature, idx) => (
-            <FeatureCard key={idx} {...feature} />
-          ))}
-        </SimpleGrid>
-      </Container>
-
-
-
-
-      <Box mt={100} py={60} bg="var(--mantine-color-gray-0)" style={{ borderRadius: 'var(--mantine-radius-xl)', padding: '40px' }}>
-        <Grid align="center">
-          <GridCol span={{ base: 12, md: 7 }}>
-            <Title order={2} mb="md" fw={900} c="dark.9">{t('market_title')}</Title>
-            <Text size="lg" mb="xl" c="gray.8" fw={500}>
-              {t('market_desc')}
-            </Text>
-            <Button component={Link} href="/insights" size="lg" color="wasabi" variant="outline" radius="md">
-              {t('market_btn')}
-            </Button>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 5 }}>
-            <Paper shadow="md" p="xl" radius="lg" withBorder>
-              <Title order={3} ta="center" mb="lg" fw={800} c="dark.9">{t('trend_title')}</Title>
-              <Stack gap="md">
-                <TrendItem label={t('trend_label_1')} value={t('trend_val_1')} color="red" />
-                <TrendItem label={t('trend_label_2')} value={t('trend_val_2')} color="wasabi" />
-                <TrendItem label={t('trend_label_3')} value={t('trend_val_3')} color="blue" />
-              </Stack>
-            </Paper>
-          </GridCol>
-        </Grid>
+      {/* 1. Brand Film (Hero) */}
+      <Box id="section-hero">
+        <Hero />
       </Box>
 
-      <Box mt={100} py={60}>
-        <Grid gutter={50} align="center">
-          <GridCol span={{ base: 12, md: 5 }}>
-            <Paper shadow="xl" radius="lg" style={{ overflow: 'hidden' }}>
-              <MantineImage src="/images/family-dinner-hd.png" alt="Family" />
-            </Paper>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 7 }}>
-            <Badge color="red" size="lg" mb="md">{t('gourmet_badge')}</Badge>
-            <Title order={2} mb="md" fw={900} c="dark.9">{t('gourmet_title')}</Title>
-            <Text size="lg" mb="xl" c="gray.8" fw={500}>
-              {t('gourmet_desc')}
-            </Text>
-            <Button component={Link} href="/products/fresh" size="lg" color="wasabi" radius="md">
-              {t('gourmet_btn')}
-            </Button>
-          </GridCol>
-        </Grid>
-      </Box>
-
-      <Box mt={100} mb={60} py={60} style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
-        <Grid align="center" gutter={60}>
-          <GridCol span={{ base: 12, md: 4 }}>
-            <Paper shadow="sm" p="xl" radius="lg" withBorder style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <MantineImage src="/images/logo.jpg?v=2" w="80%" style={{ maxWidth: '250px', border: '4px solid white', borderRadius: '50%' }} alt="Logo" />
-            </Paper>
-          </GridCol>
-          <GridCol span={{ base: 12, md: 8 }}>
-            <Text c="wasabi" fw={700} mb="xs" size="sm" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>{t('identity_tag')}</Text>
-            <Title order={2} mb="md" fw={900} c="dark.9">{t('identity_title')}</Title>
-
-            <Text size="lg" mb="md" c="gray.8" fw={500}>
-              {t('identity_desc_1')}
-            </Text>
-
-            <Text size="lg" mb="md" c="gray.8" fw={500}>
-              {t('identity_desc_2')}
-            </Text>
-
-            <Text size="lg" c="gray.8" fw={500}>
-              {t('identity_desc_3')}
-            </Text>
-          </GridCol>
-        </Grid>
-      </Box>
+      {/* 2. Main Content (All integrated into Hero) */}
     </>
   );
 }

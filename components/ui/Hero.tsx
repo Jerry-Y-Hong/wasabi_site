@@ -1,14 +1,14 @@
 'use client';
 
-import { Title, Text, Container, Button, Group, ActionIcon, Tooltip } from '@mantine/core';
-import { IconVolume, IconVolumeOff, IconMovie, IconSettings, IconLeaf, IconWorld, IconRefresh } from '@tabler/icons-react';
+import { Title, Text, Container, Button, Group, ActionIcon, Tooltip, SimpleGrid } from '@mantine/core';
+import { IconVolume, IconVolumeOff, IconMovie, IconSettings, IconLeaf, IconWorld, IconRefresh, IconBook, IconCpu, IconChartBar, IconThumbUp, IconCertificate } from '@tabler/icons-react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import classes from './Hero.module.css';
 import { useTranslation } from '@/lib/i18n';
 
 const globalSlides = [
-    '/images/studio/global_scene_1.png',
+    '/images/studio/global_scene_1.png', // Reverted to original
     '/images/studio/global_scene_2.png',
     '/images/studio/global_scene_3.png',
     '/images/studio/global_scene_4.png',
@@ -191,17 +191,26 @@ const narrations: Record<string, Record<string, string[]>> = {
 export function Hero() {
     const { t, language } = useTranslation();
     const [isMuted, setIsMuted] = useState(true);
-    const [videoMode, setVideoMode] = useState<'brand' | 'tech' | 'seeding' | 'process' | 'global'>('brand');
+    const [videoMode, setVideoMode] = useState<'brand' | 'story' | 'tech' | 'seeding' | 'process' | 'global'>('brand');
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Image Preloading to prevent "white flash" or jutter
+    // Image Preloading
     useEffect(() => {
         const allImages = [...globalSlides, ...seedingSlides, ...processSlides, ...brandSlides, ...techSlides];
+        // Note: storySlides will be defined below or imported
         allImages.forEach(src => {
             const img = new window.Image();
             img.src = src;
         });
     }, []);
+
+    const storySlides = [
+        '/images/story_scene_1.png',
+        '/images/story_scene_3.png',
+        '/images/story_scene_2.png',
+        '/images/story_scene_4.png',
+    ];
+
 
     const [telemetry, setTelemetry] = useState({
         ppfd: 450.2,
@@ -217,6 +226,11 @@ export function Hero() {
     });
 
     const [activeSlide, setActiveSlide] = useState(0);
+
+    // Reset slide index when mode changes to prevent overflow/blank screen
+    useEffect(() => {
+        setActiveSlide(0);
+    }, [videoMode]);
 
     // Narration states
     const lastSpokenRef = useRef<string>('');
@@ -247,10 +261,10 @@ export function Hero() {
         utterancesRef.current = [];
         isSpeakingRef.current = false;
 
-        // 2. Segmenting (Periods, Commas, Exclamation, Question marks)
+        // 2. Segmenting (Periods, Exclamation, Question marks - removed commas for smoother flow)
         const segments: string[] = [];
         let currentPos = 0;
-        const regex = /[.!?,]/g;
+        const regex = /[.!?]/g;
         let match;
 
         while ((match = regex.exec(text)) !== null) {
@@ -304,7 +318,21 @@ export function Hero() {
                 th: 'th-TH',
                 vi: 'vi-VN'
             };
-            utterance.lang = langMap[language] || 'en-US';
+            const targetLang = langMap[language] || 'en-US';
+            utterance.lang = targetLang;
+
+            // Voice Selection Strategy: Prioritize "Google" voices for better quality
+            const voices = window.speechSynthesis.getVoices();
+            const targetVoices = voices.filter(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang);
+
+            let bestVoice = targetVoices.find(v => v.name.includes('Google')); // 1. Try Google Cloud voices (Chrome)
+            if (!bestVoice) bestVoice = targetVoices.find(v => v.name.includes('Premium')); // 2. Try Premium voices (Edge/OS)
+            if (!bestVoice) bestVoice = targetVoices[0]; // 3. Fallback
+
+            if (bestVoice) {
+                utterance.voice = bestVoice;
+            }
+
             utterance.rate = 1.0;
             utterance.volume = 1.0;
 
@@ -405,27 +433,60 @@ export function Hero() {
         if (modeJustChanged && activeSlide !== 0) return;
 
         const langKey = narrations[language] ? language : 'en';
-        const modeNarrations = narrations[langKey][videoMode];
+        let modeNarrations = narrations[langKey][videoMode];
+
+        // Fallback for missing 'story' narrations to ensure auto-play works
+        if (!modeNarrations && videoMode === 'story') {
+            if (langKey === 'ko') {
+                modeNarrations = [
+                    "와사비가 왜 세상에서 가장 비싼 작물인지 아십니까? 오직 맑은 물과 제한된 환경에서만 허락되는 극도로 희귀한 종이기 때문입니다.",
+                    "우리가 먹는 부위는 단순한 뿌리가 아닙니다. 바로 뿌리 위에서 자라나는 '근경'이라는 아주 특별하고 귀한 특수 부위입니다.",
+                    "이 근경을 얻기 위해서는 까다로운 기후 조건과 2년이라는 긴 기다림이 필요합니다. 그 희소성과 재배 난이도가 와사비의 높은 가치를 만듭니다.",
+                    "우리는 이 자연의 난제를 첨단 기술로 풀었습니다. 데이터로 제어되는 와사비 스마트팜, 이것이 우리가 만드는 농업의 혁신입니다."
+                ];
+            } else {
+                modeNarrations = [
+                    "Do you know why Wasabi is the most expensive crop? It is an extremely rare species that grows only in limited environments with pristine water.",
+                    "What we consume is not the root, but the 'Rhizome', a special and precious stem part that grows just above the root.",
+                    "Obtaining this Rhizome requires exacting climate conditions and two years of waiting. This scarcity drives its immense value.",
+                    "We have solved nature's puzzle with advanced technology. Our data-driven smart farm is the innovation we bring to agriculture."
+                ];
+            }
+        }
 
         const slideMap: Record<string, string[]> = {
             global: globalSlides,
             seeding: seedingSlides,
             process: processSlides,
             brand: brandSlides,
-            tech: techSlides
+            tech: techSlides,
+            story: storySlides
         };
         const slides = slideMap[videoMode];
 
         if (modeNarrations && modeNarrations[activeSlide]) {
             const targetText = modeNarrations[activeSlide];
             const isFreshStart = lastSpokenRef.current === '' || modeJustChanged;
-            const delay = isFreshStart ? 400 : 1500;
+
+            // Adjusted delay to 1500ms (1.5s) to ensure audio stability and visual readiness
+            const delay = isFreshStart ? 1500 : 800;
 
             timer = setTimeout(() => {
                 speak(targetText, () => {
                     // The delay is now handled inside speak's onComplete for better sync
                     if (slides) {
-                        setActiveSlide(prev => (prev + 1) % slides.length);
+                        // Check if we are at the last slide of the current mode
+                        if (activeSlide >= slides.length - 1) {
+                            // Move to the next mode in sequence
+                            const modes = ['brand', 'story', 'seeding', 'tech', 'process', 'global'] as const;
+                            const currentIdx = modes.indexOf(videoMode as any);
+                            const nextMode = modes[(currentIdx + 1) % modes.length];
+                            setVideoMode(nextMode);
+                            // activeSlide is reset to 0 by the useEffect listener on videoMode
+                        } else {
+                            // Go to next slide
+                            setActiveSlide(prev => prev + 1);
+                        }
                     }
                 });
                 prevModeRef.current = videoMode;
@@ -453,8 +514,44 @@ export function Hero() {
         }
     };
 
+    // Content Mapping for Text Area
+    const contentMap: Record<string, { t1: string; t2: string; desc: string }> = {
+        brand: {
+            t1: t('hero_title_1'),
+            t2: t('hero_title_2'),
+            desc: t('hero_desc')
+        },
+        story: {
+            t1: "PART 1. THE ORIGIN",
+            t2: "Premium Value",
+            desc: language === 'ko' ? "천혜의 자연 강원도 화천, 이곳에서 K-Wasabi의 전설이 시작됩니다. 혹독한 추위와 맑은 물, 자연이 준 시련을 우리는 기술로 극복했습니다." : "Beginning in Hwacheon's pristine nature, the legend of K-Wasabi unfolds. We overcame nature's trials with technology."
+        },
+        seeding: {
+            t1: "PART 2. BIO-TECHNOLOGY",
+            t2: "Auto Seeding & Tissue Culture",
+            desc: language === 'ko' ? "식물 생장점을 배양하여 만든 무병묘(Virus-Free)를 로봇이 정밀하게 자동 파종합니다." : "Robotic automated seeding of virus-free tissue cultured meristems."
+        },
+        tech: {
+            t1: "PART 3. MARKET INSIGHT",
+            t2: "Data Driven Agriculture",
+            desc: t('market_desc') || (language === 'ko' ? "데이터가 말해주는 100조 시장의 기회. AI가 분석하고 예측하는 정밀 농업." : "The opportunity of a 100 trillion market proven by data. Precision agriculture analyzed and predicted by AI.")
+        },
+        process: {
+            t1: "PART 4. SUCCESS STORY",
+            t2: "From Farm to Table",
+            desc: t('gourmet_desc') || (language === 'ko' ? "최고의 셰프들이 선택한 맛의 정점. 농장에서 식탁까지 완벽한 콜드체인으로 전달됩니다." : "The pinnacle of taste chosen by top chefs. Delivered from farm to table with a perfect cold chain.")
+        },
+        global: {
+            t1: "PART 5. OUR IDENTITY",
+            t2: "Global Standard",
+            desc: language === 'ko' ? "세계가 인정한 K-Farm의 기준. 우리는 농업의 물리적 경계를 허물고 새로운 표준을 심고 있습니다." : "K-Farm's standard recognized by the world. We are breaking the physical boundaries of agriculture."
+        }
+    };
+
+    const currentContent = contentMap[videoMode] || contentMap['brand'];
+
     return (
-        <div className={classes.hero} style={{ background: '#1A1B1E', position: 'relative', overflow: 'hidden' }}>
+        <div className={classes.hero} style={{ background: '#000000', position: 'relative', overflow: 'hidden' }}>
             {/* Subtle Tech Background Pattern */}
             <div style={{
                 position: 'absolute',
@@ -467,19 +564,51 @@ export function Hero() {
                 zIndex: 0
             }} />
 
-            <Container size="xl" className={classes.inner} style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '60px' }}>
+            <Container size="xl" className={classes.inner} style={{ position: 'relative', zIndex: 2, height: '100%', minHeight: '720px' }}>
 
-                {/* Left Side: Text Content */}
-                <div style={{ flex: 1, maxWidth: '600px', marginLeft: '2rem' }}>
-                    <Title className={classes.title} style={{ textAlign: 'left' }}>
-                        <span className={classes.highlight}>{t('hero_title_1')}</span><br />
-                        <span style={{ fontSize: '0.75em', color: '#ffffff', fontWeight: 900 }}>
-                            {t('hero_title_2')}
+                {/* Title Section (Moved Up to avoid overlap) */}
+                {/* Title Top (t1) - Can span full width */}
+                <div style={{
+                    position: 'absolute',
+                    top: '10%',
+                    left: '2rem',
+                    width: '90%',
+                    zIndex: 10,
+                    pointerEvents: 'none'
+                }}>
+                    <Title order={3} className={classes.title} style={{ textAlign: 'left' }}>
+                        <span className={classes.highlight}>{currentContent.t1}</span>
+                    </Title>
+                </div>
+
+                {/* Main Subject (t2) - Restricted width to avoid video */}
+                <div style={{
+                    position: 'absolute',
+                    top: '22%',
+                    left: '2rem',
+                    width: '45%',
+                    zIndex: 10,
+                    pointerEvents: 'none'
+                }}>
+                    <Title order={1} style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                        <span style={{ fontSize: '2.5rem', color: '#ffffff', fontWeight: 900 }}>
+                            {currentContent.t2}
                         </span>
                     </Title>
+                </div>
 
-                    <Text className={classes.description} mt={30} size="xl" style={{ textAlign: 'left', color: '#e9ecef' }}>
-                        {t('hero_desc')}
+                {/* Left Side: Description & Controls (Fixed Position) */}
+                <div style={{
+                    position: 'absolute',
+                    top: '60%', // Moved down slightly
+                    transform: 'translateY(-50%)',
+                    left: 0,
+                    width: '45%',
+                    paddingLeft: '2rem',
+                    zIndex: 10
+                }}>
+                    <Text className={classes.description} size="xl" style={{ textAlign: 'left', color: '#e9ecef' }}>
+                        {currentContent.desc}
                     </Text>
 
                     <Group className={classes.controls} mt={40} justify="flex-start">
@@ -507,62 +636,53 @@ export function Hero() {
                     </Group>
                 </div>
 
-                {/* Right Side: Video Box */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', maxWidth: '800px', marginRight: '2rem' }}>
+                {/* Right Side: Video Box (Fixed Position) */}
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    right: 0,
+                    width: '48%', // Decreased width to prevent overlap
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
 
-                    {/* Mode Toggle Buttons */}
-                    <Group gap="xs" mb="md" style={{ width: '100%', justifyContent: 'flex-start' }}>
-                        <Button
-                            variant={videoMode === 'brand' ? 'filled' : 'outline'}
-                            color="wasabi"
-                            size="xs"
-                            radius="xl"
-                            onClick={() => setVideoMode('brand')}
-                            leftSection={<IconMovie size={14} />}
-                        >
-                            BRAND FILM
-                        </Button>
-                        <Button
-                            variant={videoMode === 'tech' ? 'filled' : 'outline'}
-                            color="wasabi"
-                            size="xs"
-                            radius="xl"
-                            onClick={() => setVideoMode('tech')}
-                            leftSection={<IconSettings size={14} />}
-                        >
-                            TECH INSIGHT
-                        </Button>
-                        <Button
-                            variant={videoMode === 'seeding' ? 'filled' : 'outline'}
-                            color="wasabi"
-                            size="xs"
-                            radius="xl"
-                            onClick={() => setVideoMode('seeding')}
-                            leftSection={<IconLeaf size={14} />}
-                        >
-                            AUTO SEEDING
-                        </Button>
-                        <Button
-                            variant={videoMode === 'process' ? 'filled' : 'outline'}
-                            color="wasabi"
-                            size="xs"
-                            radius="xl"
-                            onClick={() => setVideoMode('process')}
-                            leftSection={<IconRefresh size={14} />}
-                        >
-                            SUCCESS CYCLE
-                        </Button>
-                        <Button
-                            variant={videoMode === 'global' ? 'filled' : 'outline'}
-                            color="wasabi"
-                            size="xs"
-                            radius="xl"
-                            onClick={() => setVideoMode('global')}
-                            leftSection={<IconWorld size={14} />}
-                        >
-                            GLOBAL STANDARD
-                        </Button>
-                    </Group>
+                    {/* Standardized Navigation Grid (3x2) - Controlling Video Mode */}
+                    <SimpleGrid cols={3} spacing="xs" mb="lg" style={{ width: '100%' }}>
+                        {[
+                            { id: 'brand', label: 'Brand Film', icon: <IconMovie size={14} /> },
+                            { id: 'story', label: 'Premium Value', icon: <IconBook size={14} /> },
+                            { id: 'seeding', label: 'Core Tech', icon: <IconLeaf size={14} /> },
+                            { id: 'tech', label: 'Market Insight', icon: <IconChartBar size={14} /> },
+                            { id: 'process', label: 'Success Cycle', icon: <IconRefresh size={14} /> },
+                            { id: 'global', label: 'Standard', icon: <IconWorld size={14} /> }
+                        ].map((item) => (
+                            <Button
+                                key={item.id}
+                                onClick={() => {
+                                    setVideoMode(item.id as any);
+                                    setActiveSlide(0);
+                                }}
+                                variant={videoMode === item.id ? 'filled' : 'outline'}
+                                color={videoMode === item.id ? 'wasabi' : 'gray'}
+                                size="xs"
+                                radius="xl"
+                                leftSection={item.icon}
+                                style={{
+                                    transition: 'all 0.3s ease',
+                                    opacity: videoMode === item.id ? 1 : 0.6,
+                                    letterSpacing: '-0.5px', // Condense text
+                                    paddingLeft: '4px',      // Tighten padding
+                                    paddingRight: '4px',
+                                    fontSize: '11px'         // Slightly smaller font
+                                }}
+                            >
+                                {item.label}
+                            </Button>
+                        ))}
+                    </SimpleGrid>
 
                     <div style={{
                         borderRadius: '24px',
@@ -571,38 +691,38 @@ export function Hero() {
                         border: '2px solid rgba(64, 192, 87, 0.3)',
                         width: '100%',
                         position: 'relative',
-                        background: '#000'
+                        background: '#000000' // Matched with Hero background
                     }}>
                         <div
-                            key={videoMode} // Force full re-render of slides on mode change to reset animation sync
                             style={{
                                 width: '100%',
                                 aspectRatio: '16/9',
                                 position: 'relative',
                                 overflow: 'hidden',
-                                background: '#000'
+                                background: '#000000' // Matched with Hero background
                             }}
                         >
                             {(videoMode === 'global' ? globalSlides :
                                 videoMode === 'seeding' ? seedingSlides :
                                     videoMode === 'process' ? processSlides :
                                         videoMode === 'brand' ? brandSlides :
-                                            techSlides).map((slide, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    style={{
-                                                        position: 'absolute',
-                                                        inset: 0,
-                                                        backgroundImage: `url(${slide})`,
-                                                        backgroundSize: 'cover',
-                                                        backgroundPosition: 'center',
-                                                        opacity: activeSlide === idx ? 1 : 0,
-                                                        transition: 'opacity 3s ease-in-out', // Slower blend for more seamless feel
-                                                        animation: 'kenburns 120s linear infinite', // Ultra-long duration to prevent reset jumps during a single loop
-                                                        filter: 'brightness(1.1) saturate(1.1) contrast(1.1)'
-                                                    }}
-                                                />
-                                            ))}
+                                            videoMode === 'story' ? storySlides :
+                                                techSlides).map((slide, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            inset: 0,
+                                                            backgroundImage: `url(${slide})`,
+                                                            backgroundSize: 'cover',
+                                                            backgroundPosition: 'center',
+                                                            opacity: activeSlide === idx ? 1 : 0,
+                                                            transition: 'opacity 3s ease-in-out', // Slower blend for more seamless feel
+                                                            animation: 'kenburns 120s linear infinite', // Ultra-long duration to prevent reset jumps during a single loop
+                                                            filter: 'brightness(1.1) saturate(1.1) contrast(1.1)'
+                                                        }}
+                                                    />
+                                                ))}
                         </div>
 
                         {/* --- HIGH-TECH HUD OVERLAY (MAKEUP) --- */}

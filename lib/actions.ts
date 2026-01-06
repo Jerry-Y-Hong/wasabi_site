@@ -642,6 +642,7 @@ export async function scanWebsite(url: string, name?: string) {
                 sns: result.data.sns,
                 address: result.data.address,
                 aiSummary: aiAnalysis,
+                detectedCountry: result.data.detectedCountry,
                 message: `Found ${result.data.emails?.length || 0} emails. AI Analysis complete.`
             };
         } else {
@@ -909,21 +910,25 @@ export async function searchPartners(keyword: string, page: number = 1, country:
     const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
     const cx = process.env.GOOGLE_CX;
 
-    // 0. Search Optimization for 'Big Fish'
-    let finalQuery = keyword;
-
     // Pagination: Google API uses 'start' (1, 11, 21...)
     const start = (page - 1) * 10 + 1;
+    let finalQuery = keyword.trim();
 
-    if (apiKey && cx) {
+    // --- REAL GOOGLE SEARCH MODE ---
+    // Only attempt API if we have a proper query and keys
+    if (apiKey && cx && finalQuery) {
         try {
             const glParam = country ? `&gl=${country}` : '';
+            // if (country && country !== 'Global' && country !== 'KR') {
+            //     // Simple localization hint if needed
+            //     // finalQuery = `${keyword} site:.${country.toLowerCase()}`;
+            // }
+
             const res = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(finalQuery)}&start=${start}${glParam}`);
             const data = await res.json();
 
             if (data.items) {
                 // Regex for extracting simple info from snippets
-                // Updated Phone Regex: Supports +82, +1, +81, (0xx), etc.
                 const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}/g;
                 const emailRegex = /[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/;
 
@@ -958,58 +963,81 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                         type = 'Other';
                     }
 
+                    // Attempt to guess country from TLD if Global/Empty
+                    let resultCountry = country || 'Global';
+                    if (!country || country === 'Global') {
+                        try {
+                            const hostname = new URL(item.link).hostname;
+                            if (hostname.endsWith('.kr')) resultCountry = 'South Korea';
+                            else if (hostname.endsWith('.jp')) resultCountry = 'Japan';
+                            else if (hostname.endsWith('.cn')) resultCountry = 'China';
+                            else if (hostname.endsWith('.vn')) resultCountry = 'Vietnam';
+                            else if (hostname.endsWith('.th')) resultCountry = 'Thailand';
+                            else if (hostname.endsWith('.de')) resultCountry = 'Germany';
+                            else if (hostname.endsWith('.uk') || hostname.endsWith('.co.uk')) resultCountry = 'United Kingdom';
+                            else if (hostname.endsWith('.fr')) resultCountry = 'France';
+                            else if (hostname.endsWith('.us') || hostname.endsWith('.edu') || hostname.endsWith('.gov')) resultCountry = 'United States';
+                        } catch (e) {
+                            // ignore
+                        }
+                    }
+
                     return {
-                        id: Date.now() + index, // Ensure unique key
+                        id: Date.now() + index,
                         name: item.title,
                         type: type,
                         relevance: snippet.length > 50 ? snippet.substring(0, 60) + '...' : 'Relevant Search Result',
                         contact: contact,
                         phone: phone,
                         url: item.link,
-                        country: country // Pass through the country
+                        country: resultCountry
                     };
                 });
             } else {
-                console.log('Google Search API returned no items:', data);
-                return [];
+                console.log('Google API: No items found or Quota Exceeded. Falling back to Mock.');
+                // Fall through to Mock Data
             }
         } catch (error) {
-            console.error("Google Search API Error:", error);
-            return [];
+            console.error("Google Search API Error (Falling back to Mock):", error);
+            // Fall through to Mock Data
         }
-    } else {
-        // Fallback to mock data with a bit of variety based on keyword
-        return MOCK_DATA.filter(p =>
-            p.name.toLowerCase().includes(keyword.toLowerCase()) ||
-            p.relevance.toLowerCase().includes(keyword.toLowerCase())
-        );
     }
-    // 2. Simulation Mode (Mock Data)
-    const lowerKeyword = keyword.toLowerCase();
 
-    // Filter by Country then Keyword
-    const filtered = MOCK_DATA.filter(item => {
+    // --- MOCK SIMULATION MODE ---
+    // Filter Mock Data by Country then Keyword
+    const lowerKeyword = keyword.toLowerCase().trim();
+
+    let filtered = MOCK_DATA.filter(item => {
+        // Country Filter
         const isGlobal = !country || country === 'Global';
-        const countryMatch = isGlobal || item.country === country;
-        const keywordMatch = item.name.toLowerCase().includes(lowerKeyword) ||
-            item.type.toLowerCase().includes(lowerKeyword) ||
-            item.relevance.toLowerCase().includes(lowerKeyword);
-        return countryMatch && keywordMatch;
+        const itemCountry = item.country || 'Global';
+        // Relaxed country match
+        const countryMatch = isGlobal || itemCountry === country ||
+            (country === 'KR' && itemCountry === 'South Korea') ||
+            (country === 'JP' && itemCountry === 'Japan') ||
+            (country === 'US' && itemCountry === 'United States');
+
+        if (!countryMatch) return false;
+
+        // Keyword Filter
+        if (!lowerKeyword) return true; // No keyword = show all for country
+
+        const nameMatch = item.name.toLowerCase().includes(lowerKeyword);
+        const typeMatch = item.type.toLowerCase().includes(lowerKeyword);
+        const relevanceMatch = item.relevance.toLowerCase().includes(lowerKeyword);
+
+        return nameMatch || typeMatch || relevanceMatch;
     });
 
-    // If no match/empty keyword but country matches, return random subset from that country
-    let results = filtered;
-    if (filtered.length === 0 && keyword.trim() === '') {
-        const isGlobal = !country || country === 'Global';
-        results = MOCK_DATA.filter(item => isGlobal || item.country === country);
-    } else if (filtered.length === 0) {
-        // Return nothing if keyword specifically didn't match
-        results = [];
+    // Fallback: If filtered is empty but keyword was empty (and maybe country mismatch strictly),
+    // and we are in Global mode, just show everything.
+    if (filtered.length === 0 && !lowerKeyword && (!country || country === 'Global')) {
+        filtered = MOCK_DATA;
     }
 
-    // Pagination for Mock Data (Simple Slice)
-    const startIndex = (page - 1) * 5;
-    const paginatedResults = results.slice(startIndex, startIndex + 5);
+    // Pagination for Mock Data
+    const startIndex = (page - 1) * 10;
+    const paginatedResults = filtered.slice(startIndex, startIndex + 10);
 
     // Add isMock flag
     return paginatedResults.map(item => ({ ...item, isMock: true }));
