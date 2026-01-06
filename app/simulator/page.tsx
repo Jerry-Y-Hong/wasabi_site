@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Paper, Text, Grid, Button, Group, Slider, Badge, Stack, Box, Center, ThemeIcon, Overlay, Title, Tabs, rem, PasswordInput, Divider } from '@mantine/core';
+import { Container, Paper, Text, Grid, Button, Group, Slider, Badge, Stack, Box, Center, ThemeIcon, Overlay, Title, Tabs, rem, PasswordInput, Divider, ActionIcon } from '@mantine/core';
 import { Play, Pause, Lock, CheckCircle, AlertTriangle, Activity, Droplet, Zap, LayoutDashboard, ArrowDown, Fan, ThermometerSnowflake, Wind } from 'lucide-react';
 
 // --- Types ---
@@ -264,105 +264,82 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
     )
 }
 
-// --- Smart Bed Monitor Component ---
+// --- Minimal Smart Bed Monitor (One-Line) ---
 const SmartBedMonitor = ({ sim }: any) => {
     const deltaTemp = sim.env.airTemp - sim.env.bedTemp;
-    const deltaHum = sim.env.airHum - sim.env.bedHum;
 
     return (
-        <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40' }}>
-            <Group justify="space-between" mb="lg">
+        <Paper p="xs" bg="#25262B" radius="md" withBorder style={{ borderColor: '#373A40' }}>
+            <Group justify="space-between" wrap="nowrap">
+                {/* Label */}
                 <Group gap="xs">
-                    <ThemeIcon color="teal" variant="light" size="lg"><LayoutDashboard size={20} /></ThemeIcon>
-                    <Text fw={700} c="white">SMART BED MONITOR (Zone A)</Text>
+                    <ThemeIcon color="teal" variant="light" size="sm"><LayoutDashboard size={14} /></ThemeIcon>
+                    <Text fw={700} c="gray.5" size="sm" style={{ whiteSpace: 'nowrap' }}>Zone A</Text>
                 </Group>
-                <Group gap="xs">
-                    <Badge color="gray" variant="outline">ZONE A-1</Badge>
-                    <Badge variant="gradient" gradient={{ from: 'teal', to: 'lime' }}>SYSTEM ACTIVE</Badge>
+
+                {/* Data Strip */}
+                <Group gap="lg" style={{ flexGrow: 1, justifyContent: 'center' }}>
+
+                    {/* Air Section */}
+                    <Group gap="xs">
+                        <ActionIcon variant="transparent" color="cyan" size="sm"><Wind size={16} /></ActionIcon>
+                        <div>
+                            <Group gap={6} align="baseline">
+                                <Text size="sm" fw={700} c="white">{sim.env.airTemp.toFixed(1)}°</Text>
+                                <Text size="xs" c="dimmed" fw={700}>{sim.env.airHum.toFixed(0)}%</Text>
+                            </Group>
+                        </div>
+                        {/* Tiny Controls */}
+                        <Group gap={2}>
+                            <ActionIcon
+                                variant={sim.hvac.fan_circ ? "filled" : "light"}
+                                color="blue" size="xs" radius="xl"
+                                onClick={() => sim.toggleHvac('fan_circ')} title="Circulation Fan"
+                            >
+                                <Fan size={10} />
+                            </ActionIcon>
+                            <ActionIcon
+                                variant={sim.hvac.fan_exh ? "filled" : "light"}
+                                color="orange" size="xs" radius="xl"
+                                onClick={() => sim.toggleHvac('fan_exh')} title="Exhaust Fan"
+                            >
+                                <ArrowDown size={10} />
+                            </ActionIcon>
+                        </Group>
+                    </Group>
+
+                    {/* Delta Pill */}
+                    <Badge
+                        variant="outline" color={Math.abs(deltaTemp) > 3 ? "red" : "gray"}
+                        size="sm" radius="sm" style={{ textTransform: 'none', border: '1px solid #444' }}
+                    >
+                        Δ {deltaTemp > 0 ? "+" : ""}{deltaTemp.toFixed(1)}
+                    </Badge>
+
+                    {/* Bed Section */}
+                    <Group gap="xs">
+                        <ActionIcon variant="transparent" color="teal" size="sm"><ThermometerSnowflake size={16} /></ActionIcon>
+                        <div>
+                            <Group gap={6} align="baseline">
+                                <Text size="sm" fw={700} c="white">{sim.env.bedTemp.toFixed(1)}°</Text>
+                                <Text size="xs" c="dimmed" fw={700}>{sim.env.bedHum.toFixed(0)}%</Text>
+                            </Group>
+                        </div>
+                        {/* Tiny Heater Control */}
+                        <ActionIcon
+                            variant={sim.hvac.heater_bed ? "filled" : "light"}
+                            color="red" size="xs" radius="xl"
+                            onClick={() => sim.toggleHvac('heater_bed')} title="Bed Heater"
+                        >
+                            <Zap size={10} />
+                        </ActionIcon>
+                    </Group>
+
                 </Group>
+
+                {/* Status */}
+                <Badge color="dark" size="sm" variant="light">M-01</Badge>
             </Group>
-
-            <Grid>
-                {/* Upper: Air / Canopy */}
-                <Grid.Col span={{ base: 12, md: 5 }}>
-                    <Paper p="md" bg="#2C2E33" radius="md" style={{ borderLeft: '4px solid #3bc9db' }}>
-                        <Group justify="space-between" mb={4}>
-                            <Text size="xs" c="dimmed" fw={700}>🔼 UPPER (AIR/CANOPY)</Text>
-                            <Wind size={14} color="#3bc9db" />
-                        </Group>
-                        <Group justify="space-between" align="flex-end">
-                            <div>
-                                <Text size="xl" fw={900} c="white">{sim.env.airTemp.toFixed(1)}°C</Text>
-                                <Text size="xs" c="dimmed">Air Temp</Text>
-                            </div>
-                            <div>
-                                <Text size="xl" fw={900} c="cyan">{sim.env.airHum.toFixed(1)}%</Text>
-                                <Text size="xs" c="dimmed">Humidity</Text>
-                            </div>
-                        </Group>
-                        <Divider my="sm" color="dark.4" />
-                        <Group gap={8}>
-                            <Button
-                                size="xs" variant={sim.hvac.fan_circ ? "filled" : "default"} color="blue"
-                                onClick={() => sim.toggleHvac('fan_circ')}
-                            >
-                                Circ. Fan (R-05) {sim.hvac.fan_circ ? "ON" : "OFF"}
-                            </Button>
-                            <Button
-                                size="xs" variant={sim.hvac.fan_exh ? "filled" : "default"} color="orange"
-                                onClick={() => sim.toggleHvac('fan_exh')}
-                            >
-                                Exh. Fan (R-06) {sim.hvac.fan_exh ? "ON" : "OFF"}
-                            </Button>
-                        </Group>
-                    </Paper>
-                </Grid.Col>
-
-                {/* Delta Info (Middle) */}
-                <Grid.Col span={{ base: 12, md: 2 }}>
-                    <Stack align="center" justify="center" h="100%" gap={8}>
-                        <ArrowDown size={32} color="#555" />
-                        <Badge color={Math.abs(deltaTemp) > 5 ? "red" : "gray"} variant="filled" size="lg">
-                            ΔT {deltaTemp > 0 ? "+" : ""}{deltaTemp.toFixed(1)}
-                        </Badge>
-                        <Badge color="gray" variant="outline">
-                            ΔH {deltaHum > 0 ? "+" : ""}{deltaHum.toFixed(0)}%
-                        </Badge>
-                    </Stack>
-                </Grid.Col>
-
-                {/* Lower: Bed / Root */}
-                <Grid.Col span={{ base: 12, md: 5 }}>
-                    <Paper p="md" bg="#231f1f" radius="md" style={{ borderLeft: '4px solid #eebbbc' }}>
-                        <Group justify="space-between" mb={4}>
-                            <Text size="xs" c="dimmed" fw={700}>🔽 LOWER (BED/ROOT)</Text>
-                            <ThermometerSnowflake size={14} color="#eebbbc" />
-                        </Group>
-                        <Group justify="space-between" align="flex-end">
-                            <div>
-                                <Text size="xl" fw={900} c="white">{sim.env.bedTemp.toFixed(1)}°C</Text>
-                                <Text size="xs" c="dimmed">Bed Temp</Text>
-                            </div>
-                            <div>
-                                <Text size="xl" fw={900} c="teal">{sim.env.bedHum.toFixed(1)}%</Text>
-                                <Text size="xs" c="dimmed">Moisture</Text>
-                            </div>
-                        </Group>
-                        <Divider my="sm" color="dark.4" />
-                        <Group gap={8}>
-                            <Button
-                                size="xs" variant={sim.hvac.heater_bed ? "filled" : "default"} color="red"
-                                onClick={() => sim.toggleHvac('heater_bed')}
-                            >
-                                Bed Heat (R-07) {sim.hvac.heater_bed ? "ON" : "OFF"}
-                            </Button>
-                            <Badge color={sim.actuators.supplyPump ? "blue" : "gray"} variant="dot">
-                                {sim.actuators.supplyPump ? "Irrigating..." : "Bed Status: Good"}
-                            </Badge>
-                        </Group>
-                    </Paper>
-                </Grid.Col>
-            </Grid>
         </Paper>
     );
 };
@@ -393,12 +370,7 @@ export default function SimulatorPage() {
                             else { setAuthError(true); setInputCode(""); }
                         }}>
                             <Stack>
-                                <PasswordInput
-                                    size="md" placeholder="Enter Access Code" value={inputCode}
-                                    onChange={(e) => { setInputCode(e.currentTarget.value); setAuthError(false); }}
-                                    error={authError ? "Invalid Code" : null}
-                                    styles={{ input: { backgroundColor: '#1A1B1E', color: 'white', borderColor: '#373A40', textAlign: 'center', fontSize: 18, letterSpacing: 4 }, innerInput: { textAlign: 'center' } }}
-                                />
+                                <PasswordInput size="md" placeholder="Enter Access Code" value={inputCode} onChange={(e) => { setInputCode(e.currentTarget.value); setAuthError(false); }} error={authError ? "Invalid Code" : null} styles={{ input: { backgroundColor: '#1A1B1E', color: 'white', borderColor: '#373A40', textAlign: 'center', fontSize: 18, letterSpacing: 4 }, innerInput: { textAlign: 'center' } }} />
                                 <Button type="submit" fullWidth color="green" size="md" variant="light" mt="xs">ACCESS SYSTEM</Button>
                             </Stack>
                         </form>
@@ -493,7 +465,7 @@ export default function SimulatorPage() {
                             </Grid.Col>
                         </Grid>
 
-                        {/* NEW: Smart Bed Monitor */}
+                        {/* Minimal Smart Bed Monitor */}
                         <SmartBedMonitor sim={sim} />
 
                     </Stack>
