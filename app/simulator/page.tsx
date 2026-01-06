@@ -222,6 +222,8 @@ export default function SimulatorPage() {
         );
     }
 
+    const [activeTab, setActiveTab] = useState("DASH");
+
     return (
         <Container fluid bg="#1A1B1E" h="100vh" p={0} style={{ overflow: 'auto', color: '#C1C2C5' }}>
             {/* Header */}
@@ -247,113 +249,150 @@ export default function SimulatorPage() {
             <Container size="xl" py="xl">
                 {/* Tabs */}
                 <Group mb="lg">
-                    <Button variant="light" color="blue" radius="xl">📊 DASHBOARD</Button>
-                    <Button variant="subtle" color="gray" radius="xl">🧪 NUTRIENT</Button>
-                    <Button variant="subtle" color="gray" radius="xl">💧 WATER</Button>
+                    <Button
+                        variant={activeTab === "DASH" ? "light" : "subtle"}
+                        color={activeTab === "DASH" ? "blue" : "gray"}
+                        radius="xl"
+                        onClick={() => setActiveTab("DASH")}
+                    >
+                        📊 DASHBOARD
+                    </Button>
+                    <Button
+                        variant={activeTab === "NUTRI" ? "light" : "subtle"}
+                        color={activeTab === "NUTRI" ? "blue" : "gray"}
+                        radius="xl"
+                        onClick={() => setActiveTab("NUTRI")}
+                    >
+                        🧪 NUTRIENT
+                    </Button>
+                    <Button
+                        variant={activeTab === "WATER" ? "light" : "subtle"}
+                        color={activeTab === "WATER" ? "blue" : "gray"}
+                        radius="xl"
+                        onClick={() => setActiveTab("WATER")}
+                    >
+                        💧 WATER
+                    </Button>
                 </Group>
 
-                {/* Dashboard */}
-                <Stack>
-                    {/* Status Panel */}
-                    <Paper p="xl" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40' }}>
-                        <Grid align="center">
-                            <Grid.Col span={{ base: 12, md: 8 }}>
-                                <Text size="sm" c="dimmed" fw={700}>SYSTEM STATUS</Text>
-                                <Group align="center" gap="md">
-                                    <Text size={rem(60)} fw={900} c="white" style={{ lineHeight: 1 }}>{sim.state}</Text>
-                                    {sim.subState && <Badge size="xl" color="yellow" variant="dot">{sim.subState}</Badge>}
-                                </Group>
-                                <Group mt="md">
-                                    <Badge leftSection={<CheckCircle size={12} />} variant="outline" color="gray">Pump Ready</Badge>
-                                    <Badge leftSection={<CheckCircle size={12} />} variant="outline" color="gray">Sensors Online</Badge>
-                                </Group>
-                            </Grid.Col>
+                {/* Dashboard Tab */}
+                {activeTab === "DASH" && (
+                    <Stack>
+                        {/* Status Panel */}
+                        <Paper p="xl" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40' }}>
+                            <Grid align="center">
+                                <Grid.Col span={{ base: 12, md: 8 }}>
+                                    <Text size="sm" c="dimmed" fw={700}>SYSTEM STATUS</Text>
+                                    <Group align="center" gap="md">
+                                        <Text size={rem(60)} fw={900} c="white" style={{ lineHeight: 1 }}>{sim.state}</Text>
+                                        {sim.subState && <Badge size="xl" color="yellow" variant="dot">{sim.subState}</Badge>}
+                                    </Group>
+                                    <Group mt="md">
+                                        <Badge leftSection={<CheckCircle size={12} />} variant="outline" color="gray">Pump Ready</Badge>
+                                        <Badge leftSection={<CheckCircle size={12} />} variant="outline" color="gray">Sensors Online</Badge>
+                                    </Group>
+                                </Grid.Col>
+                                <Grid.Col span={{ base: 12, md: 4 }}>
+                                    <Paper p="md" bg="#1A1B1E" radius="md">
+                                        <Text c="green" fw={700} size="lg" ta="right">{sim.logMsg}</Text>
+                                        <Text size="xs" c="dimmed" ta="right" mb="sm">Target EC: {sim.targets.ec.toFixed(1)} | Target pH: {sim.targets.ph.toFixed(1)}</Text>
+                                        <Text size="xs" mb={4}>Solar Rad Simulation</Text>
+                                        <Slider
+                                            color="green"
+                                            min={0} max={1200} step={100} defaultValue={500}
+                                            onChange={(v) => sim.physics.solarRad = v}
+                                        />
+                                    </Paper>
+                                </Grid.Col>
+                            </Grid>
+                        </Paper>
+
+                        {/* Gauges */}
+                        <Grid>
+                            {/* EC */}
                             <Grid.Col span={{ base: 12, md: 4 }}>
-                                <Paper p="md" bg="#1A1B1E" radius="md">
-                                    <Text c="green" fw={700} size="lg" ta="right">{sim.logMsg}</Text>
-                                    <Text size="xs" c="dimmed" ta="right" mb="sm">Target EC: {sim.targets.ec.toFixed(1)} | Target pH: {sim.targets.ph.toFixed(1)}</Text>
-                                    <Text size="xs" mb={4}>Solar Rad Simulation</Text>
-                                    <Slider
-                                        color="green"
-                                        min={0} max={1200} step={100} defaultValue={500}
-                                        onChange={(v) => sim.physics.solarRad = v}
-                                    />
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320 }}>
+                                    <Group justify="space-between" mb="xl">
+                                        <Text fw={700} c="dimmed"><Activity size={16} style={{ verticalAlign: 'middle' }} /> EC LEVEL</Text>
+                                        <Badge color="green" variant="light">REALTIME</Badge>
+                                    </Group>
+                                    <Center>
+                                        <SemiCircleGauge value={sim.physics.displayEc} target={sim.targets.ec} tol={sim.targets.tolEc} unit="mS/cm" min={0} max={4} />
+                                    </Center>
+                                    <Center mt="md">
+                                        <Text size="xs" c="dimmed">Safe Range: {(sim.targets.ec - sim.targets.tolEc).toFixed(1)} ~ {(sim.targets.ec + sim.targets.tolEc).toFixed(1)}</Text>
+                                    </Center>
+                                </Paper>
+                            </Grid.Col>
+
+                            {/* pH */}
+                            <Grid.Col span={{ base: 12, md: 4 }}>
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320, position: 'relative', overflow: 'hidden' }}>
+                                    <Overlay center blur={2} opacity={0.9} color="#1A1B1E" zIndex={10} display={sim.safetyLock ? 'flex' : 'none'}>
+                                        <Stack align="center" gap="xs">
+                                            <Lock size={40} color="#FA5252" />
+                                            <Text c="red" fw={900}>SAFETY LOCK</Text>
+                                            <Text c="white" size="sm">{sim.subState}</Text>
+                                        </Stack>
+                                    </Overlay>
+                                    <Group justify="space-between" mb="xl">
+                                        <Text fw={700} c="dimmed"><Droplet size={16} style={{ verticalAlign: 'middle' }} /> pH LEVEL</Text>
+                                        <Badge color="yellow" variant="light">SMART WAIT</Badge>
+                                    </Group>
+                                    <Center>
+                                        <RainbowGauge value={sim.physics.displayPh} target={sim.targets.ph} />
+                                    </Center>
+                                    <Stack gap={2} mt="md" align="center">
+                                        <Text size="xs" c="dimmed">Wait Timer</Text>
+                                        <Box w={`${(sim.physics.phWaitTimer / 30) * 100}%`} h={6} bg="dark.4" style={{ borderRadius: 6, overflow: 'hidden' }}>
+                                            <Box w="100%" h="100%" bg="yellow" style={{ transition: 'width 0.5s' }} />
+                                        </Box>
+                                    </Stack>
+                                </Paper>
+                            </Grid.Col>
+
+                            {/* Temp */}
+                            <Grid.Col span={{ base: 12, md: 4 }}>
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320 }}>
+                                    <Text fw={700} c="dimmed" mb="xl">🌡️ TEMPERATURE</Text>
+                                    <Center>
+                                        <div style={{ position: 'relative', width: 60, height: 160, backgroundColor: '#2C2E33', borderRadius: 30, padding: 4 }}>
+                                            <div style={{ width: '100%', height: '100%', borderRadius: 28, backgroundColor: '#1A1B1E', position: 'relative', overflow: 'hidden' }}>
+                                                <div style={{
+                                                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                                                    height: `${(sim.physics.displayTemp / 40) * 100}%`,
+                                                    background: 'linear-gradient(to top, blue, red)', opacity: 0.6,
+                                                    transition: 'height 0.5s'
+                                                }} />
+                                                <Center h="100%" style={{ position: 'relative', zIndex: 10 }}>
+                                                    <Text fw={900} size="lg" c="white">{sim.physics.displayTemp.toFixed(1)}°</Text>
+                                                </Center>
+                                            </div>
+                                        </div>
+                                    </Center>
+                                    <Group justify="center" mt="xl">
+                                        <Badge color={sim.actuators.chiller ? "blue" : "gray"} variant="filled">Chiller</Badge>
+                                        <Badge color="gray" variant="filled">Heater</Badge>
+                                    </Group>
                                 </Paper>
                             </Grid.Col>
                         </Grid>
+                    </Stack>
+                )}
+
+                {/* Coming Soon Placeholder */}
+                {activeTab !== "DASH" && (
+                    <Paper p="xl" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Stack align="center">
+                            <ThemeIcon size={80} radius="xl" color="yellow" variant="light">
+                                <AlertTriangle size={40} />
+                            </ThemeIcon>
+                            <Title order={2} c="white">Coming Soon</Title>
+                            <Text c="dimmed">The {activeTab === "NUTRI" ? "Nutrient Mixing" : "Water Treatment"} module is currently under development.</Text>
+                            <Text c="dimmed" size="xs">Please use the Python Simulator for full features.</Text>
+                        </Stack>
                     </Paper>
-
-                    {/* Gauges */}
-                    <Grid>
-                        {/* EC */}
-                        <Grid.Col span={{ base: 12, md: 4 }}>
-                            <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320 }}>
-                                <Group justify="space-between" mb="xl">
-                                    <Text fw={700} c="dimmed"><Activity size={16} style={{ verticalAlign: 'middle' }} /> EC LEVEL</Text>
-                                    <Badge color="green" variant="light">REALTIME</Badge>
-                                </Group>
-                                <Center>
-                                    <SemiCircleGauge value={sim.physics.displayEc} target={sim.targets.ec} tol={sim.targets.tolEc} unit="mS/cm" min={0} max={4} />
-                                </Center>
-                                <Center mt="md">
-                                    <Text size="xs" c="dimmed">Safe Range: {(sim.targets.ec - sim.targets.tolEc).toFixed(1)} ~ {(sim.targets.ec + sim.targets.tolEc).toFixed(1)}</Text>
-                                </Center>
-                            </Paper>
-                        </Grid.Col>
-
-                        {/* pH */}
-                        <Grid.Col span={{ base: 12, md: 4 }}>
-                            <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320, position: 'relative', overflow: 'hidden' }}>
-                                <Overlay center blur={2} opacity={0.9} color="#1A1B1E" zIndex={10} display={sim.safetyLock ? 'flex' : 'none'}>
-                                    <Stack align="center" gap="xs">
-                                        <Lock size={40} color="#FA5252" />
-                                        <Text c="red" fw={900}>SAFETY LOCK</Text>
-                                        <Text c="white" size="sm">{sim.subState}</Text>
-                                    </Stack>
-                                </Overlay>
-                                <Group justify="space-between" mb="xl">
-                                    <Text fw={700} c="dimmed"><Droplet size={16} style={{ verticalAlign: 'middle' }} /> pH LEVEL</Text>
-                                    <Badge color="yellow" variant="light">SMART WAIT</Badge>
-                                </Group>
-                                <Center>
-                                    <RainbowGauge value={sim.physics.displayPh} target={sim.targets.ph} />
-                                </Center>
-                                <Stack gap={2} mt="md" align="center">
-                                    <Text size="xs" c="dimmed">Wait Timer</Text>
-                                    <Box w={`${(sim.physics.phWaitTimer / 30) * 100}%`} h={6} bg="dark.4" style={{ borderRadius: 6, overflow: 'hidden' }}>
-                                        <Box w="100%" h="100%" bg="yellow" style={{ transition: 'width 0.5s' }} />
-                                    </Box>
-                                </Stack>
-                            </Paper>
-                        </Grid.Col>
-
-                        {/* Temp */}
-                        <Grid.Col span={{ base: 12, md: 4 }}>
-                            <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 320 }}>
-                                <Text fw={700} c="dimmed" mb="xl">🌡️ TEMPERATURE</Text>
-                                <Center>
-                                    <div style={{ position: 'relative', width: 60, height: 160, backgroundColor: '#2C2E33', borderRadius: 30, padding: 4 }}>
-                                        <div style={{ width: '100%', height: '100%', borderRadius: 28, backgroundColor: '#1A1B1E', position: 'relative', overflow: 'hidden' }}>
-                                            <div style={{
-                                                position: 'absolute', bottom: 0, left: 0, right: 0,
-                                                height: `${(sim.physics.displayTemp / 40) * 100}%`,
-                                                background: 'linear-gradient(to top, blue, red)', opacity: 0.6,
-                                                transition: 'height 0.5s'
-                                            }} />
-                                            <Center h="100%" style={{ position: 'relative', zIndex: 10 }}>
-                                                <Text fw={900} size="lg" c="white">{sim.physics.displayTemp.toFixed(1)}°</Text>
-                                            </Center>
-                                        </div>
-                                    </div>
-                                </Center>
-                                <Group justify="center" mt="xl">
-                                    <Badge color={sim.actuators.chiller ? "blue" : "gray"} variant="filled">Chiller</Badge>
-                                    <Badge color="gray" variant="filled">Heater</Badge>
-                                </Group>
-                            </Paper>
-                        </Grid.Col>
-                    </Grid>
-                </Stack>
+                )}
             </Container>
         </Container>
     );
