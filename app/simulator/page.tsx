@@ -115,37 +115,43 @@ const useNutrientSimulator = () => {
 const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: any) => {
     const range = max - min;
     const pct = Math.max(0, Math.min(1, (value - min) / range));
-    const angle = 180 - (pct * 180);
+    const angle = -90 + (pct * 180); // -90 (left) to 90 (right)
+
     return (
-        <div style={{ position: 'relative', width: '220px', height: '110px', overflow: 'hidden', margin: '0 auto' }}>
+        <div style={{ position: 'relative', width: '220px', height: '110px', margin: '0 auto' }}>
+            {/* Gauge Arc */}
             <div style={{
-                width: '100%', height: '100%', backgroundColor: '#2C2E33',
-                borderRadius: '110px 110px 0 0', borderBottom: '3px solid #5C5F66'
+                position: 'absolute', top: 0, left: 0, width: '220px', height: '220px', borderRadius: '50%',
+                background: `conic-gradient(from 270deg, #4dabf7 0deg 60deg, #40c057 60deg 120deg, #fa5252 120deg 180deg, transparent 180deg)`,
+                clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.9
+            }}></div>
+
+            {/* Inner Cover (Make it slightly smaller to show more arc color if needed, currently 160x80) */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+                width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0'
+            }}></div>
+
+            {/* Needle - Made Red and higher z-index */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: '50%', width: 6, height: 100,
+                backgroundColor: '#FA5252', borderRadius: '4px 4px 0 0',
+                transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
+                transition: 'transform 0.3s ease-out', zIndex: 50,
+                boxShadow: '0 0 5px rgba(0,0,0,0.5)'
+            }}></div>
+
+            {/* Pivot Point */}
+            <div style={{
+                position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
+                width: 16, height: 16, borderRadius: '50%', backgroundColor: '#fff', border: '2px solid #FA5252', zIndex: 60
+            }}></div>
+
+            {/* Text Value */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: 0, width: '100%',
+                textAlign: 'center', zIndex: 40
             }}>
-                {/* Ticks */}
-                {[0, 1, 2, 3, 4].map(i => (
-                    <div key={i} style={{
-                        position: 'absolute', bottom: 0, left: '50%', width: 2, height: 100,
-                        backgroundColor: 'rgba(255,255,255,0.2)', transformOrigin: 'bottom center',
-                        transform: `translateX(-50%) rotate(${180 - (i / 4) * 180}deg)`
-                    }} />
-                ))}
-                {/* Needle */}
-                <div style={{
-                    position: 'absolute', bottom: 0, left: '50%', width: 4, height: 90,
-                    backgroundColor: '#FA5252', transformOrigin: 'bottom center',
-                    transform: `translateX(-50%) rotate(${angle}deg)`, transition: 'transform 0.3s ease-out',
-                    zIndex: 10, borderRadius: 4
-                }} />
-                <div style={{ position: 'absolute', bottom: -8, left: '50%', width: 16, height: 16, borderRadius: '50%', backgroundColor: '#fff', transform: 'translateX(-50%)', zIndex: 20 }}></div>
-                {/* Target */}
-                <div style={{
-                    position: 'absolute', bottom: 0, left: '50%', width: 2, height: 100,
-                    borderLeft: '2px dashed rgba(255,255,255,0.5)', transformOrigin: 'bottom center',
-                    transform: `translateX(-50%) rotate(${180 - ((target - min) / range) * 180}deg)`, zIndex: 5
-                }} />
-            </div>
-            <div style={{ textAlign: 'center', marginTop: -40, position: 'relative', zIndex: 15 }}>
                 <Text size="xl" fw={900} c="white">{value.toFixed(2)}</Text>
                 <Text size="xs" c="dimmed">{unit}</Text>
             </div>
@@ -156,24 +162,39 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
 const RainbowGauge = ({ value, target, tol }: any) => {
     const angle = -90 + (Math.max(0, Math.min(1, value / 14)) * 180);
     return (
-        <div style={{ width: '220px', margin: '0 auto' }}>
-            <div style={{ position: 'relative', width: '220px', height: '110px', overflow: 'hidden' }}>
-                {/* Gradient Arc */}
-                <div style={{
-                    position: 'absolute', width: '220px', height: '220px', borderRadius: '50%',
-                    background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
-                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.8
-                }}></div>
-                {/* Inner Cover (Hole) */}
-                <div style={{ position: 'absolute', bottom: 0, left: '30px', width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0' }}></div>
-                {/* Needle */}
-                <div style={{
-                    position: 'absolute', bottom: 0, left: '108px', width: 4, height: 90, backgroundColor: 'white',
-                    transformOrigin: 'bottom center', transform: `rotate(${angle}deg)`, transition: 'transform 0.5s', zIndex: 10
-                }}></div>
-            </div>
+        <div style={{ position: 'relative', width: '220px', height: '110px', margin: '0 auto' }}>
+            {/* Gradient Arc */}
+            <div style={{
+                position: 'absolute', top: 0, left: 0, width: '220px', height: '220px', borderRadius: '50%',
+                background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
+                clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", opacity: 0.8
+            }}></div>
+
+            {/* Inner Cover (Hole) */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+                width: '160px', height: '80px', backgroundColor: '#25262B', borderRadius: '100px 100px 0 0'
+            }}></div>
+
+            {/* Needle */}
+            <div style={{
+                position: 'absolute', bottom: 0, left: '50%', width: 4, height: 95,
+                backgroundColor: 'white', borderRadius: '4px',
+                transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
+                transition: 'transform 0.5s', zIndex: 10
+            }}></div>
+
+            {/* Pivot Point */}
+            <div style={{
+                position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
+                width: 16, height: 16, borderRadius: '50%', backgroundColor: 'white', zIndex: 20
+            }}></div>
+
             {/* Text Value */}
-            <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 20 }}>
+            <div style={{
+                position: 'absolute', bottom: 0, left: 0, width: '100%',
+                textAlign: 'center', zIndex: 30
+            }}>
                 <Text size="xl" fw={900} c="white">{value.toFixed(2)}</Text>
                 <Text size="xs" c="dimmed">pH</Text>
             </div>
