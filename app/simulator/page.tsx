@@ -117,14 +117,14 @@ const MustangNeedle = ({ angle, color = "#e74c3c" }: { angle: number, color?: st
         <div style={{
             position: 'absolute', bottom: 0, left: '50%', width: 0, height: 0,
             borderLeft: '4px solid transparent', borderRight: '4px solid transparent',
-            borderBottom: `90px solid ${color}`,
+            borderBottom: `70px solid ${color}`,
             transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
             transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // Bouncy needle
             zIndex: 50, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))'
         }} />
         <div style={{
-            position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
-            width: 20, height: 20, borderRadius: '50%',
+            position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)',
+            width: 16, height: 16, borderRadius: '50%',
             background: 'radial-gradient(circle at 30% 30%, #555, #000)',
             border: '2px solid #333', zIndex: 60, boxShadow: '0 2px 5px rgba(0,0,0,0.8)'
         }}></div>
@@ -133,10 +133,10 @@ const MustangNeedle = ({ angle, color = "#e74c3c" }: { angle: number, color?: st
 
 const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
     <div style={{
-        position: 'relative', width: '240px', height: '130px', margin: '0 auto',
+        position: 'relative', width: '180px', height: '100px', margin: '0 auto',
         padding: '10px',
         background: '#151515',
-        borderRadius: '130px 130px 0 0',
+        borderRadius: '90px 90px 0 0',
         boxShadow: `
             inset 0 2px 5px rgba(255,255,255,0.2),
             0 5px 15px rgba(0,0,0,0.8),
@@ -155,18 +155,18 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
     const angle = -90 + (pct * 180);
 
     return (
-        <div style={{ width: 240, margin: '0 auto' }}>
+        <div style={{ width: 180, margin: '0 auto' }}>
             <GaugeBezel>
                 {/* Face Background */}
                 <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
                     background: 'radial-gradient(circle, #222 0%, #000 90%)',
                     boxShadow: 'inset 0 0 20px #000'
                 }} />
 
                 {/* Arc */}
                 <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
                     background: `conic-gradient(from 270deg, #3498db 0deg 60deg, #2ecc71 60deg 120deg, #e74c3c 120deg 180deg, transparent 180deg)`,
                     clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
                     mask: "radial-gradient(transparent 55%, black 56%)",
@@ -177,8 +177,8 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
                 {/* Major Ticks */}
                 {[0, 1, 2, 3, 4].map(i => (
                     <div key={i} style={{
-                        position: 'absolute', bottom: 0, left: '50%', width: 3, height: 110,
-                        background: 'linear-gradient(to bottom, #fff 10px, transparent 10px)',
+                        position: 'absolute', bottom: 0, left: '50%', width: 2, height: 80,
+                        background: 'linear-gradient(to bottom, #fff 8px, transparent 8px)',
                         transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${-90 + (i / 4) * 180}deg)`,
                         zIndex: 20, opacity: 0.8
                     }} />
@@ -190,13 +190,13 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
                 <div style={{
                     position: 'absolute', top: 0, left: 0, width: '100%', height: '50%',
                     background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)',
-                    borderRadius: '130px 130px 0 0', pointerEvents: 'none', zIndex: 100
+                    borderRadius: '90px 90px 0 0', pointerEvents: 'none', zIndex: 100
                 }} />
             </GaugeBezel>
 
-            <div style={{ textAlign: 'center', marginTop: '-45px', position: 'relative', zIndex: 70 }}>
-                <Text size={rem(32)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(52, 152, 219, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
-                <Text size="sm" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>{unit}</Text>
+            <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 70 }}>
+                <Text size={rem(24)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(52, 152, 219, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
+                <Text size="xs" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>{unit}</Text>
             </div>
         </div>
     )
@@ -205,18 +205,18 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
 const RainbowGauge = ({ value, target, tol }: any) => {
     const angle = -90 + (Math.max(0, Math.min(1, value / 14)) * 180);
     return (
-        <div style={{ width: 240, margin: '0 auto' }}>
+        <div style={{ width: 180, margin: '0 auto' }}>
             <GaugeBezel>
                 {/* Face Background */}
                 <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
                     background: 'radial-gradient(circle, #222 0%, #000 90%)',
                     boxShadow: 'inset 0 0 20px #000'
                 }} />
 
                 {/* Gradient Arc */}
                 <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 220, height: 220, borderRadius: '50%',
+                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
                     background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
                     clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
                     mask: "radial-gradient(transparent 55%, black 56%)",
@@ -230,13 +230,13 @@ const RainbowGauge = ({ value, target, tol }: any) => {
                 <div style={{
                     position: 'absolute', top: 0, left: 0, width: '100%', height: '50%',
                     background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)',
-                    borderRadius: '130px 130px 0 0', pointerEvents: 'none', zIndex: 100
+                    borderRadius: '90px 90px 0 0', pointerEvents: 'none', zIndex: 100
                 }} />
             </GaugeBezel>
 
-            <div style={{ textAlign: 'center', marginTop: '-45px', position: 'relative', zIndex: 70 }}>
-                <Text size={rem(32)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(46, 204, 113, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
-                <Text size="sm" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>pH</Text>
+            <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 70 }}>
+                <Text size={rem(24)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(46, 204, 113, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
+                <Text size="xs" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>pH</Text>
             </div>
         </div>
     )
@@ -393,8 +393,8 @@ export default function SimulatorPage() {
                         {/* 3. Gauges Row (Bottom - Mustang Style) */}
                         <Grid>
                             {/* EC */}
-                            <Grid.Col span={{ base: 12, md: 4 }}>
-                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 280, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <Grid.Col span={{ base: 12, xs: 4 }}>
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 250, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     <Group justify="center" mb="md">
                                         <Text fw={700} c="dimmed"><Activity size={16} style={{ verticalAlign: 'middle', marginRight: 5 }} /> EC LEVEL</Text>
                                     </Group>
@@ -406,8 +406,8 @@ export default function SimulatorPage() {
                             </Grid.Col>
 
                             {/* pH */}
-                            <Grid.Col span={{ base: 12, md: 4 }}>
-                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 280, position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <Grid.Col span={{ base: 12, xs: 4 }}>
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 250, position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     <Overlay center blur={2} opacity={0.9} color="#1A1B1E" zIndex={100} display={sim.safetyLock ? 'flex' : 'none'}>
                                         <Stack align="center" gap="xs">
                                             <Lock size={40} color="#FA5252" />
@@ -425,8 +425,8 @@ export default function SimulatorPage() {
                             </Grid.Col>
 
                             {/* Temp (Converted to gauge) */}
-                            <Grid.Col span={{ base: 12, md: 4 }}>
-                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 280, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <Grid.Col span={{ base: 12, xs: 4 }}>
+                                <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 250, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     <Group justify="center" mb="md">
                                         <Text fw={700} c="dimmed">🌡️ TEMPERATURE</Text>
                                     </Group>
