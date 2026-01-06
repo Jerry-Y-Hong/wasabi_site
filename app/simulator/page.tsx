@@ -149,6 +149,24 @@ const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
     </div>
 );
 
+const VerticalBezel = ({ children }: { children: React.ReactNode }) => (
+    <div style={{
+        position: 'relative', width: '80px', height: '160px', margin: '0 auto',
+        padding: '10px',
+        background: '#151515',
+        borderRadius: '40px',
+        boxShadow: `
+            inset 0 2px 5px rgba(255,255,255,0.2),
+            0 5px 15px rgba(0,0,0,0.8),
+            0 0 0 4px #2c3e50,
+            0 0 0 6px #555
+        `,
+        overflow: 'hidden'
+    }}>
+        {children}
+    </div>
+);
+
 const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: any) => {
     const range = max - min;
     const pct = Math.max(0, Math.min(1, (value - min) / range));
@@ -237,6 +255,54 @@ const RainbowGauge = ({ value, target, tol }: any) => {
             <div style={{ textAlign: 'center', marginTop: '-35px', position: 'relative', zIndex: 70 }}>
                 <Text size={rem(24)} fw={900} c="white" style={{ textShadow: "0 0 10px rgba(46, 204, 113, 0.5)", fontFamily: "Impact, sans-serif", letterSpacing: 1 }}>{value.toFixed(2)}</Text>
                 <Text size="xs" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: 2 }}>pH</Text>
+            </div>
+        </div>
+    )
+}
+
+const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
+    const range = max - min;
+    const pct = Math.max(0, Math.min(1, (value - min) / range));
+
+    return (
+        <div style={{ width: 80, margin: '0 auto', textAlign: 'center' }}>
+            <VerticalBezel>
+                {/* Background Track */}
+                <div style={{
+                    position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
+                    width: 20, height: 130, borderRadius: 10,
+                    background: '#222',
+                    boxShadow: 'inset 0 0 5px #000'
+                }} />
+
+                {/* Liquid */}
+                <div style={{
+                    position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)',
+                    width: 14, height: `${pct * 100}px`, borderRadius: 10,
+                    background: 'linear-gradient(to top, #3498db, #e74c3c)',
+                    transition: 'height 0.5s',
+                    boxShadow: '0 0 10px rgba(231, 76, 60, 0.5)'
+                }} />
+
+                {/* Tube Glare */}
+                <div style={{
+                    position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
+                    width: 6, height: 130, borderRadius: 10,
+                    background: 'rgba(255,255,255,0.1)', pointerEvents: 'none'
+                }} />
+
+                {/* Bulb */}
+                <div style={{
+                    position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)',
+                    width: 30, height: 30, borderRadius: '50%',
+                    background: 'radial-gradient(circle at 30% 30%, #e74c3c, #c0392b)',
+                    boxShadow: '0 0 10px rgba(231, 76, 60, 0.6), inset 0 2px 5px rgba(255,255,255,0.4)',
+                    zIndex: 20
+                }} />
+            </VerticalBezel>
+            <div style={{ marginTop: 5 }}>
+                <Text size="lg" fw={900} c="white" style={{ textShadow: "0 0 10px rgba(231, 76, 60, 0.5)", fontFamily: "Impact, sans-serif" }}>{value.toFixed(1)}</Text>
+                <Text size="xs" c="dimmed" fw={700}>{unit}</Text>
             </div>
         </div>
     )
@@ -430,8 +496,7 @@ export default function SimulatorPage() {
                                     <Group justify="center" mb="md">
                                         <Text fw={700} c="dimmed">🌡️ TEMPERATURE</Text>
                                     </Group>
-                                    {/* Using SemiCircleGauge for Temp too for consistency */}
-                                    <SemiCircleGauge value={sim.physics.displayTemp} target={sim.targets.temp} tol={2} unit="°C" min={0} max={40} />
+                                    <MustangVerticalGauge value={sim.physics.displayTemp} min={0} max={40} unit="°C" />
                                     <Center mt="md">
                                         <Group gap="xs">
                                             <Badge color={sim.actuators.chiller ? "blue" : "gray"} variant="filled">Chiller</Badge>
