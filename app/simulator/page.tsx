@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Paper, Text, Grid, Button, Group, Slider, Badge, Stack, Box, Center, ThemeIcon, Overlay, Title, Tabs, rem } from '@mantine/core';
+import { Container, Paper, Text, Grid, Button, Group, Slider, Badge, Stack, Box, Center, ThemeIcon, Overlay, Title, Tabs, rem, PasswordInput } from '@mantine/core';
 import { Play, Pause, Lock, CheckCircle, AlertTriangle, Activity, Droplet, Zap } from 'lucide-react';
 
 // --- Types ---
@@ -177,6 +177,50 @@ const RainbowGauge = ({ value, target, tol }: any) => {
 
 export default function SimulatorPage() {
     const sim = useNutrientSimulator();
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [inputCode, setInputCode] = useState("");
+    const [authError, setAuthError] = useState(false);
+
+    if (!isAuthorized) {
+        return (
+            <Container fluid bg="#141517" h="100vh" p={0} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Stack align="center" gap="lg" style={{ animate: 'fade-in 0.5s' }}>
+                    <ThemeIcon size={100} radius="xl" color="dark" variant="light" style={{ border: '2px solid #373A40' }}>
+                        <Lock size={50} color="#C1C2C5" />
+                    </ThemeIcon>
+                    <div style={{ textAlign: 'center' }}>
+                        <Title c="white" order={2} style={{ letterSpacing: 1 }}>K-WASABI SIMULATOR</Title>
+                        <Badge color="red" variant="dot" size="lg" mt="xs">RESTRICTED ACCESS</Badge>
+                        <Text c="dimmed" size="sm" mt="md">Proprietary Technology. Authorized Personnel Only.</Text>
+                    </div>
+                    <Paper p="xl" radius="lg" bg="#25262B" w={340} withBorder style={{ borderColor: '#373A40', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            if (inputCode === "1234") setIsAuthorized(true);
+                            else { setAuthError(true); setInputCode(""); }
+                        }}>
+                            <Stack>
+                                <PasswordInput
+                                    size="md"
+                                    placeholder="Enter Access Code"
+                                    value={inputCode}
+                                    onChange={(e) => { setInputCode(e.currentTarget.value); setAuthError(false); }}
+                                    error={authError ? "Invalid Code" : null}
+                                    styles={{
+                                        input: { backgroundColor: '#1A1B1E', color: 'white', borderColor: '#373A40', textAlign: 'center', fontSize: 18, letterSpacing: 4 },
+                                        innerInput: { textAlign: 'center' }
+                                    }}
+                                />
+                                <Button type="submit" fullWidth color="green" size="md" variant="light" mt="xs">
+                                    ACCESS SYSTEM
+                                </Button>
+                            </Stack>
+                        </form>
+                    </Paper>
+                </Stack>
+            </Container>
+        );
+    }
 
     return (
         <Container fluid bg="#1A1B1E" h="100vh" p={0} style={{ overflow: 'auto', color: '#C1C2C5' }}>
