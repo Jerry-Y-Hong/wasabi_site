@@ -177,6 +177,7 @@ const RainbowGauge = ({ value, target, tol }: any) => {
 
 export default function SimulatorPage() {
     const sim = useNutrientSimulator();
+    const [activeTab, setActiveTab] = useState("DASH");
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [inputCode, setInputCode] = useState("");
     const [authError, setAuthError] = useState(false);
@@ -221,8 +222,6 @@ export default function SimulatorPage() {
             </Container>
         );
     }
-
-    const [activeTab, setActiveTab] = useState("DASH");
 
     return (
         <Container fluid bg="#1A1B1E" h="100vh" p={0} style={{ overflow: 'auto', color: '#C1C2C5' }}>
