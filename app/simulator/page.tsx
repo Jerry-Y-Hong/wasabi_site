@@ -151,14 +151,14 @@ const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
 
 const VerticalBezel = ({ children }: { children: React.ReactNode }) => (
     <div style={{
-        position: 'relative', width: '80px', height: '160px', margin: '0 auto',
+        position: 'relative', width: '60px', height: '110px', margin: '0 auto',
         padding: '10px',
         background: '#151515',
-        borderRadius: '40px',
+        borderRadius: '30px',
         boxShadow: `
-            inset 0 2px 5px rgba(255,255,255,0.2),
+            inset 0 2px 5px rgba(255,255,255,0.2), 
             0 5px 15px rgba(0,0,0,0.8),
-            0 0 0 4px #2c3e50,
+            0 0 0 4px #2c3e50, 
             0 0 0 6px #555
         `,
         overflow: 'hidden'
@@ -265,20 +265,20 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
     const pct = Math.max(0, Math.min(1, (value - min) / range));
 
     return (
-        <div style={{ width: 80, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ width: 60, margin: '0 auto', textAlign: 'center' }}>
             <VerticalBezel>
                 {/* Background Track */}
                 <div style={{
                     position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-                    width: 20, height: 130, borderRadius: 10,
+                    width: 16, height: 90, borderRadius: 10,
                     background: '#222',
                     boxShadow: 'inset 0 0 5px #000'
                 }} />
 
                 {/* Liquid */}
                 <div style={{
-                    position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)',
-                    width: 14, height: `${pct * 100}px`, borderRadius: 10,
+                    position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+                    width: 10, height: `${pct * 70}px`, borderRadius: 10,
                     background: 'linear-gradient(to top, #3498db, #e74c3c)',
                     transition: 'height 0.5s',
                     boxShadow: '0 0 10px rgba(231, 76, 60, 0.5)'
@@ -287,14 +287,14 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
                 {/* Tube Glare */}
                 <div style={{
                     position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-                    width: 6, height: 130, borderRadius: 10,
+                    width: 4, height: 90, borderRadius: 10,
                     background: 'rgba(255,255,255,0.1)', pointerEvents: 'none'
                 }} />
 
                 {/* Bulb */}
                 <div style={{
-                    position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)',
-                    width: 30, height: 30, borderRadius: '50%',
+                    position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)',
+                    width: 24, height: 24, borderRadius: '50%',
                     background: 'radial-gradient(circle at 30% 30%, #e74c3c, #c0392b)',
                     boxShadow: '0 0 10px rgba(231, 76, 60, 0.6), inset 0 2px 5px rgba(255,255,255,0.4)',
                     zIndex: 20
