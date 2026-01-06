@@ -2,10 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Paper, Text, Grid, Button, Group, Slider, Badge, Stack, Box, Center, ThemeIcon, Overlay, Title, Tabs, rem, PasswordInput, Divider, ActionIcon } from '@mantine/core';
-import { Play, Pause, Lock, CheckCircle, AlertTriangle, Activity, Droplet, Zap, LayoutDashboard, ArrowDown, Fan, ThermometerSnowflake, Wind } from 'lucide-react';
+import { Play, Pause, Lock, CheckCircle, AlertTriangle, Activity, Droplet, Zap, LayoutDashboard, ArrowDown, Fan, ThermometerSnowflake, Wind, Layers } from 'lucide-react';
 
 // --- Types ---
 type SimulatorState = "IDLE" | "FILLING" | "DOSING" | "SUPPLYING";
+
+interface TierData {
+    temp: number;
+    hum: number;
+    fan: boolean;
+    heater: boolean;
+}
 
 // --- Logic Hook (Ref-based for Physics Loop stability) ---
 const useNutrientSimulator = () => {
@@ -24,7 +31,16 @@ const useNutrientSimulator = () => {
         },
         env: {
             airTemp: 24.0, airHum: 60.0,
-            bedTemp: 22.0, bedHum: 45.0
+            bedTemp: 22.0, bedHum: 45.0,
+            externalTemp: 15.0,
+            // [NEW] 5-Tier Micro-climate Data
+            tiers: [
+                { temp: 24.0, hum: 60.0, fan: false, heater: false }, // Tier 1 (Bottom)
+                { temp: 24.2, hum: 59.5, fan: false, heater: false },
+                { temp: 24.5, hum: 59.0, fan: false, heater: false },
+                { temp: 24.8, hum: 58.5, fan: false, heater: false },
+                { temp: 25.5, hum: 57.0, fan: false, heater: false }, // Tier 5 (Top - Hotter)
+            ] as TierData[]
         },
         actuators: {
             rawPump: false, inletValve: false, mixingPump: false, supplyPump: false, // R-01 ~ R-03
@@ -32,9 +48,9 @@ const useNutrientSimulator = () => {
             chiller: false, uvLamp: true, sandFilter: false
         },
         hvac: {
-            fan_circ: false, // R-05
-            fan_exh: false,  // R-06
-            heater_bed: false // R-07
+            fan_circ: false, // Main Room Circ
+            fan_exh: false,  // Main Room Exh
+            heater_bed: false
         },
         targets: { ec: 2.0, ph: 5.8, temp: 18.0, tolEc: 0.3, tolPh: 0.5, tolTemp: 2.0 }
     });
@@ -44,7 +60,7 @@ const useNutrientSimulator = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const e = engine.current; // Shortcut
+            const e = engine.current;
             const p = e.physics;
             const act = e.actuators;
             const env = e.env;
@@ -52,6 +68,7 @@ const useNutrientSimulator = () => {
             const t = e.targets;
 
             // --- 1. Physics Simulation ---
+            // Water/Tank physics (Existing)
             if (act.rawPump) p.rawWaterLevel = Math.min(1000, p.rawWaterLevel + 2.0);
             if (act.inletValve && p.rawWaterLevel > 0) {
                 p.tankLevel += 0.5; p.rawWaterLevel -= 0.5;
@@ -62,80 +79,91 @@ const useNutrientSimulator = () => {
             }
             if (act.supplyPump) p.tankLevel = Math.max(0, Math.min(200, p.tankLevel - 0.5));
 
+            // External Temp
+            env.externalTemp = 10.0 + (p.solarRad / 80);
+
             // Nutrient Temp
-            const ambientTemp = e.env.airTemp; // Linked to Air Temp
+            const ambientTemp = e.env.airTemp;
             if (act.chiller) p.temp -= 0.1; else p.temp += (ambientTemp - p.temp) * 0.005;
 
             // Dosing
             if (act.valveA > 0) { p.tankA -= 0.01 * act.valveA; p.totalA += 0.01 * act.valveA; p.ec += 0.05 * act.valveA; }
             if (act.valveB > 0) { p.tankB -= 0.01 * act.valveB; p.totalB += 0.01 * act.valveB; p.ec += 0.05 * act.valveB; }
             if (act.acidValve > 0) { p.tankAcid -= 0.01 * act.acidValve; p.realPh -= 0.1 * act.acidValve; }
-
             p.sensorPh += (p.realPh - p.sensorPh) * 0.05;
 
-            // Environmental Physics (Smart Bed)
-            // 1. Air Physics
-            if (hvac.fan_exh) env.airTemp -= 0.05; // Ventilation Cooling
-            else env.airTemp += (p.solarRad / 25000); // Solar Heating
+            // [NEW] 5-Tier Physics Simulation (Stack Effect)
+            env.tiers.forEach((tier, i) => {
+                // Base Temp = Room Temp + Height Offset (Heat Rises)
+                // Tier 0 (Bottom): -1.0, Tier 4 (Top): +2.0
+                const heightOffset = -1.0 + (i * 0.75);
+                let targetTemp = env.airTemp + heightOffset;
 
-            // 2. Bed Physics
-            if (act.supplyPump) {
-                // Irrigation cools/warms bed to water temp
-                env.bedTemp += (p.displayTemp - env.bedTemp) * 0.05; // Water Temp effect
-                env.bedHum = Math.min(100, env.bedHum + 0.5); // Wetting
-            } else {
-                env.bedHum = Math.max(30, env.bedHum - 0.05); // Drying
-            }
-            if (hvac.heater_bed) env.bedTemp += 0.1; // Bed Heating
-            env.bedTemp += (env.airTemp - env.bedTemp) * 0.002; // Thermal Equilibrium
+                // LED Heat Effect (Top tiers get more trapped heat)
+                targetTemp += (p.solarRad / 1000) * (i * 0.2);
 
-            // Noise for display
+                // Cooling Effect from Tier Fan
+                if (tier.fan) targetTemp -= 1.5; // Fan cooling effect
+
+                // Physics Smoothing
+                tier.temp += (targetTemp - tier.temp) * 0.05;
+
+                // Humidity Physics (Bottom is more humid)
+                let targetHum = env.airHum + (4 - i) * 2; // Tier 0: +8%, Tier 4: +0%
+                if (tier.fan) targetHum -= 5.0; // Fan dries air
+                tier.hum += (targetHum - tier.hum) * 0.05;
+            });
+
+
+            // Environmental Physics (Main Room)
+            if (hvac.fan_exh) env.airTemp -= 0.05;
+            else env.airTemp += (p.solarRad / 25000) + (env.externalTemp - env.airTemp) * 0.002;
+
+            // Bed Physics (Representative Zone A - Linked to Tier 1 for simplicity)
+            env.bedTemp = env.tiers[0].temp - 1.0;
+
+            // Noise
             p.displayEc = p.ec + (Math.random() - 0.5) * 0.02;
             p.displayPh = p.sensorPh + (Math.random() - 0.5) * 0.04;
             p.displayTemp = p.temp + (Math.random() - 0.5) * 0.2;
 
             // --- 2. Control Logic ---
             if (e.autoMode) {
+                // Tier Automation: High Precision Mode (Success-Oriented)
+                // React immediately if deviation > 0.5°C
+                env.tiers.forEach(tier => {
+                    if (tier.temp > t.temp + 0.5) tier.fan = true;
+                    else if (tier.temp < t.temp) tier.fan = false;
+                });
+
                 // Solar Modes
-                if (p.solarRad > 700) { t.ec = 2.4; }
-                else if (p.solarRad > 300) { t.ec = 2.0; }
-                else { t.ec = 1.6; }
+                if (p.solarRad > 700) t.ec = 2.4;
+                else if (p.solarRad > 300) t.ec = 2.0;
+                else t.ec = 1.6;
 
-                // Water Level
+                // Machines
                 if (p.rawWaterLevel < 200) act.rawPump = true; else if (p.rawWaterLevel > 900) act.rawPump = false;
-
-                // Nutrient Temp Control
                 if (p.displayTemp > t.temp + t.tolTemp) act.chiller = true; else if (p.displayTemp < t.temp - 0.5) act.chiller = false;
 
-                // [NEW] HVAC Automation
-                // 1. Air Control (Cooling / Ventilation)
-                // If Air Temp > Target + 5 (Hot) -> Exh Fan ON
-                if (env.airTemp > t.temp + 5.0) {
-                    hvac.fan_exh = true;
-                } else if (env.airTemp < t.temp + 2.0) {
-                    hvac.fan_exh = false; // Turn off with hysteresis
+                // Room HVAC
+                const deltaExt = Math.abs(env.airTemp - env.externalTemp);
+                let isCondensationRisk = false;
+
+                if (deltaExt > 6.0) {
+                    isCondensationRisk = true;
+                    hvac.fan_circ = true;
                 }
+                if (env.airTemp > t.temp + 5.0) hvac.fan_exh = true;
+                else if (env.airTemp < t.temp + 2.0) hvac.fan_exh = false;
 
-                // 2. Bed Control (Heating)
-                // If Bed Temp < Target - 2 (Cold) -> Heater ON
-                if (env.bedTemp < t.temp - 2.0) {
-                    hvac.heater_bed = true;
-                } else if (env.bedTemp > t.temp) {
-                    hvac.heater_bed = false;
-                }
-
-                // 3. Humidity Control (Circulation)
-                // If Hum > 80% -> Circ Fan ON
-                if (env.airHum > 80.0) hvac.fan_circ = true;
-                else if (env.airHum < 70.0) hvac.fan_circ = false;
-
-                // Update Log Message for HVAC
-                if (hvac.fan_exh) e.logMsg = "Auto: Cooling Air (Fan ON)";
-                else if (hvac.heater_bed) e.logMsg = "Auto: Warming Bed (Heat ON)";
+                // Logging
+                if (isCondensationRisk) e.logMsg = `⚠️ Anti-Condensation (ΔExt ${deltaExt.toFixed(1)}°C)`;
+                else if (env.tiers.some(t => t.fan)) e.logMsg = "Auto: Precision Balancing (±0.5°C)";
+                else if (hvac.fan_exh) e.logMsg = "Auto: Ventilating Room";
                 else if (act.chiller) e.logMsg = "Auto: Chilling Nutrient";
                 else e.logMsg = "System Stable (Auto)";
 
-                // State Machine
+                // Dosing State Machine
                 act.valveA = 0; act.valveB = 0; act.acidValve = 0;
                 const ecError = t.ec - p.displayEc;
                 const phError = p.displayPh - t.ph;
@@ -149,83 +177,52 @@ const useNutrientSimulator = () => {
                     if (p.tankLevel >= 160) { act.inletValve = false; e.state = "DOSING"; }
                 } else if (e.state === "DOSING") {
                     p.dosingTime += 0.1; act.mixingPump = true;
-                    // ... Dosing Logic Simplified ...
                     if (p.phWaitTimer > 0) {
-                        p.phWaitTimer -= 1; e.subState = `⏳ pH Reacting... (${Math.ceil(p.phWaitTimer / 10)})`; e.safetyLock = true;
+                        p.phWaitTimer -= 1; e.subState = `⏳ Reacting... (${Math.ceil(p.phWaitTimer / 10)})`; e.safetyLock = true;
                     } else if (Math.abs(phError) > t.tolPh * 0.2) {
                         e.subState = "Acid Dosing"; act.acidValve = 1.0; p.phWaitTimer = 30; e.safetyLock = true;
                     } else if (ecError > t.tolEc * 0.2) {
                         const tick = Math.floor(Date.now() / 500);
-                        if (tick % 2 === 0) { e.subState = "A-Sol Inject"; act.valveA = 1.0; }
-                        else { e.subState = "B-Sol Inject"; act.valveB = 1.0; }
+                        if (tick % 2 === 0) { e.subState = "A-Sol"; act.valveA = 1.0; }
+                        else { e.subState = "B-Sol"; act.valveB = 1.0; }
                         e.safetyLock = true;
                     } else { e.subState = "Stabilizing"; }
-
                     if (Math.abs(ecError) < 0.1 && Math.abs(phError) < 0.1 && p.phWaitTimer === 0) e.state = "SUPPLYING";
-
                 } else if (e.state === "SUPPLYING") {
                     act.mixingPump = true; act.supplyPump = true;
                     if (p.tankLevel < 20) e.state = "IDLE";
                 }
-            } else {
-                e.logMsg = "Manual Control Mode";
-            }
+            } else { e.logMsg = "Manual Control Mode"; }
 
-            // Trigger Render
             setRenderTick(t => t + 1);
         }, 100);
         return () => clearInterval(interval);
     }, []);
 
-    // Helper functions to interact with the Mutable state
     const setSolar = (v: number) => { engine.current.physics.solarRad = v; };
     const setAuto = (v: boolean) => { engine.current.autoMode = v; };
-    const toggleHvac = (key: keyof typeof engine.current.hvac) => { engine.current.hvac[key] = !engine.current.hvac[key]; };
     const toggleActuator = (key: keyof typeof engine.current.actuators) => {
         const val = engine.current.actuators[key];
-        if (typeof val === 'boolean') {
-            (engine.current.actuators as any)[key] = !val;
-        }
+        if (typeof val === 'boolean') (engine.current.actuators as any)[key] = !val;
+    };
+    // Toggle Specific Tier Fan
+    const toggleTierFan = (index: number) => {
+        engine.current.env.tiers[index].fan = !engine.current.env.tiers[index].fan;
     };
 
-    // Return the Immutable Snapshot for React Rendering
-    return {
-        ...engine.current,
-        setSolar, setAuto, toggleHvac, toggleActuator
-    };
+    return { ...engine.current, setSolar, setAuto, toggleActuator, toggleTierFan };
 };
 
-// --- Gauge Components ---
+// --- Gauge Components Unchanged ---
 const MustangNeedle = ({ angle, color = "#e74c3c" }: { angle: number, color?: string }) => (
     <>
-        <div style={{
-            position: 'absolute', bottom: 0, left: '50%', width: 0, height: 0,
-            borderLeft: '4px solid transparent', borderRight: '4px solid transparent',
-            borderBottom: `70px solid ${color}`,
-            transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`,
-            transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            zIndex: 50, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))'
-        }} />
-        <div style={{
-            position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)',
-            width: 16, height: 16, borderRadius: '50%',
-            background: 'radial-gradient(circle at 30% 30%, #555, #000)',
-            border: '2px solid #333', zIndex: 60, boxShadow: '0 2px 5px rgba(0,0,0,0.8)'
-        }}></div>
+        <div style={{ position: 'absolute', bottom: 0, left: '50%', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderBottom: `70px solid ${color}`, transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${angle}deg)`, transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', zIndex: 50, filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))' }} />
+        <div style={{ position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)', width: 16, height: 16, borderRadius: '50%', background: 'radial-gradient(circle at 30% 30%, #555, #000)', border: '2px solid #333', zIndex: 60, boxShadow: '0 2px 5px rgba(0,0,0,0.8)' }}></div>
     </>
 );
-
 const GaugeBezel = ({ children }: { children: React.ReactNode }) => (
-    <div style={{
-        position: 'relative', width: '180px', height: '100px', margin: '0 auto',
-        padding: '10px',
-        background: '#151515',
-        borderRadius: '90px 90px 0 0',
-        boxShadow: `inset 0 2px 5px rgba(255,255,255,0.2), 0 5px 15px rgba(0,0,0,0.8), 0 0 0 4px #2c3e50, 0 0 0 6px #555`,
-        overflow: 'hidden'
-    }}>{children}</div>
+    <div style={{ position: 'relative', width: '180px', height: '100px', margin: '0 auto', padding: '10px', background: '#151515', borderRadius: '90px 90px 0 0', boxShadow: `inset 0 2px 5px rgba(255,255,255,0.2), 0 5px 15px rgba(0,0,0,0.8), 0 0 0 4px #2c3e50, 0 0 0 6px #555`, overflow: 'hidden' }}>{children}</div>
 );
-
 const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: any) => {
     const pct = Math.max(0, Math.min(1, (value - min) / (max - min)));
     const angle = -90 + (pct * 180);
@@ -233,18 +230,8 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
         <div style={{ width: 180, margin: '0 auto' }}>
             <GaugeBezel>
                 <div style={{ position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, #222 0%, #000 90%)', boxShadow: 'inset 0 0 20px #000' }} />
-                <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
-                    background: `conic-gradient(from 270deg, #3498db 0deg 60deg, #2ecc71 60deg 120deg, #e74c3c 120deg 180deg, transparent 180deg)`,
-                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", mask: "radial-gradient(transparent 55%, black 56%)", WebkitMask: "radial-gradient(transparent 55%, black 56%)", opacity: 0.9
-                }}></div>
-                {[0, 1, 2, 3, 4].map(i => (
-                    <div key={i} style={{
-                        position: 'absolute', bottom: 0, left: '50%', width: 2, height: 80,
-                        background: 'linear-gradient(to bottom, #fff 8px, transparent 8px)',
-                        transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${-90 + (i / 4) * 180}deg)`, zIndex: 20, opacity: 0.8
-                    }} />
-                ))}
+                <div style={{ position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%', background: `conic-gradient(from 270deg, #3498db 0deg 60deg, #2ecc71 60deg 120deg, #e74c3c 120deg 180deg, transparent 180deg)`, clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", mask: "radial-gradient(transparent 55%, black 56%)", WebkitMask: "radial-gradient(transparent 55%, black 56%)", opacity: 0.9 }}></div>
+                {[0, 1, 2, 3, 4].map(i => (<div key={i} style={{ position: 'absolute', bottom: 0, left: '50%', width: 2, height: 80, background: 'linear-gradient(to bottom, #fff 8px, transparent 8px)', transformOrigin: 'bottom center', transform: `translateX(-50%) rotate(${-90 + (i / 4) * 180}deg)`, zIndex: 20, opacity: 0.8 }} />))}
                 <MustangNeedle angle={angle} color="#e74c3c" />
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '50%', background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)', borderRadius: '90px 90px 0 0', pointerEvents: 'none', zIndex: 100 }} />
             </GaugeBezel>
@@ -255,18 +242,13 @@ const SemiCircleGauge = ({ value, target, tol, label, unit, min, max, color }: a
         </div>
     )
 }
-
 const RainbowGauge = ({ value, target, tol }: any) => {
     const angle = -90 + (Math.max(0, Math.min(1, value / 14)) * 180);
     return (
         <div style={{ width: 180, margin: '0 auto' }}>
             <GaugeBezel>
                 <div style={{ position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, #222 0%, #000 90%)', boxShadow: 'inset 0 0 20px #000' }} />
-                <div style={{
-                    position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%',
-                    background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`,
-                    clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", mask: "radial-gradient(transparent 55%, black 56%)", WebkitMask: "radial-gradient(transparent 55%, black 56%)", opacity: 0.9
-                }}></div>
+                <div style={{ position: 'absolute', top: 10, left: 10, width: 160, height: 160, borderRadius: '50%', background: `conic-gradient(from 270deg, #e74c3c 0deg 51deg, #e67e22 51deg 77deg, #2ecc71 77deg 103deg, #3498db 103deg 128deg, #9b59b6 128deg 180deg, transparent 180deg)`, clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)", mask: "radial-gradient(transparent 55%, black 56%)", WebkitMask: "radial-gradient(transparent 55%, black 56%)", opacity: 0.9 }}></div>
                 <MustangNeedle angle={angle} color="#3498db" />
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '50%', background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, transparent 100%)', borderRadius: '90px 90px 0 0', pointerEvents: 'none', zIndex: 100 }} />
             </GaugeBezel>
@@ -277,7 +259,6 @@ const RainbowGauge = ({ value, target, tol }: any) => {
         </div>
     )
 }
-
 const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
     const pct = Math.max(0, Math.min(1, (value - min) / (max - min)));
     return (
@@ -300,99 +281,54 @@ const MustangVerticalGauge = ({ value, min, max, unit }: any) => {
     )
 }
 
-// --- Minimal Smart Bed Monitor (One-Line) ---
-const SmartBedMonitor = ({ sim }: any) => {
-    const deltaTemp = sim.env.airTemp - sim.env.bedTemp;
+// --- Tier Monitor Row ---
+const TierMonitorRow = ({ sim, index, tier }: any) => {
     const isAuto = sim.autoMode;
+    // Temp Gradient color: Blue (Bottom/Cold) -> Red (Top/Hot)
+    const tierColor = index === 0 ? "blue" : index === 4 ? "orange" : "gray";
 
     return (
-        <Paper p="xs" bg="#25262B" radius="md" withBorder style={{ borderColor: '#373A40' }}>
+        <Paper p="xs" bg="#25262B" radius="md" withBorder style={{ borderColor: '#373A40', marginBottom: 6 }}>
             <Group justify="space-between" wrap="nowrap">
-                {/* Label */}
-                <Group gap="xs">
-                    <ThemeIcon color={isAuto ? "green" : "teal"} variant="light" size="sm"><LayoutDashboard size={14} /></ThemeIcon>
-                    <Stack gap={0}>
-                        <Text fw={700} c="gray.5" size="sm" style={{ whiteSpace: 'nowrap' }}>Zone A</Text>
-                        {isAuto && <Text size={rem(9)} c="green">AUTO ACTIVE</Text>}
-                    </Stack>
+                {/* Lavel */}
+                <Group gap="xs" style={{ minWidth: 100 }}>
+                    <ThemeIcon color={tierColor} variant="light" size="sm"><Layers size={14} /></ThemeIcon>
+                    <Text fw={700} c="gray.5" size="sm">Tier {index + 1}</Text>
                 </Group>
 
-                {/* Data Strip */}
+                {/* Data */}
                 <Group gap="xl" style={{ flexGrow: 1, justifyContent: 'center' }}>
-
-                    {/* Air Section */}
                     <Group gap="xs">
-                        <ActionIcon variant="transparent" color="cyan" size="sm"><Wind size={16} /></ActionIcon>
+                        <ActionIcon variant="transparent" color="cyan" size="sm"><ThermometerSnowflake size={16} /></ActionIcon>
                         <div>
                             <Group gap={6} align="baseline">
-                                <Text size="sm" fw={700} c="white">{sim.env.airTemp.toFixed(1)}°</Text>
-                                <Text size="xs" c="dimmed" fw={700}>{sim.env.airHum.toFixed(0)}%</Text>
+                                <Text size="sm" fw={700} c="white">{tier.temp.toFixed(1)}°</Text>
+                                <Text size="xs" c="dimmed" fw={700}>{tier.hum.toFixed(0)}%</Text>
                             </Group>
                         </div>
-                        {/* CONTROLS: Air */}
-                        <Button.Group>
-                            <Button
-                                size="compact-xs"
-                                variant={sim.hvac.fan_circ ? "filled" : "default"}
-                                color="blue"
-                                disabled={isAuto}
-                                style={{ opacity: isAuto ? 0.6 : 1 }}
-                                onClick={() => sim.toggleHvac('fan_circ')}
-                            >
-                                Circ
-                            </Button>
-                            <Button
-                                size="compact-xs"
-                                variant={sim.hvac.fan_exh ? "filled" : "default"}
-                                color="orange"
-                                disabled={isAuto}
-                                style={{ opacity: isAuto ? 0.6 : 1 }}
-                                onClick={() => sim.toggleHvac('fan_exh')}
-                            >
-                                Exh
-                            </Button>
-                        </Button.Group>
                     </Group>
 
-                    {/* Delta Pill */}
-                    <Badge
-                        variant="outline" color={Math.abs(deltaTemp) > 3 ? "red" : "gray"}
-                        size="sm" radius="sm" style={{ textTransform: 'none', border: '1px solid #444' }}
+                    {/* Controls: Tier Fan */}
+                    <Button
+                        size="compact-xs"
+                        variant={tier.fan ? "filled" : "default"}
+                        color={tier.fan ? "green" : "gray"}
+                        disabled={isAuto}
+                        style={{ opacity: isAuto ? 0.6 : 1 }}
+                        onClick={() => sim.toggleTierFan(index)}
+                        leftSection={<Fan size={10} />}
                     >
-                        Δ {deltaTemp > 0 ? "+" : ""}{deltaTemp.toFixed(1)}
-                    </Badge>
-
-                    {/* Bed Section */}
-                    <Group gap="xs">
-                        <ActionIcon variant="transparent" color="teal" size="sm"><ThermometerSnowflake size={16} /></ActionIcon>
-                        <div>
-                            <Group gap={6} align="baseline">
-                                <Text size="sm" fw={700} c="white">{sim.env.bedTemp.toFixed(1)}°</Text>
-                                <Text size="xs" c="dimmed" fw={700}>{sim.env.bedHum.toFixed(0)}%</Text>
-                            </Group>
-                        </div>
-                        {/* CONTROLS: Bed */}
-                        <Button
-                            size="compact-xs"
-                            variant={sim.hvac.heater_bed ? "filled" : "default"}
-                            color="red" radius="xl"
-                            leftSection={<Zap size={10} />}
-                            disabled={isAuto}
-                            style={{ opacity: isAuto ? 0.6 : 1 }}
-                            onClick={() => sim.toggleHvac('heater_bed')}
-                        >
-                            Heat
-                        </Button>
-                    </Group>
-
+                        {tier.fan ? "FAN ON" : "FAN OFF"}
+                    </Button>
                 </Group>
 
                 {/* Status */}
-                <Badge color="dark" size="sm" variant="light">M-01</Badge>
+                <Badge color="dark" size="sm" variant="light">T-0{index + 1}</Badge>
             </Group>
         </Paper>
     );
 };
+
 
 export default function SimulatorPage() {
     const sim = useNutrientSimulator();
@@ -482,9 +418,12 @@ export default function SimulatorPage() {
                                 <Group justify="space-between">
                                     <Group gap="xs">
                                         <ThemeIcon color="orange" variant="light"><Zap size={16} /></ThemeIcon>
-                                        <Text fw={700} c="orange">SOLAR RADIATION SIMULATION</Text>
+                                        <Text fw={700} c="orange">SOLAR RADIATION & EXT. ENV</Text>
                                     </Group>
-                                    <Text fw={700} c="white">{sim.physics.solarRad} W/㎡</Text>
+                                    <Group gap="lg">
+                                        <Text fw={700} c="dimmed">EXT: {sim.env.externalTemp.toFixed(1)}°C</Text>
+                                        <Text fw={700} c="white">{sim.physics.solarRad} W/㎡</Text>
+                                    </Group>
                                 </Group>
                                 <Slider color="orange" size="lg" min={0} max={1200} step={100} defaultValue={500} onChange={sim.setSolar} label={(val) => `${val} W/㎡`} marks={[{ value: 0, label: 'Night' }, { value: 500, label: 'Cloudy' }, { value: 1000, label: 'Sunny' }]} styles={{ markLabel: { color: '#909296', fontSize: 10 } }} />
                             </Stack>
@@ -510,13 +449,33 @@ export default function SimulatorPage() {
                                 <Paper p="lg" bg="#25262B" radius="lg" withBorder style={{ borderColor: '#373A40', minHeight: 250, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                                     <Group justify="center" mb="md"><Text fw={700} c="dimmed">🌡️ TEMPERATURE</Text></Group>
                                     <MustangVerticalGauge value={sim.physics.displayTemp} min={0} max={40} unit="°C" />
-                                    <Center mt="md"><Group gap="xs"><Badge color={sim.actuators.chiller ? "blue" : "gray"} variant="filled">Chiller</Badge><Badge color="gray" variant="filled">Heater</Badge></Group></Center>
+                                    <Center mt="md">
+                                        <Group gap="xs">
+                                            <Button
+                                                size="compact-xs"
+                                                color={sim.actuators.chiller ? "blue" : "gray"}
+                                                variant={sim.actuators.chiller ? "filled" : "default"}
+                                                onClick={() => sim.toggleActuator('chiller')}
+                                            >
+                                                Chiller
+                                            </Button>
+                                            <Badge color="gray" variant="filled">Heater</Badge>
+                                        </Group>
+                                    </Center>
                                 </Paper>
                             </Grid.Col>
                         </Grid>
 
-                        {/* Minimal Smart Bed Monitor */}
-                        <SmartBedMonitor sim={sim} />
+                        {/* 5-Tier Stacking Monitor */}
+                        <div>
+                            <Group justify="space-between" mb="xs">
+                                <Text size="sm" fw={700} c="dimmed" style={{ letterSpacing: 1 }}>RACK 01 - VERTICAL MONITORING</Text>
+                                {sim.autoMode && <Badge size="sm" color="green" variant="light">AUTO BALANCING</Badge>}
+                            </Group>
+                            {sim.env.tiers.map((tier: any, i: number) => (
+                                <TierMonitorRow key={i} sim={sim} index={i} tier={tier} />
+                            ))}
+                        </div>
 
                     </Stack>
                 )}
