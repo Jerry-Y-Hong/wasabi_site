@@ -14,9 +14,10 @@ class NutrientSimulator:
         self.total_b_dosed = 0.0
         self.raw_water_level = 500.0
         self.tank_level = 0.0        
-        self.tank_a_level = 20.0
-        self.tank_b_level = 20.0
-        self.tank_c_level = 20.0
+        self.tank_max_capacity = 80.0
+        self.tank_a_level = 10.0
+        self.tank_b_level = 10.0
+        self.tank_c_level = 10.0
         self.real_ph = 7.0       
         self.sensor_ph = 7.0     
         self.ph_wait_timer = 0   
@@ -33,8 +34,11 @@ class NutrientSimulator:
         self.actuators = {"Raw Pump": False, "Sand Filter": False, "UV Lamp": True, "Supply Pump": False, "Mixing Pump": False, "Inlet Valve": False, "Chiller": False, "Valve A": 0.0, "Valve B": 0.0, "Acid Valve": 0.0}
         self.auto_mode = True
         self.state = "IDLE"
-        self.sub_state = ""
+        self.sub_state = "SYSTEM READY"
+        self.alarms = []
         self.safety_lock = False
+        self.maintenance_mode = False
+        self.last_update = time.time()
 
     def update(self):
         if self.actuators["Raw Pump"]: self.raw_water_level = min(1000, self.raw_water_level + 2.0)
@@ -45,7 +49,7 @@ class NutrientSimulator:
                 if self.tank_level > 0:
                     self.ec = (self.ec * (self.tank_level-0.5) + 0.5*0.5) / self.tank_level
                     self.real_ph = (self.real_ph * (self.tank_level-0.5) + 7.0*0.5) / self.tank_level
-        if self.actuators["Supply Pump"]: self.tank_level = max(0, min(200, self.tank_level - 0.5))
+        if self.actuators["Supply Pump"]: self.tank_level = max(0, min(self.tank_max_capacity, self.tank_level - 0.5))
         ambient_temp = 20 + (self.solar_rad / 100)
         if self.actuators["Chiller"]: self.temp -= 0.1
         else: self.temp += (ambient_temp - self.temp) * 0.005
@@ -70,87 +74,73 @@ class NutrientSimulator:
         if self.auto_mode: self.run_logic()
             
     def run_logic(self):
-        if self.raw_water_level < 200: self.actuators["Raw Pump"] = True
-        elif self.raw_water_level > 900: self.actuators["Raw Pump"] = False
+        # 1. Critical Alarm Check (Bulkhead Fail-Safe)
+        self.alarms = []
+        if self.temp > 22.0: self.alarms.append("HIGH_TEMP_CRITICAL")
+        if self.tank_level > 78.0: self.alarms.append("LEVEL_OVERFLOW_RISK")
+        if self.tank_a_level < 0.5: self.alarms.append("SOL_A_LOW")
+        
+        # 2. Environmental Compensation (Wasabi Specific)
         if self.solar_rad > 700: 
             self.target_ec = 2.4
-            self.log_msg = "Mode: Sunny (High EC)"
+            self.log_msg = "Climate: High Transpiration"
         elif self.solar_rad > 300: 
             self.target_ec = 2.0
-            self.log_msg = "Mode: Normal"
+            self.log_msg = "Climate: Steady Growth"
         else: 
             self.target_ec = 1.6
-            self.log_msg = "Mode: Low Light"
-        if self.display_temp > self.target_temp + self.tol_temp: self.actuators["Chiller"] = True
-        elif self.display_temp < self.target_temp - 0.5: self.actuators["Chiller"] = False
+            self.log_msg = "Climate: Energy Saving"
+
+        # 3. Thermal Management (PID-like Hysteresis)
+        if self.display_temp > self.target_temp + 0.5: self.actuators["Chiller"] = True
+        elif self.display_temp < self.target_temp: self.actuators["Chiller"] = False
+
+        # 4. State Machine Logic
         ec_error = self.target_ec - self.display_ec
         ph_error = self.display_ph - self.target_ph 
+        
+        if self.state == "IDLE":
+            self.stop_all_dosing()
+            if self.tank_level < 15.0: self.state = "FILLING"
+            
+        elif self.state == "FILLING":
+            self.sub_state = "Replenishing Raw Water"
+            self.actuators["Inlet Valve"] = True
+            if self.tank_level >= 50.0: # Fill to 50L before dosing
+                self.actuators["Inlet Valve"] = False
+                self.state = "DOSING"
+                
+        elif self.state == "DOSING":
+            self.actuators["Mixing Pump"] = True
+            self.process_dosing(ec_error, ph_error)
+            
+            # Transition to Supply if stable for 5 seconds
+            if abs(ec_error) < 0.05 and abs(ph_error) < 0.05:
+                self.state = "SUPPLYING"
+                
+        elif self.state == "SUPPLYING":
+            self.sub_state = "Distributing to Grow Units"
+            self.actuators["Supply Pump"] = True
+            self.actuators["UV Lamp"] = True
+            if self.tank_level < 10.0: self.state = "IDLE"
+
+    def stop_all_dosing(self):
         self.actuators["Valve A"] = 0.0
         self.actuators["Valve B"] = 0.0
         self.actuators["Acid Valve"] = 0.0
-        self.safety_lock = False
-        self.sub_state = ""
-        if self.state == "DOSING":
-            if self.dosing_start_time == 0: self.dosing_start_time = time.time()
-            self.dosing_duration = time.time() - self.dosing_start_time
-            self.actuators["Mixing Pump"] = True
-            
-            # --- EMERGENCY DILUTION LOGIC (Added V12.0) ---
-            # Condition: EC too High (ec_error negative large) OR pH too Low (ph_error negative large)
-            is_ec_high = ec_error < -(self.tol_ec) 
-            is_ph_low = ph_error < -(self.tol_ph) # pH dropped too much
-            
-            if is_ec_high or is_ph_low:
-                if self.tank_level < 195: # Can dilute
-                    self.sub_state = "⚠️ DILUTING (Overshoot)"
-                    self.actuators["Inlet Valve"] = True
-                    self.safety_lock = True
-                else:
-                    self.sub_state = "🚨 ALARM: TANK FULL"
-                    self.safety_lock = True # Stuck, needs manual drain
-            
-            # --- Normal Control Logic ---
-            elif self.ph_wait_timer > 0:
-                self.ph_wait_timer -= 1
-                self.sub_state = f"⏳ pH Reacting... ({self.ph_wait_timer})"
-                self.safety_lock = True 
-            elif ph_error > (self.tol_ph * 0.2):
-                self.sub_state = "Acid Dosing (Pulse)"
-                self.actuators["Acid Valve"] = 1.0 
-                self.ph_wait_timer = 30 
-                self.safety_lock = True
-            elif ec_error > (self.tol_ec * 0.2):
-                tick = int(time.time() * 2) 
-                if tick % 2 == 0:
-                    self.sub_state = "A-Sol Injecting"
-                    self.actuators["Valve A"] = 1.0 if ec_error > 0.5 else 0.2
-                else:
-                    self.sub_state = "B-Sol Injecting"
-                    self.actuators["Valve B"] = 1.0 if ec_error > 0.5 else 0.2
-                self.safety_lock = True
-            else:
-                self.sub_state = "Stabilizing"
 
-            # Completion Check (Must be fully within tolerance)
-            ec_ok = abs(ec_error) < 0.1
-            ph_ok = abs(ph_error) < 0.1
-            if ec_ok and ph_ok and self.ph_wait_timer == 0 and not (is_ec_high or is_ph_low):
-                self.state = "SUPPLYING"
-                self.dosing_start_time = 0 
-        if self.state == "IDLE":
-            self.dosing_duration = 0
-            self.actuators["Mixing Pump"] = False
-            self.actuators["Supply Pump"] = False
-            if self.tank_level < 20: self.state = "FILLING"
-        elif self.state == "FILLING":
-            self.actuators["Inlet Valve"] = True
-            if self.tank_level >= 160:
-                self.actuators["Inlet Valve"] = False
-                self.state = "DOSING"
-        elif self.state == "SUPPLYING":
-            self.actuators["Mixing Pump"] = True
-            self.actuators["Supply Pump"] = True
-            if self.tank_level < 20: self.state = "IDLE"
+    def process_dosing(self, ec_err, ph_err):
+        # PWM-like Dosing Control
+        if ph_err > 0.1: # pH too high, add acid
+            self.actuators["Acid Valve"] = 0.8
+            self.sub_state = "Neutralizing pH..."
+        elif ec_err > 0.1: # EC too low, add nutrients
+            self.sub_state = "Injecting A/B Solutions"
+            self.actuators["Valve A"] = 0.5
+            self.actuators["Valve B"] = 0.5
+        else:
+            self.stop_all_dosing()
+            self.sub_state = "Stabilizing Solution"
 
     def manual_toggle(self, name):
         if not self.auto_mode:
@@ -337,7 +327,7 @@ class NutrientHMI:
     def __init__(self, root):
         self.root = root
         self.sim = NutrientSimulator()
-        self.root.title("KF-NUTRI 11.0 (Sleek Semicircle EC)")
+        self.root.title("K-FARM HMI | Master Edition 2026")
         self.root.geometry("1400x900")
         self.root.configure(bg="#2c3e50")
         self.setup_ui()
@@ -346,7 +336,7 @@ class NutrientHMI:
     def setup_ui(self):
         header = tk.Frame(self.root, bg="#34495e", height=80)
         header.pack(fill="x")
-        tk.Label(header, text="K-WASABI Integrated Control", font=("Arial", 24, "bold"), fg="white", bg="#34495e").pack(side="left", padx=20, pady=15)
+        tk.Label(header, text="K-FARM Integrated Control", font=("Arial", 24, "bold"), fg="white", bg="#34495e").pack(side="left", padx=20, pady=15)
         self.mode_btn = tk.Button(header, text="AUTO MODE", font=("Arial", 12, "bold"), bg="#2ecc71", fg="white", width=15, command=self.toggle_mode)
         self.mode_btn.pack(side="right", padx=20, pady=20)
         
@@ -506,14 +496,14 @@ class NutrientHMI:
         self.lbl_env_dash.config(text=self.sim.log_msg)
         self.lbl_state_dash.config(text=self.sim.state)
         self.lbl_substate_dash.config(text=self.sim.sub_state)
-        h = (self.sim.tank_level / 200) * 300
+        h = (self.sim.tank_level / self.sim.tank_max_capacity) * 300
         self.tank_main_canvas.coords(self.tank_main_fill, 0, 300 - h, 200, 300)
         self.main_tank_lbl.config(text=f"{int(self.sim.tank_level)}L")
-        h_a = (self.sim.tank_a_level / 20) * 100
+        h_a = (self.sim.tank_a_level / 10) * 100
         self.tank_a_ui["canvas"].coords(self.tank_a_ui["fill"], 0, 100-h_a, 50, 100)
-        h_b = (self.sim.tank_b_level / 20) * 100
+        h_b = (self.sim.tank_b_level / 10) * 100
         self.tank_b_ui["canvas"].coords(self.tank_b_ui["fill"], 0, 100-h_b, 50, 100)
-        h_c = (self.sim.tank_c_level / 20) * 100
+        h_c = (self.sim.tank_c_level / 10) * 100
         self.tank_c_ui["canvas"].coords(self.tank_c_ui["fill"], 0, 100-h_c, 50, 100)
         self.lbl_timer.config(text=f"Time: {self.sim.dosing_duration:.1f}s")
         self.lbl_total_dose.config(text=f"A: {self.sim.total_a_dosed:.2f}L | B: {self.sim.total_b_dosed:.2f}L")

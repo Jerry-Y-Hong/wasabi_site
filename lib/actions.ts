@@ -414,7 +414,7 @@ async function writeDb(filename: string, data: any[]) {
             return { success: true };
         } catch (error) {
             console.error(`[WriteDb] Error:`, error);
-            return { success: false, warning: 'Save failed (FS Error)' };
+            return { success: false, error: '저장 실패 (파일 시스템 오류)' };
         }
     } else {
         // Local
@@ -430,7 +430,7 @@ async function writeDb(filename: string, data: any[]) {
             return { success: true };
         } catch (error) {
             console.error('File write failed:', error);
-            return { success: true, warning: 'Save failed (FS Error)' };
+            return { success: false, error: '저장 실패 (로컬 디스크 오류)' };
         }
     }
 }
@@ -1148,5 +1148,69 @@ export async function importPartnersBulk(partners: any[]) {
     } catch (error) {
         console.error('Bulk import error:', error);
         return { success: false, error: 'Failed to import partners.' };
+    }
+}
+export async function getHardwareBom() {
+    try {
+        return await readDb('hardware_bom.json');
+    } catch (error) {
+        console.error('getHardwareBom error:', error);
+        return [];
+    }
+}
+
+export async function saveHardwarePart(data: any) {
+    try {
+        const currentData = await readDb('hardware_bom.json');
+        const newEntry = {
+            ...data,
+            id: Date.now(),
+            updatedAt: new Date().toISOString(),
+        };
+        currentData.push(newEntry);
+        const res = await writeDb('hardware_bom.json', currentData);
+
+        revalidatePath('/smartfarm/hardware');
+        revalidatePath('/admin/hardware');
+
+        return res;
+    } catch (error) {
+        console.error('saveHardwarePart error:', error);
+        return { success: false, error: '서버 저장 중 오류가 발생했습니다.' };
+    }
+}
+
+export async function updateHardwarePart(id: number, data: any) {
+    try {
+        const currentData = await readDb('hardware_bom.json');
+        const index = currentData.findIndex((item: any) => item.id === id);
+        if (index !== -1) {
+            currentData[index] = { ...currentData[index], ...data, updatedAt: new Date().toISOString() };
+            const res = await writeDb('hardware_bom.json', currentData);
+            revalidatePath('/smartfarm/hardware');
+            revalidatePath('/admin/hardware');
+            return res;
+        }
+        return { success: false, error: '해당 항목을 찾을 수 없습니다.' };
+    } catch (error) {
+        console.error('updateHardwarePart error:', error);
+        return { success: false, error: '서버 수정 중 오류가 발생했습니다.' };
+    }
+}
+
+export async function deleteHardwarePart(id: number | string) {
+    try {
+        const currentData = await readDb('hardware_bom.json');
+        const newData = currentData.filter((item: any) => String(item.id) !== String(id));
+        if (newData.length !== currentData.length) {
+            const res = await writeDb('hardware_bom.json', newData);
+            revalidatePath('/smartfarm/hardware');
+            revalidatePath('/admin/hardware');
+            return res;
+        }
+        return { success: false, error: '삭제할 항목을 찾을 수 없습니다.' };
+    } catch (error) {
+        console.error('deleteHardwarePart error:', error);
+        return { success: false, error: '서버 삭제 중 오류가 발생했습니다.' };
     }
 }

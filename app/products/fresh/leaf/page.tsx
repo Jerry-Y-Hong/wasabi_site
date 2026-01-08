@@ -54,10 +54,10 @@ export default function LeafPage() {
                             }
                             mt="xl"
                         >
-                            <List.Item>10~14일 주기 신선 수확 시스템</List.Item>
-                            <List.Item>잎 폭 10~15cm 최적 규격 선별</List.Item>
-                            <List.Item>무농약 수경재배 (pesticide-free)</List.Item>
-                            <List.Item>고기 쌈, 장아찌, 샐러드용 최적화</List.Item>
+                            <List.Item>{t('prod_fresh_leaf_1')}</List.Item>
+                            <List.Item>{t('prod_fresh_leaf_2')}</List.Item>
+                            <List.Item>{t('prod_fresh_leaf_3')}</List.Item>
+                            <List.Item>{t('prod_fresh_leaf_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

@@ -1,21 +1,23 @@
 'use client';
-
 import { Container, Group, Anchor, Text, Stack, Image, ActionIcon } from '@mantine/core';
 import { IconBrandTwitterFilled, IconBrandYoutubeFilled, IconBrandInstagram, IconBrandX, IconArticle } from '@tabler/icons-react';
 import classes from './Footer.module.css';
 import { useTranslation } from '@/lib/i18n';
+import Link from 'next/link';
 
 export function Footer() {
     const { t } = useTranslation();
 
     const links = [
+        { link: '/', label: t('nav_home') },
         { link: '/contact', label: t('nav_contact') },
-        { link: '/privacy', label: 'Privacy' },
-        { link: '/blog', label: 'Blog' },
+        { link: '/privacy', label: t('footer_privacy') },
+        { link: '/blog', label: t('footer_blog') },
     ];
 
     const items = links.map((link) => (
         <Anchor
+            component={Link}
             c="dimmed"
             key={link.label}
             href={link.link}
@@ -30,7 +32,9 @@ export function Footer() {
         <div className={classes.footer}>
             <Container className={classes.inner} size="xl">
                 <Group gap="md">
-                    <Image src="/images/logo.jpg?v=100" alt="Logo" h={80} w="auto" className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
+                    <Link href="/">
+                        <Image src="/images/logo.jpg?v=100" alt="Logo" h={80} w="auto" className={classes.logo} style={{ borderRadius: '50%', border: '2px solid white', objectFit: 'cover' }} />
+                    </Link>
                     <Stack gap={0}>
                         <Text size="lg" fw={800} c="wasabi.8">K-Farm Group / Wasabi Div.</Text>
                         <Text size="xs" c="gray.6" fw={500}>{t('footer_addr')}</Text>

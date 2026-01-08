@@ -22,7 +22,7 @@ export function TranslationWidget() {
 
     return (
         <Group gap={0} align="center">
-            <Select
+            <Select id="translation-widget"
                 data={LANGUAGES}
                 value={language}
                 onChange={(val) => setLanguage(val as any)}

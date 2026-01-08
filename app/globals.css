@@ -41,3 +41,16 @@ body {
   transform: translateY(-8px);
   box-shadow: var(--mantine-shadow-xl);
 }
+
+/* Force Pointer Cursor on Interactive Elements */
+button,
+[role="button"],
+.mantine-ActionIcon-root,
+.mantine-Button-root,
+.mantine-UnstyledButton-root,
+.mantine-Select-input,
+.mantine-Select-option,
+.mantine-Menu-item,
+a {
+  cursor: pointer !important;
+}

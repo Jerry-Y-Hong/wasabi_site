@@ -54,10 +54,10 @@ export default function StemPage() {
                             }
                             mt="xl"
                         >
-                            <List.Item>매일 아침 당일 수확 및 발송</List.Item>
-                            <List.Item>독보적인 아삭한 식감 (궁채나물 유사)</List.Item>
-                            <List.Item>길이 20~30cm 규격 선별</List.Item>
-                            <List.Item>장아찌, 면 요리 토핑, 특제 소스용</List.Item>
+                            <List.Item>{t('prod_fresh_stem_1')}</List.Item>
+                            <List.Item>{t('prod_fresh_stem_2')}</List.Item>
+                            <List.Item>{t('prod_fresh_stem_3')}</List.Item>
+                            <List.Item>{t('prod_fresh_stem_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

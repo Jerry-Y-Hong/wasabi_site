@@ -53,10 +53,10 @@ export default function QCPage() {
                                 </ThemeIcon>
                             }
                         >
-                            <List.Item>RT-PCR 바이러스 정밀 검사</List.Item>
-                            <List.Item>S등급 규격 선별 (잎 4-5매, 뿌리 5cm↑)</List.Item>
-                            <List.Item>유전적 순도 및 변이 개체 선별</List.Item>
-                            <List.Item>출하 전 전수 검사 시스템</List.Item>
+                            <List.Item>{t('prod_qc_1')}</List.Item>
+                            <List.Item>{t('prod_qc_2')}</List.Item>
+                            <List.Item>{t('prod_qc_3')}</List.Item>
+                            <List.Item>{t('prod_qc_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

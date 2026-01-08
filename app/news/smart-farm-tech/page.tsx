@@ -32,18 +32,33 @@ import { useTranslation } from '@/lib/i18n';
 import { useState, useEffect } from 'react';
 
 const PILLAR_ICONS: Record<string, any> = {
-    '건축 및 설계': IconBuildingSkyscraper,
-    '재배 시스템': IconBuildingSkyscraper,
-    '배지 솔루션': IconBuildingSkyscraper,
-    '냉난방 설비': IconWind,
-    '공조 시스템': IconWind,
-    '기류 제어': IconWind,
-    '양액 기계': IconDroplet,
-    '관수 설비': IconDroplet,
-    '인공 광원': IconDroplet,
-    '운영 SW': IconRobot,
-    'IoT 하드웨어': IconRobot,
-    '로봇/자동화': IconRobot
+    'news_cat_arch': IconBuildingSkyscraper,
+    'news_cat_sys': IconBuildingSkyscraper,
+    'news_cat_medium': IconBuildingSkyscraper,
+    'news_cat_hvac1': IconWind,
+    'news_cat_hvac2': IconWind,
+    'news_cat_airflow': IconWind,
+    'news_cat_nutrient': IconDroplet,
+    'news_cat_irrigation': IconDroplet,
+    'news_cat_lighting': IconDroplet,
+    'news_cat_sw': IconRobot,
+    'news_cat_iot': IconRobot,
+    'news_cat_robot': IconRobot
+};
+
+const CATEGORY_MAP: Record<string, string> = {
+    '건축 및 설계': 'news_cat_arch',
+    '재배 시스템': 'news_cat_sys',
+    '배지 솔루션': 'news_cat_medium',
+    '냉난방 설비': 'news_cat_hvac1',
+    '공조 시스템': 'news_cat_hvac2',
+    '기류 제어': 'news_cat_airflow',
+    '양액 기계': 'news_cat_nutrient',
+    '관수 설비': 'news_cat_irrigation',
+    '인공 광원': 'news_cat_lighting',
+    '운영 SW': 'news_cat_sw',
+    'IoT 하드웨어': 'news_cat_iot',
+    '로봇/자동화': 'news_cat_robot'
 };
 
 export default function TechSpotlightPage() {
@@ -87,7 +102,8 @@ export default function TechSpotlightPage() {
             ) : partners.length > 0 ? (
                 <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="xl">
                     {partners.map((p) => {
-                        const Icon = PILLAR_ICONS[p.category] || IconRocket;
+                        const catKey = CATEGORY_MAP[p.category] || '';
+                        const Icon = PILLAR_ICONS[catKey] || IconRocket;
                         return (
                             <Card key={p.id} withBorder shadow="md" radius="lg" p="xl" style={{ transition: 'transform 0.2s', cursor: 'default' }}
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
@@ -103,7 +119,9 @@ export default function TechSpotlightPage() {
 
                                     <div>
                                         <Title order={3} mb={4}>{p.name}</Title>
-                                        <Badge size="xs" color="green" variant="light">{p.category}</Badge>
+                                        <Badge size="xs" color="green" variant="light">
+                                            {t((CATEGORY_MAP[p.category] || 'tech_spotlight_title') as any)}
+                                        </Badge>
                                     </div>
 
                                     {p.aiSummary?.analysis && (

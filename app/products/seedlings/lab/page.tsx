@@ -53,10 +53,10 @@ export default function LabPage() {
                                 </ThemeIcon>
                             }
                         >
-                            <List.Item>생장점(Meristem) 0.3mm 정밀 적출</List.Item>
-                            <List.Item>HEPA 필터 클린룸 (ISO Class 5)</List.Item>
-                            <List.Item>바이러스 프리(Virus-Free) 캘러스 유도</List.Item>
-                            <List.Item>최적 배지 조성을 통한 다신초 대량 증식</List.Item>
+                            <List.Item>{t('prod_lab_1')}</List.Item>
+                            <List.Item>{t('prod_lab_2')}</List.Item>
+                            <List.Item>{t('prod_lab_3')}</List.Item>
+                            <List.Item>{t('prod_lab_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

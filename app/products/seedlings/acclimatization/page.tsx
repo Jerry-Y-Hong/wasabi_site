@@ -53,10 +53,10 @@ export default function AcclimatizationPage() {
                                 </ThemeIcon>
                             }
                         >
-                            <List.Item>4주간의 단계적 순화 (Hardening)</List.Item>
-                            <List.Item>스마트 미스트 습도 제어 (95% → 60%)</List.Item>
-                            <List.Item>LED 광량 조절을 통한 광합성 효율 최적화</List.Item>
-                            <List.Item>뿌리 활착력 및 스트레스 저항성 강화</List.Item>
+                            <List.Item>{t('prod_acc_1')}</List.Item>
+                            <List.Item>{t('prod_acc_2')}</List.Item>
+                            <List.Item>{t('prod_acc_3')}</List.Item>
+                            <List.Item>{t('prod_acc_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

@@ -2,7 +2,7 @@
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar, Grid, Divider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
             <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
                 <Card withBorder radius="md" p="lg" bg="white">
                     <Title order={4} mb="md" c="dimmed" tt="uppercase" size="xs" fw={700}>{t('admin_dash_quick_actions')}</Title>
-                    <SimpleGrid cols={2}>
+                    <SimpleGrid cols={3} spacing="sm">
                         <Button component={Link} href="/admin/studio" variant="light" color="orange" fullWidth leftSection={<IconMovie size={16} />}>
                             {t('admin_dash_action_video')}
                         </Button>
@@ -175,6 +175,9 @@ export default function AdminDashboard() {
                         </Button>
                         <Button component={Link} href="/admin/inventory" variant="light" color="cyan" fullWidth leftSection={<IconBox size={16} />}>
                             {t('admin_dash_action_inventory')}
+                        </Button>
+                        <Button component={Link} href="/admin/hardware" variant="light" color="teal" fullWidth leftSection={<IconTools size={16} />}>
+                            {t('admin_dash_action_hardware')}
                         </Button>
                     </SimpleGrid>
                 </Card>

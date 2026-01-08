@@ -1,12 +1,12 @@
 'use client';
-
-import { Container, Group, Burger, Drawer, Stack, Text, Box, Image, Menu } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Container, Group, Burger, Drawer, Stack, Text, Box, Image, Menu, Affix, Transition, Button as MantineButton, ActionIcon, Tooltip, rem } from '@mantine/core';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { TranslationWidget } from './TranslationWidget';
 import classes from './Header.module.css';
 import { useTranslation, dictionary } from '@/lib/i18n';
+import { IconHome, IconArrowUp } from '@tabler/icons-react';
 
 export function Header() {
     const [opened, { toggle, close }] = useDisclosure(false);
@@ -14,7 +14,7 @@ export function Header() {
     const pathname = usePathname();
 
     const links = [
-        { link: '/', label: t('nav_home') },
+        { link: '/', label: t('nav_home'), icon: <IconHome size={16} /> },
         { link: '/products/seedlings', label: t('nav_seedlings') },
         { link: '/cultivation', label: t('nav_cultivation') },
         { link: '/products/fresh', label: t('nav_products') },
@@ -24,20 +24,27 @@ export function Header() {
             label: t('nav_news'),
             submenu: [
                 { link: '/news', label: t('nav_news_all') },
-                { link: '/news/smart-farm-tech', label: t('nav_news_tech') },
+                { link: '/smartfarm', label: t('sf_hub_title') },
+                { link: '/smartfarm/rda-api', label: t('sf_rda_title') },
+                { link: '/smartfarm/hardware', label: t('sf_hw_title') },
+                { link: '/smartfarm/roadmap', label: t('sf_rd_title') },
+                { link: '/smartfarm/hardware', label: t('nav_au_prime') },
             ],
         },
+        { link: '/smartfarm/modular', label: t('nav_modular') },
         { link: '/partnership', label: t('nav_partnership') },
         { link: '/consulting', label: t('nav_consulting') },
-        { link: '/simulator', label: 'Simulator' },
-        { link: 'https://k-hamp-div.vercel.app', label: 'Hemp Div.', external: true },
+        { link: '/solutions/control-system', label: t('nav_control_system') },
+        { link: '/simulator', label: t('nav_simulator') },
+        { link: 'https://k-hamp-div.vercel.app', label: t('nav_hemp'), external: true },
         { link: '/contact', label: t('nav_contact') },
     ];
 
     const items = links.map((link, idx) => {
         if (link.submenu) {
+            // ... (submenu logic remains same)
             return (
-                <Menu key={idx} shadow="md" width={200} trigger="hover" openDelay={100} closeDelay={400}>
+                <Menu key={idx} id={link.label.replace(/\s+/g, '-').toLowerCase()} shadow="md" width={200} trigger="hover" openDelay={100} closeDelay={400}>
                     <Menu.Target>
                         <Link
                             href={link.link}
@@ -52,7 +59,10 @@ export function Header() {
                                 color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined
                             }}
                         >
-                            {link.label}
+                            <Group gap={4} wrap="nowrap">
+                                {link.icon}
+                                {link.label}
+                            </Group>
                         </Link>
                     </Menu.Target>
                     <Menu.Dropdown>
@@ -65,49 +75,38 @@ export function Header() {
                 </Menu>
             );
         }
-        if (link.label === 'Hemp Div.') {
-            return (
-                <Link
-                    key={idx}
-                    href={link.link}
-                    className={classes.link}
-                    target="_blank"
-                    style={{
-                        fontSize: '12px',
-                        padding: '8px 12px',
-                        fontWeight: 800,
-                        whiteSpace: 'nowrap',
-                        backgroundColor: '#4ade80', // Hamp Green
-                        color: 'black',
-                        borderRadius: '20px',
-                        marginLeft: '10px'
-                    }}
-                >
-                    {link.label}
-                </Link>
-            );
-        }
 
+        // (Other link types logic)
         return (
             <Link
                 key={idx}
                 href={link.link}
                 className={classes.link}
                 onClick={close}
+                target={link.external ? "_blank" : undefined}
                 data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
                 style={{
                     fontSize: '12px',
-                    padding: '8px 5px',
+                    padding: '8px 12px',
                     fontWeight: 800,
                     whiteSpace: 'nowrap',
-                    backgroundColor: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined,
-                    color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined
+                    backgroundColor: link.link === 'https://k-hamp-div.vercel.app' ? '#4ade80' :
+                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined),
+                    color: link.link === 'https://k-hamp-div.vercel.app' ? 'black' :
+                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined),
+                    borderRadius: link.link === 'https://k-hamp-div.vercel.app' ? '20px' : 'var(--mantine-radius-md)',
+                    marginLeft: link.link === 'https://k-hamp-div.vercel.app' ? '10px' : '0'
                 }}
             >
-                {link.label}
+                <Group gap={4} wrap="nowrap">
+                    {link.icon}
+                    {link.label}
+                </Group>
             </Link>
         );
     });
+
+    const [scroll, scrollTo] = useWindowScroll();
 
     return (
         <header className={classes.header}>
@@ -148,7 +147,7 @@ export function Header() {
                     </Group>
                 </div>
 
-                <Drawer opened={opened} onClose={close} size="100%" padding="md" title="Menu" hiddenFrom="lg" zIndex={1000000}>
+                <Drawer opened={opened} onClose={close} size="100%" padding="md" title={t('menu_title')} hiddenFrom="lg" zIndex={1000000}>
                     <Stack>
                         {links.map((link, idx) => (
                             <Box key={idx}>
@@ -158,7 +157,10 @@ export function Header() {
                                     onClick={close}
                                     style={{ fontSize: '16px', fontWeight: 800, display: 'block', padding: '10px 0' }}
                                 >
-                                    {link.label}
+                                    <Group gap="sm">
+                                        {link.icon}
+                                        {link.label}
+                                    </Group>
                                 </Link>
                                 {link.submenu && (
                                     <Stack gap={4} pl="md" mt={4}>
@@ -179,6 +181,40 @@ export function Header() {
                     </Stack>
                 </Drawer>
             </Container>
+
+            {/* Floating Navigation Buttons */}
+            <Affix position={{ bottom: 20, right: 20 }}>
+                <Transition transition="slide-up" mounted={scroll.y > 200}>
+                    {(transitionStyles) => (
+                        <Stack gap="xs" style={transitionStyles}>
+                            <Tooltip label={t('nav_home_tooltip')} position="left" withArrow>
+                                <ActionIcon
+                                    component={Link}
+                                    href="/"
+                                    size="xl"
+                                    radius="xl"
+                                    color="wasabi.7"
+                                    variant="filled"
+                                >
+                                    <IconHome size={rem(24)} />
+                                </ActionIcon>
+                            </Tooltip>
+
+                            <Tooltip label={t('nav_top_tooltip')} position="left" withArrow>
+                                <ActionIcon
+                                    onClick={() => scrollTo({ y: 0 })}
+                                    size="lg"
+                                    radius="xl"
+                                    color="gray"
+                                    variant="light"
+                                >
+                                    <IconArrowUp size={rem(20)} />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Stack>
+                    )}
+                </Transition>
+            </Affix>
         </header >
     );
 }

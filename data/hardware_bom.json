@@ -1,0 +1,122 @@
+[
+  {
+    "id": 101,
+    "category": "Structure",
+    "name": "알루미늄 프로필 2020 (Black)",
+    "spec": "아노다이징 블랙, 1500mm/600mm 혼합 세트",
+    "maker": "표준규격",
+    "price": 85000,
+    "quantity": 1,
+    "unit": "SET",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 102,
+    "category": "Structure",
+    "name": "3-Way 코너 브라켓 & 볼트 세트",
+    "spec": "2020용 다이캐스팅, M5 볼트/T-너트 포함",
+    "maker": "표준규격",
+    "price": 45000,
+    "quantity": 1,
+    "unit": "SET",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 103,
+    "category": "Bottom Hub",
+    "name": "슬림 양액 순환 탱크 (15L)",
+    "spec": "PE 재질, 300H 최적화 슬림형",
+    "maker": "K-FARM Custom",
+    "price": 35000,
+    "quantity": 1,
+    "unit": "EA",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 104,
+    "category": "Bottom Hub",
+    "name": "저소음 순환 펌프 (DC 24V)",
+    "spec": "무소음 설계, 맥동 방지 고무링 포함",
+    "maker": "K-FARM OEM",
+    "price": 28000,
+    "quantity": 1,
+    "unit": "EA",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 105,
+    "category": "Electronics",
+    "name": "통합 제어 보드 (Smart Hub)",
+    "spec": "온습도 연동, Wi-Fi 지원, 펌프/LED 제어",
+    "maker": "K-FARM Tech",
+    "price": 125000,
+    "quantity": 1,
+    "unit": "EA",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 106,
+    "category": "Cultivation",
+    "name": "전용 재배 트레이 (600)",
+    "spec": "ABS 식품등급, 슬라이딩 구조, 급배수홀 가공",
+    "maker": "K-FARM Custom",
+    "price": 35000,
+    "quantity": 2,
+    "unit": "EA",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 107,
+    "category": "Cultivation",
+    "name": "식물용 LED 바 (600mm)",
+    "spec": "Full Spectrum, 고연색성(CRI 95+), IP65",
+    "maker": "Samsung LED Chip",
+    "price": 65000,
+    "quantity": 2,
+    "unit": "EA",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 108,
+    "category": "Exterior",
+    "name": "마그네틱 우드 패널 세트",
+    "spec": "천연 월넛 무늬목, 자석 브라켓 일체형",
+    "maker": "K-FARM Interior",
+    "price": 185000,
+    "quantity": 1,
+    "unit": "SET",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 109,
+    "category": "Exterior",
+    "name": "고투명 강화 유리 (전면)",
+    "spec": "5mm 강화, 비산 방지 필름 처리",
+    "maker": "표준규격",
+    "price": 95000,
+    "quantity": 1,
+    "unit": "SET",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  },
+  {
+    "id": 110,
+    "category": "Electronics",
+    "name": "시스템 환기 팬 블록",
+    "spec": "80mm 저소음 팬 x 2, 필터 포함",
+    "maker": "Standard",
+    "price": 18000,
+    "quantity": 1,
+    "unit": "SET",
+    "currency": "KRW",
+    "updatedAt": "2026-01-08T00:20:00Z"
+  }
+]

@@ -1,7 +1,6 @@
-# 스마트팜 양액공급기 핵심 부품 리스트 (BOM - Bill of Materials)
-**Project:** KF-NUTRI-2026 (Mixing Tank Type + Recycling Support)
-**Version:** 1.1 (Updated: Temperature & Level Control)
-**Date:** 2026-01-06
+**Project:** KF-SMARTFARM-SERIES (Industrial & Modular)
+**Version:** 1.2 (Added Modular Atomic Specs)
+**Date:** 2026-01-08
 
 ---
 
@@ -52,7 +51,21 @@
 
 ---
 
-## **💡 수정 사항 및 기술 포인트**
+## 6. [신규] 아토믹 모듈 전용 사양 (Modular Atomic 600x600)
+
+이 규격은 공간 효율성을 극대화한 **KF-MOD-2026** 모델을 위한 전용 사양입니다.
+
+| 구분 | 부품명 (Item Name) | 추천 사양 (Specifications) | 수량 | 비고/적합성 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tank** | **아토믹 양액 탱크** | - 용량: 80L (커스텀 PE 또는 STS304)<br>- 규격: 540x540x250mm 이하 | 1 | 하단 허브 550mm 높이에 최적화 |
+| **Pump** | **고압 소형 펌프** | - 직류(DC) 24V 고압 펌프 또는 소형 다단 펌프<br>- 미스트 분사용 (최소 3bar 이상) | 1 | 소음/진동이 적은 모델 선정 필수 |
+| **Chiller** | **Peltier 냉각 모듈** | - 열전소자 기반 수냉식 냉각 시스템<br>- 80L 양액의 점진적 온도 유지용 | 1 set | 대형 칠러 설치 불가한 공간용 |
+| **Filter** | **인라인 마이크로 필터** | - 1/2인치 인라인 타입 (Mesh 120) | 1 | 자가 정비 용이한 구조 |
+| **Controller** | **Modular HMI** | - 7인치 터치 패널 + ESP32/PLC 기반 | 1 | 전면 패널 매립형 |
+
+---
+
+## **💡 수정 사항 및 기술 포인트 (v1.2)**
 
 1.  **배액 재활용(Recycling)의 핵심은 '열'과 '균' 관리입니다.**
     *   펌프가 돌면서 발생하는 마찰열과 배액이 머금고 오는 지열 때문에 수온이 상승합니다. 와사비는 고수온에 치명적이므로 **칠러(Chiller)는 선택이 아닌 필수**입니다.

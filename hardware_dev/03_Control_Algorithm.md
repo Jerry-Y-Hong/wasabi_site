@@ -1,6 +1,6 @@
 # 스마트팜 양액공급기 제어 알고리즘 (Control Algorithm Specification)
 **Project:** KF-NUTRI-2026
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-01-06
 
 ---
@@ -41,6 +41,14 @@ stateDiagram-v2
         2.  `Wait State`: **30초간 투입 중단** (교반만 지속).
         3.  `Read`: 안정화된 센서 값 읽기.
         4.  `Check`: 목표 범위(Tolerance) 밖이면 1번 반복.
+
+*   **🚨 비상 희석 로직 (Emergency Dilution - Overshoot Protection) [New V12.0]:**
+    *   **목적:** 양액 농도가 실수로 과다 투입(Overshoot)되거나, pH가 너무 낮아진(Acid Overdose) 경우, 자동으로 원수를 투입하여 농도를 낮춥니다.
+    *   **발동 조건:** `현재 EC > 목표 EC + 오차범위` 또는 `현재 pH < 목표 pH - 오차범위`
+    *   **동작:**
+        1.  모든 양액/산 밸브 차단.
+        2.  **원수 밸브(Inlet Valve) 개방.**
+        3.  상태 표시: `⚠️ DILUTING` (탱크 여유 공간 있음) 또는 `🚨 ALARM: TANK FULL` (여유 공간 없음, 즉시 정지).
 
 *   **알고리즘 (세부):**
     1.  **초기 급수:** 설정된 목표 수위까지 물을 채운다 (원수 + 배액).

@@ -50,6 +50,47 @@ export default function NewsPage() {
                     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                     gap: '24px'
                 }}>
+                    {/* [FEATURED] Magnetic Tech Column */}
+                    <Card padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderColor: '#82c91e', borderWidth: 2, background: '#f8fff0' }}>
+                        <Group justify="space-between" mb="xs" wrap="nowrap">
+                            <Group gap={6}>
+                                <Badge color="lime" variant="filled">FEATURED</Badge>
+                                <Badge color="gray" variant="light">Bio-Physics</Badge>
+                            </Group>
+                            <Text size="xs" c="dimmed">2026. 01. 07</Text>
+                        </Group>
+
+                        <a href="/news/magnetic-tech" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Title order={3} size="h4" mb="sm" style={{ minHeight: '3.1em', lineHeight: 1.3, cursor: 'pointer', color: '#2f9e44' }}>
+                                식물 성장의 숨은 열쇠: 자기장(Magnetic Field) 농법의 과학
+                            </Title>
+                        </a>
+
+                        <Text size="sm" c="dimmed" lineClamp={3} mb="md" style={{ minHeight: '4.5em' }}>
+                            자기장(Magnetic Field)이 식물 뿌리 세포 분열과 양분 흡수에 미치는 영향을 심층 분석합니다.
+                            K-WASABI의 150mT 펄스 수처리 기술이 만드는 변화를 확인하세요.
+                        </Text>
+
+                        <Group mt="auto">
+                            <a
+                                href="/news/magnetic-tech"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    padding: '8px 12px',
+                                    color: '#fff',
+                                    fontWeight: 600,
+                                    fontSize: '0.875rem',
+                                    textDecoration: 'none',
+                                    backgroundColor: '#82c91e',
+                                    borderRadius: '4px',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                Read Column <IconArrowRight size={16} style={{ marginLeft: 6 }} />
+                            </a>
+                        </Group>
+                    </Card>
                     {validPosts.length > 0 ? (
                         validPosts.map((post: any) => (
                             <Card key={`${language}-${post.id || Math.random()}`} padding="lg" radius="md" withBorder shadow="sm" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

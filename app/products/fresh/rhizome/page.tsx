@@ -54,10 +54,10 @@ export default function RhizomePage() {
                             }
                             mt="xl"
                         >
-                            <List.Item>18개월 이상 장기 재배 (Long-term Cultivation)</List.Item>
-                            <List.Item>평균 중량 80g ~ 120g 특대 사이즈</List.Item>
-                            <List.Item>월등한 알릴이소티오시아네이트(AITC) 함량</List.Item>
-                            <List.Item>깊은 매운맛과 은은한 단맛의 밸런스</List.Item>
+                            <List.Item>{t('prod_fresh_rhizome_1')}</List.Item>
+                            <List.Item>{t('prod_fresh_rhizome_2')}</List.Item>
+                            <List.Item>{t('prod_fresh_rhizome_3')}</List.Item>
+                            <List.Item>{t('prod_fresh_rhizome_4')}</List.Item>
                         </List>
                     </Stack>
                 </div>

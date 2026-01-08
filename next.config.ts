@@ -1,11 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Force Rebuild Timestamp: 1735538700000 
-  experimental: {
-    outputFileTracingIncludes: {
-      '/**/*': ['./data/**/*'],
-    },
-  },
+  // Force Rebuild Timestamp: 1735538700000
+  // (experimental outputFileTracingIncludes removed – not a valid Next.js option)
   images: {
     remotePatterns: [
       {
