@@ -1,6 +1,7 @@
 'use client';
 
 import { Title, Text, Container, Button, Group, ActionIcon, Tooltip, SimpleGrid } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconVolume, IconVolumeOff, IconMovie, IconSettings, IconLeaf, IconWorld, IconRefresh, IconBook, IconCpu, IconChartBar, IconThumbUp, IconCertificate } from '@tabler/icons-react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
@@ -53,6 +54,12 @@ const narrations: Record<string, Record<string, string[]>> = {
             "전 세계 정점에 서 있는 최고급 미슐랭 셰프들이 직접 맛보고 증명하는 단 하나의 프리미엄 와사비 브랜드, 케이와사비라는 이름의 신뢰입니다.",
             "대한민국의 맑고 정직한 신선함이 전 세계 주요 미식 거점의 식탁으로 실시간으로 전달되며 인류의 미식 지도를 새롭게 그리고 있습니다."
         ],
+        story: [
+            "와사비가 왜 세상에서 가장 비싼 작물인지 아십니까? 오직 맑은 물과 제한된 환경에서만 허락되는 극도로 희귀한 종이기 때문입니다.",
+            "우리가 먹는 부위는 단순한 뿌리가 아닙니다. 바로 뿌리 위에서 자라나는 '근경'이라는 아주 특별하고 귀한 특수 부위입니다.",
+            "이 근경을 얻기 위해서는 까다로운 기후 조건과 2년이라는 긴 기다림이 필요합니다. 그 희소성과 재배 난이도가 와사비의 높은 가치를 만듭니다.",
+            "우리는 이 자연의 난제를 첨단 기술로 풀었습니다. 데이터로 제어되는 와사비 스마트팜, 이것이 우리가 만드는 농업의 혁신입니다."
+        ],
         tech: [
             "데이터는 절대 거짓말을 하지 않습니다. 우리는 생명이 들려주는 미세한 언어를 인텔리전스 숫자로 정밀하게 읽어내어 최적의 생태계를 구축합니다.",
             "AI 커맨드 센터는 365일 24시간 멈추지 않는 지능형 알고리즘을 통해, 매 순간 와사비의 생육 상태를 분석하고 미래의 성장을 미리 예측합니다.",
@@ -87,6 +94,12 @@ const narrations: Record<string, Record<string, string[]>> = {
             "คุณค่าที่เหนือยิ่งกว่าบรรจุภัณฑ์ที่หรูหรา แก่นแท้ของ เค-วาซาบิ ถูกทำให้สมบูรณ์แบบในรายละเอียดที่มองไม่เห็นซึ่งเราใส่ใจอย่างพิถีพิถัน",
             "แบรนด์วาซาบิระดับพรีเมียมเพียงหนึ่งเดียวที่ได้รับการพิสูจน์และไว้วางใจจากมิชลินเชฟระดับโลก ผู้ยืนอยู่บนจุดสูงสุดของศิลปะการทำอาหาร",
             "ความสดชื่นที่บริสุทธิ์จากเกาหลีถูกส่งตรงแบบเรียลไทม์ไปยังศูนย์กลางอาหารชั้นนำทั่วโลก วาดแผนที่อาหารเลิศรสของมนุษยชาติขึ้นใหม่"
+        ],
+        story: [
+            "คุณรู้หรือไม่ว่าทำไมวาซาบิจึงเป็นพืชที่แพงที่สุดในโลก? เพราะมันเป็นสายพันธุ์ที่หายากมากซึ่งเติบโตได้เฉพาะในสภาพแวดล้อมที่จำกัดและมีน้ำบริสุทธิ์เท่านั้น",
+            "สิ่งที่เราบริโภคไม่ใช่ราก แต่เป็น 'ลำต้นใต้ดิน' (Rhizome) ซึ่งเป็นส่วนพิเศษและล้ำค่าที่เติบโตอยู่เหนือราก",
+            "การจะได้มาซึ่งลำต้นใต้ดินนี้ ต้องอาศัยสภาพอากาศที่แม่นยำและการรอคอยยาวนานถึง 2 ปี ความขาดแคลนนี้เองที่สร้างมูลค่ามหาศาลให้กับมัน",
+            "เราได้ไขปริศนาของธรรมชาติด้วยเทคโนโลยีขั้นสูง สมาร์ทฟาร์มที่ขับเคลื่อนด้วยข้อมูลคือนวัตกรรมที่เรานำมาสู่การเกษตร"
         ],
         tech: [
             "ข้อมูลไม่เคยโกหก เราถอดรหัสภาษาที่ละเอียดอ่อนของสิ่งมีชีวิตให้เป็นตัวเลขที่ชาญฉลาด เพื่อสร้างระบบนิเวศทางชีวภาพที่สมบูรณ์แบบที่สุด",
@@ -123,6 +136,12 @@ const narrations: Record<string, Record<string, string[]>> = {
             "Thương hiệu Wasabi cao cấp duy nhất được các đầu bếp Michelin hàng đầu thế giới tin dùng, đứng trên đỉnh cao của nghệ thuật ẩm thực toàn cầu.",
             "Sự tươi ngon thuần khiết từ Hàn Quốc được chuyển giao thời gian thực đến các trung tâm ẩm thực lớn trên thế giới, vẽ lại bản đồ ẩm thực cao cấp."
         ],
+        story: [
+            "Bạn có biết tại sao Wasabi là loại cây trồng đắt nhất thế giới không? Đó là một loài cực kỳ quý hiếm chỉ phát triển trong những môi trường hạn chế với nguồn nước tinh khiết.",
+            "Phần chúng ta ăn không phải là rễ, mà là 'Thân rễ' (Rhizome), một phần thân đặc biệt và quý giá mọc ngay phía trên rễ.",
+            "Để có được Thân rễ này cần điều kiện khí hậu khắt khe và hai năm chờ đợi. Sự khan hiếm này tạo nên giá trị to lớn của nó.",
+            "Chúng tôi đã giải mã câu đố của tự nhiên bằng công nghệ tiên tiến. Nông trại thông minh dựa trên dữ liệu chính là sự đổi mới mà chúng tôi mang đến cho nông nghiệp."
+        ],
         tech: [
             "Dữ liệu không bao giờ nói dối. Chúng tôi giải mã ngôn ngữ tinh tế của sự sống thành những con số thông minh để xây dựng hệ sinh thái sinh học tối ưu.",
             "Trung tâm chỉ huy AI hoạt động 24/7 với thuật toán thông minh, phân tích trạng thái tăng trưởng và dự đoán tương lai của Wasabi trong từng khoảnh khắc.",
@@ -158,6 +177,12 @@ const narrations: Record<string, Record<string, string[]>> = {
             "The one premium wasabi brand proven and trusted by the world's master Michelin chefs sitting at the pinnacle of global gastronomy.",
             "Korea's pure and honest freshness is delivered in real-time to the world's major gourmet hotspots, redrawing the map of human fine dining."
         ],
+        story: [
+            "Do you know why Wasabi is the most expensive crop? It is an extremely rare species that grows only in limited environments with pristine water.",
+            "What we consume is not the root, but the 'Rhizome', a special and precious stem part that grows just above the root.",
+            "Obtaining this Rhizome requires exacting climate conditions and two years of waiting. This scarcity drives its immense value.",
+            "We have solved nature's puzzle with advanced technology. Our data-driven smart farm is the innovation we bring to agriculture."
+        ],
         tech: [
             "Data never lies. We precisely decode the delicate language of life into intelligent numbers to build the ultimate biological ecosystem.",
             "The AI Command Center operates 24/7 with intelligent algorithms, analyzing the growth status of every plant and predicting future yields.",
@@ -184,6 +209,252 @@ const narrations: Record<string, Record<string, string[]>> = {
             "Step 4: AI Control. Environment parameters optimized 24/7.",
             "Step 5: Final Washing. Pure purification process before the harvest.",
             "Step 6: Return Cycle. Recycling modules for maximum efficiency."
+        ]
+    },
+    'zh-CN': {
+        brand: [
+            "华川的古老奥秘与人类尖端科技交汇之地，K-Wasabi 不仅仅是农业，更是一种艺术形式。",
+            "不仅仅是精美的包装。K-Wasabi 的真正精髓在于您可能从未留意的隐形细节中得以完美呈现。",
+            "全球顶尖米其林大厨亲测并信赖的唯一高端山葵品牌，屹立于全球美食的巅峰。",
+            "韩国纯净真挚的新鲜感实时传送至全球主要美食热点，正在重绘人类精致餐饮的版图。"
+        ],
+        story: [
+            "您知道为什么山葵是世界上最昂贵的作物吗？因为它是一种极其稀有的物种，只能在清澈水源和有限的环境中生长。",
+            "我们食用的部分不仅是根，而是'根茎'，这是生长在根部上方的一个特殊而珍贵的部位。",
+            "获得这种根茎需要严苛的气候条件和两年的漫长等待。正是这种稀缺性造就了它的巨大价值。",
+            "我们利用先进技术解开了大自然的难题。数据驱动的智能农场正是我们要带给农业的创新。"
+        ],
+        tech: [
+            "数据从不撒谎。我们将生命的微妙语言精确解码为智能数字，构建终极生物生态系统。",
+            "AI 指挥中心通过智能算法 24/7 全天候运行，分析每一株植物的生长状态并预测未来产量。",
+            "气雾栽培微雾系统模拟并设计了地球上最理想的大气环境，让山葵能够最舒适地呼吸和生长。",
+            "迈向深度学习算法独立学习和进化的过程——这就是未来农业的核心技术和标准。"
+        ],
+        global: [
+            "对 K-Wasabi 而言，品质绝非妥协的对象。它是经过严格研究和数据驱动证明的来之不易的成果。",
+            "华川冰冷的黎明在我们的冷链技术保障下，神奇地转变为全球大都市的丰盛晚宴。",
+            "每一个过程都记录为数据并透明公开。我们要成为唯一用数据承诺、用信任证明的标准。",
+            "从纽约到东京再到巴黎，世界传奇大厨们选择了一个名字。K-Wasabi 象征着味觉的极致。",
+            "我们将打破农业的物理边界，为全人类的健康生活和繁荣未来树立新的全球标准。"
+        ],
+        seeding: [
+            "每一个伟大的生命都始于精确的基因蓝图。我们从数十亿细胞中严格筛选出最强壮、最完美的基因组。",
+            "保持绝对无菌的生物实验室。我们在 121 摄氏度下阻断任何外部污染的可能性，以保护纯净生命的诞生。",
+            "经验丰富的生物工程师在精密培养控制系统中培育山葵的未来，记录每一个细胞的运动。",
+            "通过无限的可扩展性为人类提供未来解决方案。始于单细胞的生命将带来繁荣的收获，繁衍未来。"
+        ],
+        process: [
+            "步骤 1：自动播种。机械臂精确移植幼苗。",
+            "步骤 2：清洗。高压喷雾确保实时卫生。",
+            "步骤 3：生长。气雾栽培技术将生长速度提高 25 倍。",
+            "步骤 4：AI 控制。全天候优化环境参数。",
+            "步骤 5：最终清洗。收获前的纯净净化过程。",
+            "步骤 6：循环。回收模块实现最大效率。"
+        ]
+    },
+    ja: {
+        brand: [
+            "華川の太古の神秘と人類の最先端技術が出会う場所、K-Wasabiは単なる農業を超え、一つの芸術となります。",
+            "単なるプレミアムなパッケージ以上の価値。K-Wasabiの真髄は、目に見えない細部においてこそ完璧に仕上げられています。",
+            "世界の食の頂点に立つミシュランシェフたちが認め、信頼する唯一のプレミアムワサビブランド。",
+            "韓国の純粋で正直な新鮮さが、世界の主要な美食都市へリアルタイムで届けられ、人類の美食地図を塗り替えています。"
+        ],
+        story: [
+            "なぜワサビが世界で最も高価な作物かご存知ですか？清らかな水と限られた環境でのみ許される、極めて希少な種だからです。",
+            "私たちが食べる部分は単なる根ではありません。根のすぐ上で育つ「根茎」という非常に特別で貴重な部位なのです。",
+            "この根茎を得るには、厳しい気候条件と2年という長い待ち時間が必要です。その希少性と栽培の難しさが、ワサビの高い価値を生み出しています。",
+            "私たちはこの自然の難題を最先端技術で解きました。データで制御されるワサビスマートファーム、これこそが私たちが作る農業の革新です。"
+        ],
+        tech: [
+            "データは決して嘘をつきません。私たちは生命の繊細な言語をインテリジェントな数値へと正確に解読し、究極の生物学的エコシステムを構築します。",
+            "AIコマンドセンターは24時間365日、高度なアルゴリズムで稼働し、すべての植物の成長状態を分析し、将来の収穫量を予測します。",
+            "エアロポニックス微細ミストシステムは、ワサビが最も快適に呼吸し成長できる、地球上で最適な大気環境をシミュレートし設計します。",
+            "ディープラーニングアルゴリズムが自律的に学習し進化するプロセスへと向かうこと、これこそが未来農業の核心技術であり標準です。"
+        ],
+        global: [
+            "K-Wasabiにとって、品質は決して妥協の対象ではありません。それは厳格な研究とデータに基づく証明によって得られた、努力の結晶です。",
+            "華川の凍てつく夜明けが、私たちのコールドチェーン技術によって守られ、世界の大都市での豪華なディナーへと変わる魔法。",
+            "すべてのプロセスはデータとして記録され、透明性を持って公開されます。私たちはデータで約束し、信頼で証明する唯一の基準であり続けます。",
+            "ニューヨークから東京、パリに至るまで、世界の伝説的なシェフたちが選んだ一つの名前。K-Wasabiは味の頂点を象徴しています。",
+            "私たちは農業の物理的な国境を打ち破り、全人類の健康な生活と豊かな未来のために、新たなグローバルスタンダードを植え付けます。"
+        ],
+        seeding: [
+            "すべての偉大な生命は、精巧な遺伝子の設計図から始まります。私たちは数十億の細胞の中から、最も強く完璧なゲノムだけを厳選します。",
+            "絶対的な無菌状態を維持するバイオラボ。121度の高温で外部からの汚染の可能性を完全に遮断し、純粋な生命の誕生を守ります。",
+            "熟練したバイオエンジニアが精密培養制御システムの中でワサビの未来を育み、細胞の一つひとつの動きを記録しています。",
+            "無限の拡張性による人類のための未来ソリューション。たった一つの細胞から始まる生命が豊かな収穫へとつながり、未来を繁殖させます。"
+        ],
+        process: [
+            "ステップ1：自動播種。ロボットアームが苗を正確に移植します。",
+            "ステップ2：洗浄。高圧ミストがリアルタイムで衛生を確保します。",
+            "ステップ3：成長。エアロポニックス技術が成長を25倍加速させます。",
+            "ステップ4：AI制御。環境パラメータを24時間365日最適化します。",
+            "ステップ5：最終洗浄。収穫前の純粋な浄化プロセス。",
+            "ステップ6：循環サイクル。最大効率のためのリサイクルモジュール。"
+        ]
+    },
+    fr: {
+        brand: [
+            "Là où le mystère ancien de Hwacheon rencontre la technologie de pointe de l'humanité, K-Wasabi devient plus qu'une simple agriculture, c'est une forme d'art.",
+            "Plus qu'un simple emballage haut de gamme. La véritable essence de K-Wasabi est perfectionnée dans les détails invisibles que vous ne voyez peut-être jamais.",
+            "La seule marque de wasabi haut de gamme prouvée et approuvée par les grands chefs Michelin du monde, au sommet de la gastronomie mondiale.",
+            "La fraîcheur pure et honnête de la Corée est livrée en temps réel aux principaux lieux gastronomiques du monde, redessinant la carte de la haute cuisine humaine."
+        ],
+        story: [
+            "Savez-vous pourquoi le wasabi est la culture la plus chère ? C'est une espèce extrêmement rare qui ne pousse que dans des environnements limités avec une eau cristalline.",
+            "Ce que nous consommons n'est pas la racine, mais le 'rhizome', une partie spéciale et précieuse de la tige qui pousse juste au-dessus de la racine.",
+            "L'obtention de ce rhizome nécessite des conditions climatiques exigeantes et deux ans d'attente. Cette rareté est à l'origine de son immense valeur.",
+            "Nous avons résolu le casse-tête de la nature grâce à une technologie de pointe. Notre ferme intelligente pilotée par les données est l'innovation que nous apportons à l'agriculture."
+        ],
+        tech: [
+            "Les données ne mentent jamais. Nous décodons précisément le langage délicat de la vie en nombres intelligents pour construire l'écosystème biologique ultime.",
+            "Le centre de commandement IA fonctionne 24h/24 et 7j/7 avec des algorithmes intelligents, analysant l'état de croissance de chaque plante et prédisant les futurs rendements.",
+            "Le système de brumisation fine aéroponique simule et conçoit l'environnement atmosphérique optimal sur Terre où le Wasabi peut respirer et grandir le plus confortablement.",
+            "Aller vers un processus où les algorithmes d'apprentissage profond apprennent et évoluent indépendamment - c'est la technologie de base et la norme de l'agriculture future."
+        ],
+        global: [
+            "Pour K-Wasabi, la qualité n'est jamais une question de compromis. C'est le résultat durement gagné d'une recherche rigoureuse et d'une preuve basée sur les données.",
+            "La magie de la transformation où l'aube glaciale de Hwacheon devient un dîner somptueux dans une grande ville mondiale, sécurisé par notre technologie de chaîne du froid.",
+            "Chaque processus est enregistré sous forme de données et divulgué de manière transparente. Nous restons la seule norme qui promet avec des données et prouve avec confiance.",
+            "De New York à Tokyo et Paris, les chefs légendaires du monde ont choisi un nom. K-Wasabi est le symbole ultime du goût.",
+            "Nous briserons les frontières physiques de l'agriculture et planterons de nouvelles normes mondiales pour la vie saine et l'avenir prospère de toute l'humanité."
+        ],
+        seeding: [
+            "Toute grande vie commence par un plan génétique sophistiqué. Nous sélectionnons strictement les génomes les plus forts et les plus parfaits parmi des milliards de cellules.",
+            "Un laboratoire biologique maintenant une stérilité absolue. Nous bloquons toute possibilité de contamination externe à 121 degrés Celsius pour protéger la pureté de la naissance.",
+            "Des bio-ingénieurs expérimentés nourrissent l'avenir du Wasabi dans un système de contrôle de culture de précision, enregistrant chaque mouvement cellulaire.",
+            "Une solution future pour l'humanité grâce à une évolutivité infinie. La vie commençant à partir d'une seule cellule mène à une récolte florissante, propageant l'avenir."
+        ],
+        process: [
+            "Étape 1 : Semis automatisé. Des bras robotiques transplantent précisément les semis.",
+            "Étape 2 : Nettoyage. La brume à haute pression assure une hygiène en temps réel.",
+            "Étape 3 : Croissance. La technologie aéroponique accélère la croissance de 25 fois.",
+            "Étape 4 : Contrôle IA. Paramètres environnementaux optimisés 24h/24 et 7j/7.",
+            "Étape 5 : Lavage final. Processus de purification pure avant la récolte.",
+            "Étape 6 : Cycle de retour. Modules de recyclage pour une efficacité maximale."
+        ]
+    },
+    de: {
+        brand: [
+            "Wo das uralte Geheimnis von Hwacheon auf die Spitzentechnologie der Menschheit trifft, wird K-Wasabi mehr als nur Landwirtschaft – es ist eine Kunstform.",
+            "Mehr als nur Premium-Verpackung. Die wahre Essenz von K-Wasabi wird in den unsichtbaren Details perfektioniert, die Sie vielleicht nie sehen.",
+            "Die einzige Premium-Wasabi-Marke, die von den besten Michelin-Köchen der Welt, die an der Spitze der globalen Gastronomie stehen, bewährt und vertraut wird.",
+            "Koreas reine und ehrliche Frische wird in Echtzeit an die wichtigsten Gourmet-Hotspots der Welt geliefert und zeichnet die Karte der menschlichen gehobenen Küche neu."
+        ],
+        story: [
+            "Wissen Sie, warum Wasabi die teuerste Pflanze ist? Es ist eine extrem seltene Art, die nur in begrenzten Umgebungen mit kristallklarem Wasser wächst.",
+            "Was wir konsumieren, ist nicht die Wurzel, sondern das 'Rhizom', ein besonderer und kostbarer Stängelteil, der direkt über der Wurzel wächst.",
+            "Um dieses Rhizom zu erhalten, bedarf es anspruchsvoller klimatischer Bedingungen und zwei Jahre Wartezeit. Diese Knappheit treibt seinen immensen Wert.",
+            "Wir haben das Rätsel der Natur mit fortschrittlicher Technologie gelöst. Unsere datengesteuerte Smart Farm ist die Innovation, die wir in die Landwirtschaft bringen."
+        ],
+        tech: [
+            "Daten lügen nie. Wir entschlüsseln präzise die zarte Sprache des Lebens in intelligente Zahlen, um das ultimative biologische Ökosystem aufzubauen.",
+            "Das KI-Kommandozentrum arbeitet rund um die Uhr mit intelligenten Algorithmen, analysiert den Wachstumsstatus jeder Pflanze und prognostiziert zukünftige Erträge.",
+            "Das aeroponische Feinstnebelsystem simuliert und gestaltet die optimale atmosphärische Umgebung auf der Erde, in der Wasabi am angenehmsten atmen und wachsen kann.",
+            "Auf dem Weg zu einem Prozess, bei dem Deep-Learning-Algorithmen unabhängig lernen und sich weiterentwickeln – das ist die Kerntechnologie und der Standard der zukünftigen Landwirtschaft."
+        ],
+        global: [
+            "Für K-Wasabi ist Qualität niemals ein Kompromiss. Es ist das hart erarbeitete Ergebnis strenger Forschung und datengestützter Beweise.",
+            "Die Magie der Verwandlung, bei der Hwacheons eisige Dämmerung zu einem üppigen Abendessen in einer globalen Großstadt wird, gesichert durch unsere Kühlkettentechnologie.",
+            "Jeder Prozess wird als Daten aufgezeichnet und transparent offengelegt. Wir bleiben der einzige Standard, der mit Daten verspricht und mit Vertrauen beweist.",
+            "Von New York über Tokio bis Paris haben die legendären Köche der Welt einen Namen gewählt. K-Wasabi steht als das ultimative Symbol für Geschmack.",
+            "Wir werden die physischen Grenzen der Landwirtschaft durchbrechen und neue globale Standards für das gesunde Leben und die wohlhabende Zukunft der gesamten Menschheit setzen."
+        ],
+        seeding: [
+            "Jedes große Leben beginnt mit einem ausgeklügelten genetischen Bauplan. Wir wählen aus Milliarden von Zellen streng nur die stärksten und perfektesten Genome aus.",
+            "Ein Biolabor, das absolute Sterilität aufrechterhält. Wir blockieren jede Möglichkeit einer externen Kontamination bei 121 Grad Celsius, um die Reinheit der Geburt zu schützen.",
+            "Erfahrene Bioingenieure pflegen die Zukunft von Wasabi in einem präzisen Kulturkontrollsystem und zeichnen jede einzelne Zellbewegung auf.",
+            "Eine zukünftige Lösung für die Menschheit durch unbegrenzte Skalierbarkeit. Leben, das aus einer einzigen Zelle beginnt, führt zu einer blühenden Ernte und vermehrt die Zukunft."
+        ],
+        process: [
+            "Schritt 1: Automatisierte Aussaat. Roboterarme verpflanzen die Setzlinge präzise.",
+            "Schritt 2: Reinigung. Hochdrucknebel sorgt für Hygiene in Echtzeit.",
+            "Schritt 3: Wachstum. Aeroponik-Technologie beschleunigt das Wachstum um das 25-fache.",
+            "Schritt 4: KI-Steuerung. Umgebungsparameter rund um die Uhr optimiert.",
+            "Schritt 5: Endreinigung. Reiner Reinigungsprozess vor der Ernte.",
+            "Schritt 6: Rücklaufzyklus. Recyclingmodule für maximale Effizienz."
+        ]
+    },
+    es: {
+        brand: [
+            "Donde el antiguo misterio de Hwacheon se encuentra con la tecnología de vanguardia de la humanidad, K-Wasabi se convierte en más que solo agricultura: es una forma de arte.",
+            "Más que solo un empaque premium. La verdadera esencia de K-Wasabi se perfecciona en los detalles invisibles que quizás nunca veas.",
+            "La única marca de wasabi premium probada y confiable por los maestros chefs Michelin del mundo que se sientan en la cima de la gastronomía global.",
+            "La frescura pura y honesta de Corea se entrega en tiempo real a los principales puntos gourmet del mundo, redibujando el mapa de la alta cocina humana."
+        ],
+        story: [
+            "¿Sabes por qué el wasabi es el cultivo más caro? Es una especie extremadamente rara que crece solo en entornos limitados con agua prístina.",
+            "Lo que consumimos no es la raíz, sino el 'rizoma', una parte especial y preciosa del tallo que crece justo encima de la raíz.",
+            "Obtener este rizoma requiere condiciones climáticas exigentes y dos años de espera. Esta escasez impulsa su inmenso valor.",
+            "Hemos resuelto el rompecabezas de la naturaleza con tecnología avanzada. Nuestra granja inteligente basada en datos es la innovación que aportamos a la agricultura."
+        ],
+        tech: [
+            "Los datos nunca mienten. Decodificamos con precisión el delicado lenguaje de la vida en números inteligentes para construir el ecosistema biológico definitivo.",
+            "El Centro de Comando de IA opera 24/7 con algoritmos inteligentes, analizando el estado de crecimiento de cada planta y prediciendo rendimientos futuros.",
+            "El sistema de niebla fina aeropónica simula y diseña el entorno atmosférico óptimo en la Tierra donde el Wasabi puede respirer y crecer más cómodamente.",
+            "Avanzando hacia un proceso donde los algoritmos de aprendizaje profundo aprenden y evolucionan independientemente: esta es la tecnología central y el estándar de la agricultura futura."
+        ],
+        global: [
+            "Para K-Wasabi, la calidad nunca es una cuestión de compromiso. Es el resultado ganado con esfuerzo de una investigación rigurosa y pruebas basadas en datos.",
+            "La magia de la transformación donde el amanecer helado de Hwacheon se convierte en una cena lujosa en una gran ciudad global, asegurada por nuestra tecnología de cadena de frío.",
+            "Cada proceso se registra como datos y se divulga de forma transparente. Seguimos siendo el único estándar que promete con datos y prueba con confianza.",
+            "Desde Nueva York hasta Tokio y París, los chefs legendarios del mundo han elegido un nombre. K-Wasabi se erige como el símbolo supremo del gusto.",
+            "Romperemos las fronteras físicas de la agricultura y plantaremos nuevos estándares globales para las vidas saludables y el futuro próspero de toda la humanidad."
+        ],
+        seeding: [
+            "Toda gran vida comienza con un plano genético sofisticado. Seleccionamos estrictamente solo los genomas más fuertes y perfectos entre miles de millones de células.",
+            "Un laboratorio biológico que mantiene la esterilidad absoluta. Bloqueamos cualquier posibilidad de contaminación externa a 121 grados Celsius para proteger la pureza del nacimiento.",
+            "Bioingenieros experimentados nutren el futuro de Wasabi dentro de un sistema de control de cultivo de precisión, registrando cada movimiento celular.",
+            "Una solución futura para la humanidad a través de una escalabilidad infinita. La vida que comienza a partir de una sola célula conduce a una cosecha próspera, propagando el futuro."
+        ],
+        process: [
+            "Paso 1: Siembra automatizada. Brazos robóticos trasplantan con precisión las plántulas.",
+            "Paso 2: Limpieza. La niebla de alta presión garantiza la higiene en tiempo real.",
+            "Paso 3: Crecimiento. La tecnología aeropónica acelera el crecimiento en 25 veces.",
+            "Paso 4: Control de IA. Parámetros ambientales optimizados 24/7.",
+            "Paso 5: Lavado final. Proceso de purificación pura antes de la cosecha.",
+            "Paso 6: Ciclo de retorno. Módulos de reciclaje para máxima eficiencia."
+        ]
+    },
+    ar: {
+        brand: [
+            "حيث يلتقي غموض هواشيون القديم بأحدث تقنيات البشرية، يصبح K-Wasabi أكثر من مجرد زراعة - إنه شكل من أشكال الفن.",
+            "أكثر من مجرد تغليف فاخر. يتم إتقان الجوهر الحقيقي لـ K-Wasabi في التفاصيل غير المرئية التي قد لا تراها أبدًا.",
+            "علامة الوسابي التجارية المتميزة الوحيدة التي أثبتها ووثق بها كبار طهاة ميشلان في العالم الجالسين في قمة فن الطهو العالمي.",
+            "يتم تسليم نضارة كوريا النقية والصادقة في الوقت الفعلي إلى النقاط الساخنة الذواقة الرئيسية في العالم، مما يعيد رسم خريطة المطاعم الراقية البشرية."
+        ],
+        story: [
+            "هل تعرف لماذا يعتبر الوسابي أغلى المحاصيل في العالم؟ إنه نوع نادر للغاية ينمو فقط في بيئات محدودة ذات مياه نقية.",
+            "ما نستهلكه ليس الجذر، بل 'الجذمور'، وهو جزء خاص وثمين من الساق ينمو فوق الجذر مباشرة.",
+            "يتطلب الحصول على هذا الجذمور ظروفًا مناخية دقيقة وانتظارًا لمدة عامين. هذه الندرة هي ما يمنحه قيمته الهائلة.",
+            "لقد قمنا بحل لغز الطبيعة باستخدام التكنولوجيا المتقدمة. مزرعتنا الذكية القائمة على البيانات هي الابتكار الذي نقدمه للزراعة."
+        ],
+        tech: [
+            "البيانات لا تكذب أبدًا. نقوم بفك تشفير لغة الحياة الدقيقة بدقة إلى أرقام ذكية لبناء النظام البيئي البيولوجي النهائي.",
+            "يعمل مركز قيادة الذكاء الاصطناعي على مدار الساعة طوال أيام الأسبوع بخوارزميات ذكية، ويحلل حالة نمو كل نبات ويتنبأ بالعوائد المستقبلية.",
+            "يحاكي نظام الضباب الهوائي الدقيق البيئة الجوية المثلى على الأرض ويصممها حيث يمكن للوسابي التنفس والنمو بشكل مريح.",
+            "التحرك نحو عملية تتعلم فيها خوارزميات التعلم العميق وتتطور بشكل مستقل - هذه هي التكنولوجيا الأساسية ومعيار الزراعة المستقبلية."
+        ],
+        global: [
+            "بالنسبة لـ K-Wasabi، الجودة ليست مسألة مساومة أبدًا. إنها النتيجة التي تم الحصول عليها بشق الأنفس من البحث الدقيق والأدلة المستندة إلى البيانات.",
+            "سحر التحول حيث يصبح فجر هواشيون المتجمد عشاء مسائيًا فخمًا في مدينة عالمية رئيسية، تم تأمينه بواسطة تقنية سلسلة التبريد الخاصة بنا.",
+            "يتم تسجيل كل عملية كبيانات والكشف عنها بشفافية. نظل المعيار الوحيد الذي يعد بالبيانات ويثبت بالثقة.",
+            "من نيويورك إلى طوكيو وباريس، اختار الطهاة الأسطوريون في العالم اسمًا واحدًا. يقف K-Wasabi كرمز نهائي للذوق.",
+            "سنكسر الحدود المادية للزراعة ونزرع معايير عالمية جديدة لحياة صحية ومستقبل مزدهر للبشرية جمعاء."
+        ],
+        seeding: [
+            "تبدأ كل حياة عظيمة بمخطط جيني متطور. نختار بدقة فقط أقوى الجينومات وأكثرها مثالية من بين مليارات الخلايا.",
+            "مختبر حيوي يحافظ على العقم المطلق. نمنع أي احتمال للتلوث الخارجي عند 121 درجة مئوية لحماية نقاء الولادة.",
+            "يقوم المهندسون الحيويون ذوو الخبرة برعاية مستقبل الوسابي داخل نظام تحكم دقيق في الثقافة، ويسجلون كل حركة خلوية.",
+            "حل مستقبلي للبشرية من خلال قابلية التوسع اللانهائية. تؤدي الحياة التي تبدأ من خلية واحدة إلى حصاد مزدهر، ونشر المستقبل."
+        ],
+        process: [
+            "الخطوة 1: البذر الآلي. تقوم الأذرع الروبوتية بنقل الشتلات بدقة.",
+            "الخطوة 2: التنظيف. يضمن الضباب عالي الضغط النظافة في الوقت الفعلي.",
+            "الخطوة 3: النمو. تعمل تقنية الزراعة الهوائية على تسريع النمو بمقدار 25 مرة.",
+            "الخطوة 4: التحكم بالذكاء الاصطناعي. تحسين معايير البيئة على مدار الساعة طوال أيام الأسبوع.",
+            "الخطوة 5: الغسيل النهائي. عملية تنقية نقية قبل الحصاد.",
+            "الخطوة 6: دورة العودة. وحدات إعادة التدوير لتحقيق أقصى قدر من الكفاءة."
         ]
     }
 };
@@ -237,7 +508,9 @@ export function Hero() {
     const utterancesRef = useRef<SpeechSynthesisUtterance[]>([]);
     const isSpeakingRef = useRef<boolean>(false);
     const speechTaskCounterRef = useRef<number>(0);
+
     const watchdogRef = useRef<any>(null);
+    const warnedLangRef = useRef<Set<string>>(new Set());
 
     // Keep the engine awake while speaking (Simple resume heartbeat)
     useEffect(() => {
@@ -245,7 +518,7 @@ export function Hero() {
             if (isSpeakingRef.current && typeof window !== 'undefined' && window.speechSynthesis) {
                 window.speechSynthesis.resume();
             }
-        }, 3000);
+        }, 12000);
         return () => clearInterval(interval);
     }, []);
 
@@ -282,6 +555,68 @@ export function Hero() {
             return;
         }
 
+        const langMap: Record<string, string> = {
+            ko: 'ko-KR',
+            en: 'en-US',
+            ja: 'ja-JP',
+            'zh-CN': 'zh-CN',
+            th: 'th-TH',
+            vi: 'vi-VN',
+            fr: 'fr-FR',
+            de: 'de-DE',
+            es: 'es-ES',
+            ar: 'ar-SA'
+        };
+        const targetLang = langMap[language] || 'en-US';
+
+        // Voice Selection Strategy: Run ONCE (Hoisted)
+        const voices = window.speechSynthesis.getVoices();
+        const targetVoices = voices.filter(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang);
+
+        let candidateVoices = targetVoices;
+        if (candidateVoices.length === 0) {
+            const shortLang = targetLang.split('-')[0];
+            candidateVoices = voices.filter(v => v.lang.startsWith(shortLang));
+        }
+
+        let bestVoice = candidateVoices.find(v => v.name.includes('Google'));
+        if (!bestVoice) bestVoice = candidateVoices.find(v => v.name.includes('Premium'));
+        if (!bestVoice) bestVoice = candidateVoices[0];
+
+        if (bestVoice) {
+            // Selected voice for targetLang
+        }
+
+        // SAFETY FALLBACK: If we didn't find a voice that matches the target language,
+        // do not try to speak (it will likely hang or play silence).
+        // Instead, simulate a delay and move to next slide.
+        const shortLang = targetLang.split('-')[0];
+        const voiceMatches = bestVoice && bestVoice.lang.startsWith(shortLang);
+
+        if (!voiceMatches) {
+            // No matching voice found for targetLang. Falling back to timer.
+
+            // Notify user ONCE per session about missing voice
+            if (!warnedLangRef.current.has(shortLang)) {
+                warnedLangRef.current.add(shortLang);
+                notifications.show({
+                    id: `tts-missing-${shortLang}`,
+                    title: 'Voice Not Installed',
+                    message: `System voice for ${targetLang} is missing. Slides will play silently. Please install the language pack in OS settings.`,
+                    color: 'orange',
+                    autoClose: 5000,
+                    icon: <IconVolumeOff size={18} />,
+                });
+            }
+            if (onComplete) {
+                // Simulate reading time (approx 6s) so slides still move
+                watchdogRef.current = setTimeout(() => {
+                    if (currentTaskId === speechTaskCounterRef.current) onComplete();
+                }, 6000);
+            }
+            return;
+        }
+
         let currentIndex = 0;
 
         const playNext = () => {
@@ -310,28 +645,12 @@ export function Hero() {
             const utterance = new SpeechSynthesisUtterance(segments[currentIndex]);
             utterancesRef.current.push(utterance);
 
-            const langMap: Record<string, string> = {
-                ko: 'ko-KR',
-                en: 'en-US',
-                ja: 'ja-JP',
-                zh: 'zh-CN',
-                th: 'th-TH',
-                vi: 'vi-VN'
-            };
-            const targetLang = langMap[language] || 'en-US';
             utterance.lang = targetLang;
-
-            // Voice Selection Strategy: Prioritize "Google" voices for better quality
-            const voices = window.speechSynthesis.getVoices();
-            const targetVoices = voices.filter(v => v.lang === targetLang || v.lang.replace('_', '-') === targetLang);
-
-            let bestVoice = targetVoices.find(v => v.name.includes('Google')); // 1. Try Google Cloud voices (Chrome)
-            if (!bestVoice) bestVoice = targetVoices.find(v => v.name.includes('Premium')); // 2. Try Premium voices (Edge/OS)
-            if (!bestVoice) bestVoice = targetVoices[0]; // 3. Fallback
-
             if (bestVoice) {
                 utterance.voice = bestVoice;
             }
+
+
 
             utterance.rate = 1.0;
             utterance.volume = 1.0;
@@ -399,11 +718,14 @@ export function Hero() {
         const slides = slideMap[videoMode];
         if (!slides) return;
 
-        // If muted, we need a time-based fallback to change slides
-        if (isMuted) {
+        // If muted OR language is not supported for voice, we need a time-based fallback to change slides
+        const SUPPORTED_VOICE_LANGS = ['ko', 'en', 'ja', 'zh-CN', 'fr', 'de', 'es', 'ar', 'th', 'vi'];
+        const isVoiceSupported = SUPPORTED_VOICE_LANGS.includes(language);
+
+        if (isMuted || !isVoiceSupported) {
             const slideInterval = setInterval(() => {
                 setActiveSlide(prev => (prev + 1) % slides.length);
-            }, 10000);
+            }, 8000); // 8 seconds per slide for reading
             return () => clearInterval(slideInterval);
         }
 
@@ -426,6 +748,14 @@ export function Hero() {
 
         if (isMuted) {
             lastSpokenRef.current = '';
+            return;
+        }
+
+        // Feature Restriction: Only allow Speech for supported languages
+        // This prevents awkward fallback behavior for languages without dedicated high-quality voices
+        const SUPPORTED_VOICE_LANGS = ['ko', 'en', 'ja', 'zh-CN', 'fr', 'de', 'es', 'ar', 'th', 'vi'];
+        if (!SUPPORTED_VOICE_LANGS.includes(language)) {
+            // Treat unsupported languages as "Muted" - let the timer logic above handle it
             return;
         }
 
@@ -514,37 +844,37 @@ export function Hero() {
         }
     };
 
-    // Content Mapping for Text Area
+    // Content Mapping for Text Area (Using Translation Keys)
     const contentMap: Record<string, { t1: string; t2: string; desc: string }> = {
         brand: {
-            t1: t('hero_title_1'),
-            t2: t('hero_title_2'),
-            desc: t('hero_desc')
+            t1: t('hero_brand_t1'),
+            t2: t('hero_brand_t2'),
+            desc: t('hero_brand_desc')
         },
         story: {
-            t1: "PART 1. THE ORIGIN",
-            t2: "Premium Value",
-            desc: language === 'ko' ? "천혜의 자연 강원도 화천, 이곳에서 K-Wasabi의 전설이 시작됩니다. 혹독한 추위와 맑은 물, 자연이 준 시련을 우리는 기술로 극복했습니다." : "Beginning in Hwacheon's pristine nature, the legend of K-Wasabi unfolds. We overcame nature's trials with technology."
+            t1: t('hero_story_t1'),
+            t2: t('hero_story_t2'),
+            desc: t('hero_story_desc')
         },
         seeding: {
-            t1: "PART 2. BIO-TECHNOLOGY",
-            t2: "Auto Seeding & Tissue Culture",
-            desc: language === 'ko' ? "식물 생장점을 배양하여 만든 무병묘(Virus-Free)를 로봇이 정밀하게 자동 파종합니다." : "Robotic automated seeding of virus-free tissue cultured meristems."
+            t1: t('hero_seeding_t1'),
+            t2: t('hero_seeding_t2'),
+            desc: t('hero_seeding_desc')
         },
         tech: {
-            t1: "PART 3. MARKET INSIGHT",
-            t2: "Data Driven Agriculture",
-            desc: t('market_desc') || (language === 'ko' ? "데이터가 말해주는 100조 시장의 기회. AI가 분석하고 예측하는 정밀 농업." : "The opportunity of a 100 trillion market proven by data. Precision agriculture analyzed and predicted by AI.")
+            t1: t('hero_tech_t1'),
+            t2: t('hero_tech_t2'),
+            desc: t('hero_tech_desc')
         },
         process: {
-            t1: "PART 4. SUCCESS STORY",
-            t2: "From Farm to Table",
-            desc: t('gourmet_desc') || (language === 'ko' ? "최고의 셰프들이 선택한 맛의 정점. 농장에서 식탁까지 완벽한 콜드체인으로 전달됩니다." : "The pinnacle of taste chosen by top chefs. Delivered from farm to table with a perfect cold chain.")
+            t1: t('hero_process_t1'),
+            t2: t('hero_process_t2'),
+            desc: t('hero_process_desc')
         },
         global: {
-            t1: "PART 5. OUR IDENTITY",
-            t2: "Global Standard",
-            desc: language === 'ko' ? "세계가 인정한 K-Farm의 기준. 우리는 농업의 물리적 경계를 허물고 새로운 표준을 심고 있습니다." : "K-Farm's standard recognized by the world. We are breaking the physical boundaries of agriculture."
+            t1: t('hero_global_t1'),
+            t2: t('hero_global_t2'),
+            desc: t('hero_global_desc')
         }
     };
 
@@ -652,12 +982,12 @@ export function Hero() {
                     {/* Standardized Navigation Grid (3x2) - Controlling Video Mode */}
                     <SimpleGrid cols={3} spacing="xs" mb="lg" style={{ width: '100%' }}>
                         {[
-                            { id: 'brand', label: 'Brand Film', icon: <IconMovie size={14} /> },
-                            { id: 'story', label: 'Premium Value', icon: <IconBook size={14} /> },
-                            { id: 'seeding', label: 'Core Tech', icon: <IconLeaf size={14} /> },
-                            { id: 'tech', label: 'Market Insight', icon: <IconChartBar size={14} /> },
-                            { id: 'process', label: 'Success Cycle', icon: <IconRefresh size={14} /> },
-                            { id: 'global', label: 'Standard', icon: <IconWorld size={14} /> }
+                            { id: 'brand', label: t('hero_nav_brand'), icon: <IconMovie size={14} /> },
+                            { id: 'story', label: t('hero_nav_story'), icon: <IconBook size={14} /> },
+                            { id: 'seeding', label: t('hero_nav_tech'), icon: <IconLeaf size={14} /> },
+                            { id: 'tech', label: t('hero_nav_insight'), icon: <IconChartBar size={14} /> },
+                            { id: 'process', label: t('hero_nav_process'), icon: <IconRefresh size={14} /> },
+                            { id: 'global', label: t('hero_nav_global'), icon: <IconWorld size={14} /> }
                         ].map((item) => (
                             <Button
                                 key={item.id}

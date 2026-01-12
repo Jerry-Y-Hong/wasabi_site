@@ -29,12 +29,12 @@ export default function Home() {
   };
 
   const navItems = [
-    { id: 'section-hero', label: 'Brand Film', icon: <IconMovie size={18} /> },
-    { id: 'section-story', label: 'Our Story', icon: <IconBook size={18} /> },
-    { id: 'section-tech', label: 'Core Tech', icon: <IconCpu size={18} /> },
-    { id: 'section-insight', label: 'Insight', icon: <IconChartBar size={18} /> },
-    { id: 'section-success', label: 'Success', icon: <IconThumbUp size={18} /> },
-    { id: 'section-standard', label: 'Standard', icon: <IconCertificate size={18} /> },
+    { id: 'section-hero', label: t('hero_nav_brand'), icon: <IconMovie size={18} /> },
+    { id: 'section-story', label: t('hero_nav_story'), icon: <IconBook size={18} /> },
+    { id: 'section-tech', label: t('hero_nav_tech'), icon: <IconCpu size={18} /> },
+    { id: 'section-insight', label: t('hero_nav_insight'), icon: <IconChartBar size={18} /> },
+    { id: 'section-success', label: t('hero_nav_process'), icon: <IconThumbUp size={18} /> },
+    { id: 'section-standard', label: t('hero_nav_global'), icon: <IconCertificate size={18} /> },
   ];
 
   /* Shared Navigation Component */
