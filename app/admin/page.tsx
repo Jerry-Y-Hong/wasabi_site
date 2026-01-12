@@ -2,7 +2,7 @@
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar, Grid, Divider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools, IconChartDots, IconPlant } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -178,6 +178,29 @@ export default function AdminDashboard() {
                         </Button>
                         <Button component={Link} href="/admin/hardware" variant="light" color="teal" fullWidth leftSection={<IconTools size={16} />}>
                             {t('admin_dash_action_hardware')}
+                        </Button>
+                        <Button component={Link} href="/admin/settings/password" variant="light" color="gray" fullWidth leftSection={<IconSettings size={16} />}>
+                            Settings
+                        </Button>
+                        <Button
+                            component={Link}
+                            href="/admin/analytics"
+                            variant="gradient"
+                            gradient={{ from: 'violet', to: 'indigo', deg: 90 }}
+                            fullWidth
+                            leftSection={<IconChartDots size={16} />}
+                        >
+                            Analytics Pro
+                        </Button>
+                        <Button
+                            component={Link}
+                            href="/simulator"
+                            variant="gradient"
+                            gradient={{ from: 'teal', to: 'lime', deg: 90 }}
+                            fullWidth
+                            leftSection={<IconPlant size={16} />}
+                        >
+                            Greenhouse Sim
                         </Button>
                     </SimpleGrid>
                 </Card>

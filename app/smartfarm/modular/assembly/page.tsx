@@ -72,7 +72,7 @@ export default function AssemblyManualPage() {
                 '초소형 무선 pH/EC 센서 및 80L 탱크 안착',
                 '상단 적층용 가이드 핀 및 유압 포트 점검'
             ],
-            image: '/images/assembly/step1_v7.png'
+            image: '/images/assembly/step1_v8.png'
         },
         {
             label: '2단계: 아토믹 모듈 적층',
@@ -84,7 +84,7 @@ export default function AssemblyManualPage() {
                 '정밀 가이드 핀을 이용한 모듈 간 체결',
                 '무게감 있는 각 모듈의 안정적 고정 확인'
             ],
-            image: '/images/assembly/step2_v7.png'
+            image: '/images/assembly/step2_v8.png'
         },
         {
             label: '3단계: 모듈별 독립 공조',
@@ -96,7 +96,7 @@ export default function AssemblyManualPage() {
                 '월넛/메탈 마그네틱 스킨 개별 부착',
                 '모듈 단위의 최적 공환기 테스트'
             ],
-            image: '/images/assembly/step3_v7.png'
+            image: '/images/assembly/step3_v8.png'
         },
         {
             label: '4단계: 스마트 브레인 크라운 합체',
@@ -108,7 +108,7 @@ export default function AssemblyManualPage() {
                 '프로파일 중앙 관로를 활용한 히든 배선(Hidden Wiring) 연결',
                 'T-슬롯 마그네틱 접점을 통한 측면 패널 전원 공급 확인'
             ],
-            image: '/images/assembly/step4_v7.png'
+            image: '/images/assembly/step4_v8.png'
         },
         {
             label: '5단계: 유연한 공간 배치',
@@ -120,7 +120,7 @@ export default function AssemblyManualPage() {
                 '프리미엄 인테리어 조화 및 고추냉이 재배 시작',
                 '스마트 앱 연동을 통한 원격 모니터링 활성화'
             ],
-            image: '/images/assembly/step5_v7.png'
+            image: '/images/assembly/step5_v8.png'
         }
     ];
 

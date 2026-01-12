@@ -3,12 +3,15 @@
 import { cookies } from 'next/headers';
 
 import { getSessionToken } from '@/lib/auth';
+import { getStoredPassword } from '@/lib/auth-storage';
 
 export async function setAuthCookie(password: string) {
-    // Hardcoded password as requested by user
-    const CORRECT_PASSWORD = process.env.ADMIN_PASSWORD || '3357';
+    const cleanPassword = password.trim();
+    // Dynamic password from Vercel Blob
+    const CORRECT_PASSWORD = await getStoredPassword();
 
-    if (password === CORRECT_PASSWORD) {
+    // console.log('Auth Check:', cleanPassword, 'vs', CORRECT_PASSWORD); // Debug log
+    if (cleanPassword === CORRECT_PASSWORD.trim()) {
         const cookieStore = await cookies();
         cookieStore.set('wasabi_session_v2', getSessionToken(), {
             httpOnly: true,

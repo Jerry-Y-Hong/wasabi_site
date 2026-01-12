@@ -19,13 +19,18 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    // 2. Admin Protection
-    if (pathname.startsWith('/admin')) {
+    // 2. Admin & Simulator Protection
+    if (pathname.startsWith('/admin') || pathname.startsWith('/simulator')) {
         const authCookie = request.cookies.get('wasabi_session_v2');
 
         // If no auth cookie, redirect to login
         if (!authCookie || authCookie.value !== getSessionToken()) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            // Redirect to login, but keep the original URL to redirect back after login?
+            // For now simple redirect.
+            const loginUrl = new URL('/login', request.url);
+            // Optional: Pass prompt to tell user why
+            // loginUrl.searchParams.set('from', pathname); 
+            return NextResponse.redirect(loginUrl);
         }
     }
 
@@ -34,5 +39,5 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     // Matcher needs to be broader now to catch the root path '/' for redirects
-    matcher: ['/', '/admin', '/admin/:path*'],
+    matcher: ['/', '/admin/:path*', '/simulator/:path*'],
 };
