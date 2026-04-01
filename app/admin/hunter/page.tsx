@@ -48,7 +48,7 @@ import {
     IconCircleCheck,
     IconFileDescription,
     IconRefresh,
-    IconPdf,
+    IconFileTypePdf as IconPdf,
     IconChartBar,
     IconTarget,
     IconUsers,
@@ -61,7 +61,7 @@ import {
     IconCertificate,
     IconBuildingFactory,
     IconTable,
-    IconAnalyze,
+    IconChartBar as IconAnalyze,
     IconLayoutDashboard
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -109,6 +109,11 @@ const getUrgencyColor = (urgency: string) => {
 
 export default function HunterAdmin() {
     const { t, language } = useTranslation();
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Helper for Urgency Color (Moved inside to access t, or keep outside. We can keep getUrgencyColor outside since it doesn't use t)
 
@@ -1099,6 +1104,16 @@ export default function HunterAdmin() {
     };
 
 
+
+    if (!isMounted) {
+        return (
+            <Box style={{ minHeight: '100vh', width: '100%', backgroundColor: '#f8f9fa' }}>
+                <Center style={{ height: '80vh' }}>
+                    <Loader color="blue" type="bars" />
+                </Center>
+            </Box>
+        );
+    }
 
     return (
         <Container size="xl" py="xl">
