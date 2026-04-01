@@ -40,22 +40,25 @@ export function Header() {
     ];
 
     const items = links.map((link, idx) => {
+        const isActive = pathname && link.link === '/' 
+            ? pathname === '/' 
+            : pathname?.startsWith(link.link);
+
         if (link.submenu) {
-            // ... (submenu logic remains same)
             return (
                 <Menu key={idx} id={link.label.replace(/\s+/g, '-').toLowerCase()} shadow="md" width={200} trigger="hover" openDelay={100} closeDelay={400}>
                     <Menu.Target>
                         <Link
                             href={link.link}
                             className={classes.link}
-                            data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
+                            data-active={isActive ? 'true' : undefined}
                             style={{
                                 fontSize: '12px',
                                 padding: '8px 5px',
                                 fontWeight: 800,
                                 whiteSpace: 'nowrap',
-                                backgroundColor: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined,
-                                color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined
+                                backgroundColor: isActive ? 'var(--mantine-color-wasabi-1)' : 'transparent',
+                                color: isActive ? 'var(--mantine-color-wasabi-7)' : 'inherit'
                             }}
                         >
                             <Group gap={4} wrap="nowrap">
@@ -75,21 +78,20 @@ export function Header() {
             );
         }
 
-        // (Other link types logic)
         return (
             <Link
                 key={idx}
                 href={link.link}
                 className={classes.link}
                 onClick={close}
-                data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
+                data-active={isActive ? 'true' : undefined}
                 style={{
                     fontSize: '12px',
                     padding: '8px 12px',
                     fontWeight: 800,
                     whiteSpace: 'nowrap',
-                    backgroundColor: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined,
-                    color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined,
+                    backgroundColor: isActive ? 'var(--mantine-color-wasabi-1)' : 'transparent',
+                    color: isActive ? 'var(--mantine-color-wasabi-7)' : 'inherit',
                 }}
             >
                 <Group gap={4} wrap="nowrap">
