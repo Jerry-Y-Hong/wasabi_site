@@ -36,7 +36,6 @@ export function Header() {
         { link: '/consulting', label: t('nav_consulting') },
         { link: '/solutions/control-system', label: t('nav_control_system') },
         { link: '/simulator', label: t('nav_simulator') },
-        { link: 'https://k-hamp-div.vercel.app', label: t('nav_hemp'), external: true },
         { link: '/contact', label: t('nav_contact') },
     ];
 
@@ -83,19 +82,14 @@ export function Header() {
                 href={link.link}
                 className={classes.link}
                 onClick={close}
-                target={link.external ? "_blank" : undefined}
                 data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
                 style={{
                     fontSize: '12px',
                     padding: '8px 12px',
                     fontWeight: 800,
                     whiteSpace: 'nowrap',
-                    backgroundColor: link.link === 'https://k-hamp-div.vercel.app' ? '#4ade80' :
-                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined),
-                    color: link.link === 'https://k-hamp-div.vercel.app' ? 'black' :
-                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined),
-                    borderRadius: link.link === 'https://k-hamp-div.vercel.app' ? '20px' : 'var(--mantine-radius-md)',
-                    marginLeft: link.link === 'https://k-hamp-div.vercel.app' ? '10px' : '0'
+                    backgroundColor: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined,
+                    color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined,
                 }}
             >
                 <Group gap={4} wrap="nowrap">

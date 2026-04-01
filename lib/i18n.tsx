@@ -782,6 +782,7 @@ export const dictionary = {
         'nav_consulting': '컨설팅',
         'nav_contact': '고객문의',
         'nav_control_system': '통합 제어 솔루션',
+        'nav_simulator': '3D 시뮬레이터',
         'nav_cultivation': '재배기술',
         'nav_home': '홈',
         'nav_home_tooltip': '홈으로 이동',
