@@ -1201,7 +1201,7 @@ export const dictionary = {
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    t: (key: string) => string;
+    t: (key: string, defaultValue?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -1236,10 +1236,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const t = (key: string) => {
+    const t = (key: string, defaultValue?: string) => {
         // Always use 'ko' dictionary as the source for Google Translate to process
         const koDict = dictionary['ko'] as any;
-        return koDict[key] || key;
+        return koDict[key] || defaultValue || key;
     };
 
     return (
