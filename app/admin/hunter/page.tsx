@@ -126,16 +126,16 @@ export default function HunterAdmin() {
     ], [t]);
 
     const COUNTRY_DISPLAY: Record<string, string> = useMemo(() => ({
-        '': t('country_all').split(' ')[0],
-        'JP': t('country_jp').split(' ')[0],
-        'US': t('country_us').split(' ')[0],
-        'KR': t('country_kr').split(' ')[0],
-        'CN': t('country_cn').split(' ')[0],
-        'DE': t('country_de').split(' ')[0] || 'Germany',
-        'FR': t('country_fr').split(' ')[0] || 'France',
-        'AE': t('country_ae').split(' ')[0] || 'UAE',
-        'TH': t('country_th').split(' ')[0] || 'Thailand',
-        'VN': t('country_vn').split(' ')[0] || 'Vietnam',
+        '': (t('country_all') || 'All').split(' ')[0],
+        'JP': (t('country_jp') || 'Japan').split(' ')[0],
+        'US': (t('country_us') || 'United States').split(' ')[0],
+        'KR': (t('country_kr') || 'South Korea').split(' ')[0],
+        'CN': (t('country_cn') || 'China').split(' ')[0],
+        'DE': (t('country_de') || 'Germany').split(' ')[0],
+        'FR': (t('country_fr') || 'France').split(' ')[0],
+        'AE': (t('country_ae') || 'UAE').split(' ')[0],
+        'TH': (t('country_th') || 'Thailand').split(' ')[0],
+        'VN': (t('country_vn') || 'Vietnam').split(' ')[0],
     }), [t]);
 
     const APP_STATUS: Record<string, string> = useMemo(() => ({
