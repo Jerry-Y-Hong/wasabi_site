@@ -8,7 +8,7 @@ import { DesignArchitectDashboard } from '@/components/AI/DesignArchitectDashboa
 import { DataAnalystDashboard } from '@/components/AI/DataAnalystDashboard';
 import { StrategyCSODashboard } from '@/components/AI/StrategyCSODashboard';
 import { PipelineStatusChart, InquiryTypeChart } from '@/components/DashboardCharts';
-import { IconPalette, IconSettings, IconChartBar, IconLayout, IconBriefcase, IconHierarchy2, IconUsers, IconTrendingUp, IconMail, IconRocket, IconLogout, IconCircleCheck } from '@tabler/icons-react';
+import { IconPalette, IconSettings, IconChartBar, IconLayout, IconBriefcase, IconHierarchy, IconUsers, IconTrendingUp, IconMail, IconRocket, IconLogout, IconCircleCheck } from '@tabler/icons-react';
 import Link from 'next/link';
 import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
 
             <Tabs defaultValue="strategy" variant="outline" color="blue">
                 <Tabs.List mb="md">
-                    <Tabs.Tab value="strategy" leftSection={<IconHierarchy2 size={16} />}>
+                    <Tabs.Tab value="strategy" leftSection={<IconHierarchy size={16} />}>
                         Control Tower (CSO)
                     </Tabs.Tab>
                     <Tabs.Tab value="creative" leftSection={<IconPalette size={16} />}>

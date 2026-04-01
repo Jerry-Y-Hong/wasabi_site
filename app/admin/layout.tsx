@@ -30,7 +30,7 @@ import {
     IconLogout,
     IconChartBar,
     IconBuildingStore,
-    IconSettingsAutomation
+    IconAdjustments
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { logout } from '@/app/login/actions';
@@ -69,7 +69,7 @@ export default function AdminLayout({
     const menuItems = [
         { icon: IconLayoutDashboard, label: 'Dashboard', link: '/admin', active: pathname === '/admin' },
         { icon: IconChartBar, label: 'Analytics', link: '/admin/analytics', active: pathname === '/admin/analytics' },
-        { icon: IconSettingsAutomation, label: 'Control Tower', link: '/admin/control', active: pathname === '/admin/control', color: 'grape' },
+        { icon: IconAdjustments, label: 'Control Tower', link: '/admin/control', active: pathname === '/admin/control', color: 'grape' },
         { icon: IconRocket, label: 'Hunter AI', link: '/admin/hunter', active: pathname === '/admin/hunter', color: 'blue' },
         { icon: IconVideo, label: 'Studio', link: '/admin/studio', active: pathname === '/admin/studio' },
         { icon: IconBox, label: 'Inventory', link: '/admin/inventory', active: pathname === '/admin/inventory' },

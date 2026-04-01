@@ -16,7 +16,7 @@ import {
     Divider,
     Timeline
 } from '@mantine/core';
-import { IconSend, IconTrophy, IconRobot, IconHierarchy2, IconTarget, IconUsers, IconRocket } from '@tabler/icons-react';
+import { IconSend, IconTrophy, IconRobot, IconHierarchy, IconTarget, IconUsers, IconRocket } from '@tabler/icons-react';
 import { useTranslation } from '@/lib/i18n';
 
 interface Message {
@@ -100,7 +100,7 @@ export function StrategyCSODashboard() {
             <Group justify="space-between" p="xl" bg="blue.9" c="white">
                 <Group gap="md">
                     <Avatar color="yellow.5" radius="xl" size="lg">
-                        <IconHierarchy2 size={28} />
+                        <IconHierarchy size={28} />
                     </Avatar>
                     <Stack gap={0}>
                         <Title order={3}>{t('cso_dashboard_header_title')}</Title>

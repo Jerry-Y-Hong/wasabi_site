@@ -164,7 +164,6 @@ export default function HunterAdmin() {
 
     const SPECIALTIES = useMemo(() => [
         t('spec_arch') || '건축 및 설계',
-        t('spec_arch'),
         t('spec_system'),
         t('spec_substrate'),
         t('spec_hvac'),

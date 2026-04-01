@@ -2,7 +2,7 @@
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar, Grid, Divider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools, IconChartDots, IconPlant, IconRefresh, IconSettingsAutomation } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuilding, IconDownload, IconFileDescription, IconBox, IconTools, IconChartBar, IconPlant, IconRefresh, IconAdjustments } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
                     <Grid.Col span={{ base: 12, md: 8 }}>
                         <Group gap="lg">
                             <ThemeIcon color="cyan" variant="light" size={48} radius="md">
-                                <IconBuildingArch size={26} />
+                                <IconBuilding size={26} />
                             </ThemeIcon>
                             <Stack gap={2}>
                                 <Group gap="xs">
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
                                 variant="filled"
                                 color="cyan"
                                 size="xs"
-                                leftSection={<IconFileAnalytics size={14} />}
+                                leftSection={<IconFileDescription size={14} />}
                                 onClick={() => notifications.show({ title: t('admin_dash_tool_btn_analyze'), message: 'GHModeler result files ready?', color: 'cyan' })}
                             >
                                 {t('admin_dash_tool_btn_analyze')}
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                         <Button component={Link} href="/admin/hardware" variant="light" color="teal" fullWidth leftSection={<IconTools size={16} />}>
                             {t('admin_dash_action_hardware')}
                         </Button>
-                        <Button component={Link} href="/admin/control" variant="light" color="grape" fullWidth leftSection={<IconSettingsAutomation size={16} />}>
+                        <Button component={Link} href="/admin/control" variant="light" color="grape" fullWidth leftSection={<IconAdjustments size={16} />}>
                             Control
                         </Button>
                         <Button
