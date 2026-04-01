@@ -3,10 +3,19 @@ import random
 import sys
 import os
 
-# --- Configuration ---
-TARGET_EC = 2.0  # mS/cm
-TARGET_PH = 5.8  # pH
-TARGET_TEMP = 18.0 # Celsius
+# 생육 타겟 상수 (PhD Ultimate Consensus - Aeroponic Wasabi Special)
+TARGET_EC = 1.4      # Aeroponic standard (1.2~1.6)
+TARGET_PH = 6.0      # Aeroponic standard (6.0~6.5)
+TARGET_TEMP = 13.0
+TARGET_LIGHT = 70.0  # PPFD (μmol/m²/s)
+TARGET_CO2 = 700.0   # ppm
+
+# Tolerances
+EC_TOLERANCE = 0.1
+PH_TOLERANCE = 0.2
+TEMP_TOLERANCE = 0.5
+LIGHT_TOLERANCE = 10.0
+CO2_TOLERANCE = 50.0
 TANK_CAPACITY = 200 # Liters
 FILL_LEVEL_TARGET = 80.0 # % (Fill until 80%)
 

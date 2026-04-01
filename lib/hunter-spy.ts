@@ -6,7 +6,7 @@ function isValidEmail(email: string) {
 }
 
 export async function spyOnCompany(targetUrl: string) {
-    if (!targetUrl) return { success: false, error: "No URL provided" };
+    if (!targetUrl) return { success: false, error: "URL이 제공되지 않았습니다." };
 
     try {
         // 1. Timeout Setup (10 seconds max)
@@ -40,7 +40,7 @@ export async function spyOnCompany(targetUrl: string) {
         clearTimeout(timeout);
 
         if (!response.ok) {
-            throw new Error(`Failed to access site: ${response.status}`);
+            throw new Error(`사이트 접속 실패: ${response.status}`);
         }
 
         const html = await response.text();
@@ -81,6 +81,12 @@ export async function spyOnCompany(targetUrl: string) {
             $.root().text().match(/\d+\s+[A-Z][a-z]+\s+(St|Ave|Rd|Blvd|Lane),?\s+[A-Z][a-z]+,?\s+[A-Z]{2}\s+\d{5}/);
         const foundAddress = addressMatch ? addressMatch[0] : null;
 
+        // E. Favicon Extraction (New)
+        let favicon = $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href') || '/favicon.ico';
+        if (favicon && !favicon.startsWith('http')) {
+            favicon = new URL(favicon, targetUrl).toString();
+        }
+
         // 4. Content Cleanup for AI
         const title = $('title').text().trim() || $('meta[property="og:title"]').attr('content') || '';
         const metaDescription = $('meta[name="description"]').attr('content') ||
@@ -93,13 +99,20 @@ export async function spyOnCompany(targetUrl: string) {
         let mainText = $('.se-main-container, .post-view, #postListBody, .contents_area').text() || $('body').text();
         mainText = mainText.replace(/\s+/g, ' ').substring(0, 3000).trim();
 
-        // E. Deep Link identification
+        // F. Deep Link identification (Improved)
         let deepLink = '';
+        const deepLinkKeywords = ['team', 'management', 'about', 'contact', '회사소개', '오시는길', '조직도', '임원'];
+
         $('a').each((_, el) => {
-            const text = $(el).text().toLowerCase();
+            const text = $(el).text().toLowerCase().trim();
             const href = $(el).attr('href');
-            if (href && (text.includes('contact') || text.includes('about') || text.includes('team') || text.includes('회사소개') || text.includes('오시는길'))) {
-                if (!deepLink && !href.startsWith('mailto') && !href.startsWith('tel')) deepLink = href;
+            if (href && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('#')) {
+                if (deepLinkKeywords.some(kw => text.includes(kw))) {
+                    // Prioritize 'team' or 'management' if possible, otherwise first match
+                    if (!deepLink || text.includes('team') || text.includes('management') || text.includes('조직도')) {
+                        deepLink = href;
+                    }
+                }
             }
         });
 
@@ -134,6 +147,7 @@ export async function spyOnCompany(targetUrl: string) {
                 phones: Array.from(foundPhones),
                 sns,
                 address: foundAddress,
+                favicon,
                 deepLink: deepLink ? new URL(deepLink, targetUrl).toString() : null,
                 detectedCountry // Return the guess
             }
@@ -142,7 +156,7 @@ export async function spyOnCompany(targetUrl: string) {
     } catch (error: any) {
         return {
             success: false,
-            error: error.message || "Connection Failed"
+            error: error.message || "연결 실패 (Connection Failed)"
         };
     }
 }

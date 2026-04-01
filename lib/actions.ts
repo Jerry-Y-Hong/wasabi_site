@@ -376,7 +376,7 @@ async function readDb(filename: string): Promise<any[]> {
                     await fsp.writeFile(tmpPath, data);
                     return JSON.parse(data);
                 } catch (err) {
-                    console.log(`[ReadDb] Not found in build path either: ${filename}`);
+
                     // 🔥 ULTIMATE FALLBACK: Return hardcoded data if all else fails
                     if (filename === 'posts.json') return FALLBACK_POSTS;
                     return [];
@@ -548,11 +548,9 @@ export async function runDeepResearch(id: number) {
     if (!partner) return { success: false, error: 'Partner not found' };
 
     try {
-        console.log(`[Deep Research] Starting for: ${partner.name}`);
 
-        // 1. Get Targeted Keywords
         const keywords = await getDeepResearchKeywords(partner.name);
-        console.log(`[Deep Research] Keywords: ${keywords.join(', ')}`);
+
 
         let aggregatedData = `Company: ${partner.name}\nMain URL: ${partner.url}\n\n`;
 
@@ -576,7 +574,7 @@ export async function runDeepResearch(id: number) {
                             aggregatedData += `Search Snippet (${kw}): ${item.title} - ${item.snippet}\n`;
                         });
                     } else {
-                        console.log(`[Deep Research] No search results for "${kw}"`);
+
                     }
                 } catch (e: any) {
                     console.error(`Search failed for ${kw}:`, e.message);
@@ -599,13 +597,47 @@ export async function runDeepResearch(id: number) {
         // 4. Call Pro Model for Analysis
         const aiReport = await deepResearchPartnerAI(partner.name, aggregatedData);
 
-        // 5. Save Report
+        // 5. Transform JSON to Markdown for UI Compatibility
+        const reportObj = aiReport.intelligence;
+        let markdownReport = "";
+
+        if (reportObj && typeof reportObj === 'object') {
+            // Generate Markdown from JSON
+            markdownReport = `## Executive Summary
+${reportObj.executive_summary || "No summary available."}
+
+## Key Personnel
+| Name | Role |
+|------|------|
+${(reportObj.key_personnel || []).map((p: any) => `| ${p.name || '-'} | ${p.role || '-'} |`).join('\n')}
+
+## SWOT Analysis
+| Category | Details |
+|----------|---------|
+| **Strengths** | ${(reportObj.swot?.strengths || []).join(', ')} |
+| **Weaknesses** | ${(reportObj.swot?.weaknesses || []).join(', ')} |
+| **Opportunities** | ${(reportObj.swot?.opportunities || []).join(', ')} |
+| **Threats** | ${(reportObj.swot?.threats || []).join(', ')} |
+
+## Business Insight
+${reportObj.business_insight || "No insight available."}
+
+## Golden Hook
+> **${reportObj.email_hook || "No hook generated."}**`;
+
+        } else if (typeof reportObj === 'string') {
+            // Fallback if AI returned string
+            markdownReport = reportObj;
+        }
+
+        // 6. Save Report
         await updateHunterInfo(id, {
-            intelligenceReport: aiReport.intelligence,
+            intelligenceReport: markdownReport,
+            intelligenceJSON: reportObj, // Save structured data for future use
             status: 'AI Analyzed'
         });
 
-        return { success: true, report: aiReport.intelligence };
+        return { success: true, report: markdownReport };
     } catch (error) {
         console.error(`[Deep Research] Error:`, error);
         return { success: false, error: 'Failed to complete deep research.' };
@@ -614,13 +646,10 @@ export async function runDeepResearch(id: number) {
 
 export async function scanWebsite(url: string, name?: string) {
     try {
-        console.log(`[Scan] Action Triggered for: ${url}`);
 
         const result = await spyOnCompany(url);
-        console.log(`[Scan] Result:`, result.success ? 'Success' : 'Fail');
 
         if (result.success && result.data) {
-            console.log(`[Scan] Metadata Found: Title="${result.data.title}", MetaLen=${result.data.metaDescription.length}, SummaryLen=${result.data.summary.length}`);
 
             // AI Analysis Integration
             let aiAnalysis = null;
@@ -628,9 +657,10 @@ export async function scanWebsite(url: string, name?: string) {
                 aiAnalysis = await analyzeLeadQuality(
                     name || result.data.title || "Unknown Company",
                     result.data.summary || "",
-                    result.data.metaDescription || ""
+                    result.data.metaDescription || "",
+                    result.data.detectedCountry // Pass detected country to AI
                 );
-                console.log(`[Scan] AI Analysis Result: Score=${aiAnalysis?.score}`);
+                // 
             } catch (aiErr) {
                 console.error("[Scan] AI Analysis Error:", aiErr);
             }
@@ -673,9 +703,14 @@ export async function getDashboardStats() {
     const contactData = await getContactInquiries();
     const consultingData = await getConsultingInquiries();
 
+    let verifiedCount = 0;
     const statusCounts = hunterData.reduce((acc: any, curr: any) => {
         const status = curr.status || 'New';
         acc[status] = (acc[status] || 0) + 1;
+        
+        if (curr.aiSummary && (curr.aiSummary.score || 0) >= 7) {
+            verifiedCount++;
+        }
         return acc;
     }, {});
 
@@ -700,17 +735,15 @@ export async function getDashboardStats() {
     });
 
     return {
-        pipeline: { total: hunterData.length, statusCounts },
+        pipeline: { total: hunterData.length, statusCounts, verifiedCount },
         inquiries: { total: contactData.length + consultingData.length, categoryCounts, recent: recentInquiries }
     };
 }
 
-
 // Blog & Video Scripts also use JSON
 export async function saveBlogPost(data: any) {
-    console.log('[Debug] Saving Blog Post...');
+
     const currentData = await readDb('posts.json');
-    console.log('[Debug] Current Posts Count:', currentData.length);
 
     // Generate slug: try English conversion, fallback to timestamp if empty
     let slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -728,7 +761,6 @@ export async function saveBlogPost(data: any) {
     };
     currentData.push(newEntry);
 
-    console.log('[Debug] New Posts Count:', currentData.length);
     await writeDb('posts.json', currentData);
 
     revalidatePath('/admin/blog');
@@ -738,7 +770,7 @@ export async function saveBlogPost(data: any) {
 }
 
 export async function getBlogPosts(lang: string = 'ko') {
-    console.log(`[getBlogPosts] Request for lang: ${lang}`);
+
     // 🔥 FORCE USE OF HARDCODED DATA FOR MULTI-LANG TO FIX CACHE ISSUES
     // This ensures specific language requests always get the correct static content
     // ignoring any stale file system caches.
@@ -790,7 +822,6 @@ export async function getVideoScripts() {
     const data = await readDb('scripts.json');
     return data.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 }
-
 
 // Image Upload needs special handling
 export async function saveAnimatorImage(base64Data: string, fileName: string) {
@@ -994,7 +1025,7 @@ export async function searchPartners(keyword: string, page: number = 1, country:
                     };
                 });
             } else {
-                console.log('Google API: No items found or Quota Exceeded. Falling back to Mock.');
+
                 // Fall through to Mock Data
             }
         } catch (error) {
@@ -1020,13 +1051,29 @@ export async function searchPartners(keyword: string, page: number = 1, country:
         if (!countryMatch) return false;
 
         // Keyword Filter
-        if (!lowerKeyword) return true; // No keyword = show all for country
+        if (!lowerKeyword) return true;
 
-        const nameMatch = item.name.toLowerCase().includes(lowerKeyword);
-        const typeMatch = item.type.toLowerCase().includes(lowerKeyword);
-        const relevanceMatch = item.relevance.toLowerCase().includes(lowerKeyword);
+        // Enhanced filtering for mock data to handle complex preset queries
+        // Strip common boolean operators and parentheses for simpler matching
+        const searchTokens = lowerKeyword
+            .replace(/\((.*?)\)/g, '$1')
+            .replace(/\b(or|and)\b/gi, ' ')
+            .replace(/[-"']/g, ' ')
+            .split(/\s+/)
+            .filter(t => t.length > 1);
 
-        return nameMatch || typeMatch || relevanceMatch;
+        if (searchTokens.length === 0) return true;
+
+        const nameLower = item.name.toLowerCase();
+        const typeLower = item.type.toLowerCase();
+        const relevanceLower = item.relevance.toLowerCase();
+
+        // If any token matches (OR behavior for mock consistency)
+        return searchTokens.some(token =>
+            nameLower.includes(token) ||
+            typeLower.includes(token) ||
+            relevanceLower.includes(token)
+        );
     });
 
     // Fallback: If filtered is empty but keyword was empty (and maybe country mismatch strictly),
@@ -1061,10 +1108,10 @@ export async function sendProposalEmail(to: string, partnerName: string, subject
             <p>This is <strong>K-Farm Group / Wasabi Div.</strong> (K-Wasabi) from Korea.</p>
             <p>We are the exclusive aggregator and distributor for Wasabi farms in Hwacheon-gun, the Mecca of Korean Wasabi.</p>
             <p>We supply all parts: Leaves, Stems, Roots, and Powder.</p>
-            <p>Please check our proposal attached or visit <a href="https://www.k-wasabi.kr">www.k-wasabi.kr</a>.</p>
+            <p>Please check our proposal attached or visit <a href="https://ksmart-farm.com">ksmart-farm.com</a>.</p>
             <br/>
             <p>Best regards,</p>
-            <p><strong>Jerry Y. Hong</strong><br/>Sales Director<br/>K-Wasabi</p>
+            <p><strong>Jerry Y. Hong</strong><br/>CMO<br/>K-Wasabi</p>
         </div>
     `;
 
@@ -1214,3 +1261,5 @@ export async function deleteHardwarePart(id: number | string) {
         return { success: false, error: '서버 삭제 중 오류가 발생했습니다.' };
     }
 }
+
+

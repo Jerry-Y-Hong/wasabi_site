@@ -102,7 +102,6 @@ export default function HardwareAdmin() {
         unit: 'EA'
     });
 
-
     // Calculate total cost and category breakdown
     const totalCost = (parts || []).reduce((sum, item) => {
         if (!item) return sum;

@@ -44,7 +44,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **European Greens** | 18~24℃ | Full Spectrum | 하 | 저압, 기초 센서 |
 | **Specialty Herbs** | 20~25℃ | High Intensity Blue | 중 | 정밀 습도 제어 |
-| **Wasabi** | 15~18℃ | Far-Red / Low Light | 상 | 냉각 시스템 + 고압 미스트 |
+| Wasabi (HQ) | 12 - 15°C | 3s / 5min (HPA) | 상 | pH 5.5 - 6.0, EC 1.2 - 1.6, 냉각 시스템 + 고압 미스트 |
 
 ## 7. 가격 경쟁력 확보 (Cost Engineering)
 *   **공용 프레임:** 작물에 상관없이 동일한 프레임을 대량 생산하여 단가 하락 유도.

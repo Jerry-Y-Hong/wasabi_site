@@ -1,37 +1,46 @@
-**Project:** KF-SMARTFARM-SERIES (Industrial & Modular)
-**Version:** 1.2 (Added Modular Atomic Specs)
-**Date:** 2026-01-08
+**Project:** KF-SMARTFARM-SERIES (Enterprise & Modular)
+**Version:** 2.1 (Enterprise 7-Tier)
+**Date:** 2026-02-12
 
 ---
 
-## 1. 유압 및 펌프류 (Hydraulics & Pumps)
+# 📋 Bill of Materials (BOM) v3.0 (Enterprise 7-Tier 4-Row)
 
-| 구분 | 부품명 (Item Name) | 추천 사양 (Specifications) | 수량 | 비고/추천 제조사 |
+> [!IMPORTANT]
+> **[LANGUAGE RULE] 모든 작업, 문서, 주석, 출력은 반드시 `한국어`로 작성해야 합니다.**
+
+## 1. 재배 장치 (Cultivation Systems)
+| 품목 | 규격 | 수량 | 비고 |
+| :--- | :--- | :--- | :--- |
+| **리니어 랙 프레임** | 2240x600x4500mm, 7단 | **64 set** | 4열 병렬 고밀도 배치 (각 열 16개) |
+| **와사비 전용 트레이** | 2000x600x150mm | **448 ea** | 64랙 x 7단 구성 (용량 2배 증대) |
+| **이동형 LED 유닛** | MAGI System (7단 대응) | 32 set | 이중 레일 기반 4열 전체 스캐닝 |
+
+## 2. 펌프 및 유압 시스템 (Hydraulics & Pumps)
+**[설계 기준]**: 40m 리니어 구간 및 64개 랙 동시 급액을 위한 초고압 시스템.
+
+| 구분 | 부품명 | 상세 사양 (Specifications) | 수량 | 비고/추천 제조사 |
 | :--- | :--- | :--- | :--- | :--- |
-| **Main Pump** | **급수/공급 펌프** | - 다단 원심 펌프 (Horizontal Multistage Centrifugal Pump)<br>- 유량: 10~15 ㎥/h<br>- 양정: 40~50m (약 4~5 bar)<br>- 재질: STS304 (접액부) | 1 | **Wilo (윌로)**: MHI 시리즈<br>**Grundfos (그룬포스)**: CM 시리즈<br>**한일전기**: P-S 시리즈 (가성비) |
-| **Mixing** | **교반 펌프** | - 수중 펌프 또는 소형 순환 펌프<br>- 믹싱 탱크 내부 교반용 (상온 유지 보조) | 1 | 한일, 윌로 소형 수중펌프 |
-| **Recycle** | **배액 회수 펌프** | - 자흡식 펌프 (Self-priming)<br>- 필터 전단에 설치하여 배액 탱크로 이송 | 1 | 윌로 PU 시리즈 등 |
-| **Tank** | **믹싱 탱크** | - 용량: 200L 이상<br>- 재질: PE (단열 처리 권장) | 1 | 외부 열차단을 위한 폼 단열 작업 권장 |
-| **Inject** | **벤추리 인젝터** | - 규격: 1/2인치 또는 3/4인치<br>- 바이패스 타입 솔레노이드 밸브 셋트 | 3 set | **Mazzei (마제이)** |
+| **Main Pump** | **메인 공급 펌프** | - 다단 원심 펌프 (Vertical Multistage)<br>- **양정: 80m (8 bar)**<br>- 유량: 40 ㎥/h<br>- 재질: STS304 | 2 set | Grundfos CR 45 급 (이중화) |
+| **Recycle** | **배액 회수 펌프** | - 고성능 자흡식 | 4 | 구역별 독립 회수 |
 
-## 2. 밸브 및 배관 (Valves & Piping)
+## 3. 밸브 및 배관 (Valves & Piping)
+**[설계 기준]**: 80A 메인 트렁크 라인 및 4개 분기 헤더.
 
-| 구분 | 부품명 (Item Name) | 추천 사양 (Specifications) | 수량 | 비고/추천 제조사 |
+| 구분 | 부품명 | 상세 사양 (Specifications) | 수량 | 비고 |
 | :--- | :--- | :--- | :--- | :--- |
-| **Solenoid** | **양액 주입 밸브** | - 규격: 1/2인치, 내화학성(PVC/Teflon) 필수<br>- DC24V | 3~5 | **Burkert**, **효신** |
-| **Control** | **구역 제어 밸브** | - 규격: 40A ~ 50A, 전동 볼 밸브 (Motorized)<br>- 배액 재활용 전환 밸브 (3-Way) 포함 | 16+ | **KMC**, **효신** |
-| **Check** | **체크 밸브** | - 역류 방지용 (배액/원수 혼합 지점) | 2 | 스윙/판 체크 밸브 |
-| **Filter** | **정밀 필터** | - 디스크 필터 (120 Mesh) + **샌드 필터(재활용 시)** | 1 set | **Amiad**, **Arkal** |
+| **Main Pipe** | **주 배관 (80A)** | - 메인 루프 (공급/회수 각 40m)<br>- 재질: STS304 또는 SCH80 PVC | 80m+ | 유량 2배 증대에 따른 구경 확대 |
+| **Branch Pipe** | **분기 배관 (25A/15A)** | - 64개 랙 개별 분기 라인 | 1식 | 정밀 유량 제어 밸브 포함 |
 
-## 3. 센서 및 계측기 (Sensors) - **(냉각/수위 강화)**
+## 4. 센서 및 계측기 (Sensors)
+**[수량 기준]**: 64개 랙 x 7단 = 448 Shelf 전체 모니터링.
 
-| 구분 | 부품명 (Item Name) | 추천 사양 (Specifications) | 수량 | 비고/추천 제조사 |
+| 구분 | 부품명 | 상세 사양 (Specifications) | 수량 | 비고 |
 | :--- | :--- | :--- | :--- | :--- |
-| **Temp** | **수온 센서 (PT100)** | - 타입: PT100 RTD 또는 NTC 10K<br>- 형태: **방수 프로브 (웰 타입)**, SUS304<br>- 정밀도: ±0.5℃ 이내 | 2 | **Autonics**, **Hanyoung**<br>(1개: 원수/믹싱탱크, 1개: 배액탱크) |
-| **Level** | **수위 센서 (제어용)** | - 타입: **전극봉 타입 (3단: 저/중/고)** 또는 초음파<br>- 제어: 급수 중단, 펌프 공회전 방지 | 2 set | **Hanyoung Nux (FS-3)**<br>(1set: 믹싱탱크, 1set: 배액탱크) |
-| **EC** | **전도도 센서** | - 측정 범위: 0~10 mS/cm, 온도 보상 내장 | 2 | **HM Digital**, **SensoRex** |
-| **pH** | **pH 센서** | - 측정 범위: 0~14 pH | 2 | **SensoRex** |
-| **Flow** | **전자식 유량계** | - 관경: 40A ~ 50A, 펄스 출력 | 1~2 | 급수량 및 배액량 측정 |
+| **Rack-S** | **랙 단위 통합 센서** | - 온습도 + CO2 통합 모듈 | 64 ea | 랙별 환경 독립 제어 |
+| **Shelf-S** | **생육점 정밀 센서** | - 초소형 캐노피 온습도 센서 | **448 ea** | 고밀도 생산 정밀 감시 |
+| **EC/pH** | **양액 센서 (이중화)** | - 공업용 고정밀 센서 (이중화 필수) | 2 set | **Mettler Toledo**, **SensoRex** |
+| **Flow** | **전자식 유량계** | - 50A, 적산 유량 및 순간 유량 계측 | 2 | 급액/배액 비율 분석 (함수율 추정) |
 
 ## 4. 냉각 및 살균 시스템 (Cooling & Sterilization) - **(필수 추가)**
 

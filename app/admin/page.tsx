@@ -2,7 +2,7 @@
 
 import { Container, Title, Text, SimpleGrid, Paper, Group, Stack, Card, ThemeIcon, Badge, Button, Avatar, Grid, Divider } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools, IconChartDots, IconPlant } from '@tabler/icons-react';
+import { IconMail, IconTrendingUp, IconUsers, IconSearch, IconPencil, IconMovie, IconSettings, IconShare, IconBuildingArch, IconDownload, IconFileAnalytics, IconBox, IconTools, IconChartDots, IconPlant, IconRefresh, IconSettingsAutomation } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { getDashboardStats } from '@/lib/actions';
 import { logout } from '@/app/login/actions';
@@ -65,11 +65,12 @@ export default function AdminDashboard() {
                     <Text c="dimmed" size="lg" mt={5}>{t('admin_dash_greeting')}</Text>
                 </div>
                 <Group>
-                    <Button component={Link} href="/admin/hunter" size="md" color="black" variant="filled" leftSection={<IconSearch size={18} />}>
-                        {t('admin_dash_btn_hunter')}
-                    </Button>
-                    <Button onClick={handleLogout} size="md" color="red" variant="light">
-                        {t('admin_dash_btn_logout')}
+                    <Button
+                        variant="light"
+                        leftSection={<IconRefresh size={18} />}
+                        onClick={() => window.location.reload()}
+                    >
+                        Refresh
                     </Button>
                 </Group>
             </Group>
@@ -179,28 +180,18 @@ export default function AdminDashboard() {
                         <Button component={Link} href="/admin/hardware" variant="light" color="teal" fullWidth leftSection={<IconTools size={16} />}>
                             {t('admin_dash_action_hardware')}
                         </Button>
-                        <Button component={Link} href="/admin/settings/password" variant="light" color="gray" fullWidth leftSection={<IconSettings size={16} />}>
+                        <Button component={Link} href="/admin/control" variant="light" color="grape" fullWidth leftSection={<IconSettingsAutomation size={16} />}>
+                            Control
+                        </Button>
+                        <Button
+                            component={Link}
+                            href="/admin/settings/password"
+                            variant="light"
+                            color="gray"
+                            fullWidth
+                            leftSection={<IconSettings size={16} />}
+                        >
                             Settings
-                        </Button>
-                        <Button
-                            component={Link}
-                            href="/admin/analytics"
-                            variant="gradient"
-                            gradient={{ from: 'violet', to: 'indigo', deg: 90 }}
-                            fullWidth
-                            leftSection={<IconChartDots size={16} />}
-                        >
-                            Analytics Pro
-                        </Button>
-                        <Button
-                            component={Link}
-                            href="/simulator"
-                            variant="gradient"
-                            gradient={{ from: 'teal', to: 'lime', deg: 90 }}
-                            fullWidth
-                            leftSection={<IconPlant size={16} />}
-                        >
-                            Greenhouse Sim
                         </Button>
                     </SimpleGrid>
                 </Card>

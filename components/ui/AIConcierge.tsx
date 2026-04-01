@@ -1,231 +1,290 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Affix, Button, Transition, Card, Text, Group, Stack, ActionIcon, ScrollArea, Avatar, ThemeIcon, Box } from '@mantine/core';
-import { IconMessageChatbot, IconX, IconArrowRight, IconRobot, IconShoppingCart, IconArchive, IconTarget, IconHeadset } from '@tabler/icons-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+import { 
+  Affix, 
+  Button, 
+  Transition, 
+  Card, 
+  Text, 
+  Group, 
+  Stack, 
+  ActionIcon, 
+  ScrollArea, 
+  Avatar, 
+  ThemeIcon, 
+  Box, 
+  TextInput,
+  Loader,
+  Badge,
+  Tooltip
+} from '@mantine/core';
+import { 
+  IconMessageChatbot, 
+  IconX, 
+  IconRobot, 
+  IconSend, 
+  IconHeadset, 
+  IconHierarchy2, 
+  IconChefHat, 
+  IconBriefcase,
+  IconSparkles
+} from '@tabler/icons-react';
+import { usePathname } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n';
+
+interface Message {
+  sender: 'ai' | 'user';
+  text: string;
+}
+
+interface AgentConfig {
+  name: string;
+  role: string;
+  apiPath: string;
+  icon: any;
+  color: string;
+  welcomeMsg: string;
+}
 
 export default function AIConcierge() {
     const [mounted, setMounted] = useState(false);
     const [opened, setOpened] = useState(false);
-    const [lang, setLang] = useState<'ko' | 'en'>('en');
-
-    const router = useRouter();
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
+    const viewport = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
-    const isAdminPath = pathname?.startsWith('/admin');
+    const { t, language } = useTranslation();
 
-    const [messages, setMessages] = useState<{ sender: 'ai' | 'user', text: string, actions?: any[] }[]>([]);
+    // 1. Unified Agent Logic based on current page
+    const getAgentConfig = (): AgentConfig => {
+        if (pathname?.startsWith('/admin')) {
+            return {
+                name: 'CSO Han',
+                role: t('ai_concierge_role_cso'),
+                apiPath: '/api/chat/strategy',
+                icon: IconHierarchy2,
+                color: 'blue',
+                welcomeMsg: t('ai_concierge_hi_cso')
+            };
+        } else if (pathname?.includes('/contact') || pathname?.includes('/news')) {
+            return {
+                name: 'Chief Park',
+                role: t('ai_concierge_role_park'),
+                apiPath: '/api/chat/tech',
+                icon: IconHeadset,
+                color: 'cyan',
+                welcomeMsg: t('ai_concierge_hi_park')
+            };
+        } else if (pathname?.includes('/b2b') || pathname?.includes('/trade')) {
+            return {
+                name: 'Broker Kim',
+                role: t('ai_concierge_role_kim'),
+                apiPath: '/api/chat/trade',
+                icon: IconBriefcase,
+                color: 'orange',
+                welcomeMsg: t('ai_concierge_hi_kim')
+            };
+        }
+        return {
+            name: 'Manager Hong',
+            role: t('ai_concierge_role_hong'),
+            apiPath: '/api/chat/sales',
+            icon: IconChefHat,
+            color: 'teal',
+            welcomeMsg: t('ai_concierge_hi_hong')
+        };
+    };
 
-    // 1. Mark as mounted to prevent hydration errors
+    const agent = getAgentConfig();
+
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // 2. Set initial message ONLY after mounting and whenever path/lang changes
+    // Reset chat when agent profile changes (significant path change)
     useEffect(() => {
         if (!mounted) return;
+        setMessages([{ sender: 'ai', text: agent.welcomeMsg }]);
+    }, [agent.name, mounted]);
 
-        const content = {
-            en: {
-                admin: {
-                    text: 'Welcome back, Chairman. [ADMIN] Mode active. How shall we proceed today?',
-                    actions: [
-                        { label: 'Run Partner Hunter (DB)', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
-                        { label: 'Performance Dashboard', link: '/admin', icon: IconArchive, color: 'teal' },
-                        { label: 'Go to Site', link: '/', icon: IconArrowRight, color: 'gray' },
-                    ]
-                },
-                customer: {
-                    text: 'Welcome to K-Farm Premium Concierge. How can I assist you today?',
-                    actions: [
-                        { label: 'Shop Wasabi', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
-                        { label: 'Digital Vault', link: '/video', icon: IconArchive, color: 'violet' },
-                        { label: '1:1 Business Inquiry', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
-                    ]
-                }
-            },
-            ko: {
-                admin: {
-                    text: '회장님, 관리자 모드입니다. 어떤 작업을 진행할까요?',
-                    actions: [
-                        { label: '파트너 헌터 실행', link: '/admin/hunter', icon: IconTarget, color: 'blue' },
-                        { label: '실적 대시보드', link: '/admin', icon: IconArchive, color: 'teal' },
-                        { label: '메인으로 이동', link: '/', icon: IconArrowRight, color: 'gray' },
-                    ]
-                },
-                customer: {
-                    text: 'K-Farm 프리미엄 컨시어지입니다. 무엇을 도와드릴까요?',
-                    actions: [
-                        { label: '와사비 구매하기', link: '/products/fresh', icon: IconShoppingCart, color: 'green' },
-                        { label: '디지털 금고 구경', link: '/video', icon: IconArchive, color: 'violet' },
-                        { label: '1:1 비즈니스 문의', link: '/consulting/inquiry', icon: IconHeadset, color: 'orange' },
-                    ]
-                }
-            }
-        };
+    const scrollToBottom = () => {
+        if (viewport.current) {
+            viewport.current.scrollTo({ top: viewport.current.scrollHeight, behavior: 'smooth' });
+        }
+    };
 
-        const current = content[lang][isAdminPath ? 'admin' : 'customer'];
-
-        // Only reset to greeting if messages are currently empty or it's a path change
-        setMessages([{
-            sender: 'ai',
-            text: current.text,
-            actions: current.actions
-        }]);
-    }, [isAdminPath, lang, mounted]);
-
-    // 3. REMOVED Auto-open greeting - user finds it intrusive
-    /*
     useEffect(() => {
-        if (!mounted) return;
-        const timer = setTimeout(() => {
-            setOpened(prev => prev || true);
-        }, 2500);
-        return () => clearTimeout(timer);
-    }, [mounted]);
-    */
+        scrollToBottom();
+    }, [messages, loading, opened]);
 
-    const handleAction = (link: string, label: string) => {
-        const navText = lang === 'ko' ? '알겠습니다. 안내해 드릴게요:' : 'Understood. Navigating to:';
-        setMessages(prev => [...prev,
-        { sender: 'user', text: label },
-        { sender: 'ai', text: `${navText} ${label}` }
-        ]);
+    const handleSend = async () => {
+        if (!input.trim() || loading) return;
 
-        setTimeout(() => {
-            router.push(link);
-            if (link.startsWith('/admin') || link === '/') {
-                setOpened(false);
-            }
-        }, 800);
+        const userMsg: Message = { sender: 'user', text: input };
+        setMessages(prev => [...prev, userMsg]);
+        setInput('');
+        setLoading(true);
+
+        try {
+            const response = await fetch(agent.apiPath, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [...messages, userMsg].map(m => ({
+                        sender: m.sender,
+                        text: m.text
+                    })),
+                    language: language
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to connect to AI');
+            const data = await response.json();
+
+            setMessages(prev => [...prev, { sender: 'ai', text: data.text || "I'm sorry, I encountered an issue." }]);
+        } catch (error) {
+            console.error('Chat Error:', error);
+            setMessages(prev => [...prev, { sender: 'ai', text: "Connection issues. Please try again later." }]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!mounted) return null;
 
     return (
-        <Affix position={{ bottom: 20, right: 20 }} zIndex={1000}>
+        <Affix position={{ bottom: 30, right: 30 }} zIndex={1000}>
             <Transition transition="slide-up" mounted={true}>
                 {(transitionStyles) => (
                     <Box style={transitionStyles}>
                         {!opened ? (
+                          <Tooltip label={t('ai_concierge_placeholder')} position="left">
                             <ActionIcon
                                 onClick={() => setOpened(true)}
                                 variant="gradient"
-                                gradient={isAdminPath ? { from: 'dark.6', to: 'blue.9' } : { from: 'green.7', to: 'lime.8' }}
+                                gradient={{ from: `${agent.color}.6`, to: `${agent.color}.9` }}
                                 radius="xl"
-                                size={50}
+                                size={64}
                                 styles={{
                                     root: {
-                                        boxShadow: '0 8px 15px rgba(0,0,0,0.2)',
-                                        border: '2px solid rgba(255,255,255,0.2)',
+                                        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                                        border: '3px solid rgba(255,255,255,0.3)',
                                     }
                                 }}
                             >
-                                <IconMessageChatbot size={24} />
+                                <agent.icon size={28} />
                             </ActionIcon>
+                          </Tooltip>
                         ) : (
                             <Card
                                 shadow="xl"
                                 radius="lg"
-                                p="md"
+                                p={0}
                                 withBorder
-                                w={350}
+                                w={380}
+                                h={600}
                                 styles={{
                                     root: {
-                                        backgroundColor: isAdminPath ? '#1a1b1e' : '#fff',
-                                        borderColor: isAdminPath ? '#373a40' : '#e9ecef',
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                                        overflow: 'hidden'
                                     }
                                 }}
                             >
-                                <Group justify="space-between" mb="sm">
+                                {/* Premium Header */}
+                                <Group justify="space-between" p="md" bg={`${agent.color}.7`} c="white">
                                     <Group gap="xs">
-                                        <ThemeIcon
-                                            variant="light"
-                                            color={isAdminPath ? 'blue' : 'green'}
-                                            radius="xl"
-                                        >
-                                            <IconRobot size={18} />
+                                        <ThemeIcon variant="white" color={agent.color} radius="xl" size="lg">
+                                            <agent.icon size={20} />
                                         </ThemeIcon>
-                                        <Text fw={700} size="sm" c={isAdminPath ? 'white' : 'dark'}>
-                                            {isAdminPath ? (lang === 'ko' ? '[관리자] AI 메신저' : 'Admin AI') : (lang === 'ko' ? 'K-Farm AI 비서' : 'K-Farm AI')}
-                                        </Text>
+                                        <Stack gap={0}>
+                                            <Group gap={5}>
+                                              <Text fw={800} size="sm">{agent.name}</Text>
+                                              <IconSparkles size={12} />
+                                            </Group>
+                                            <Text size="xs" opacity={0.8}>{agent.role}</Text>
+                                        </Stack>
                                     </Group>
-                                    <Group gap={5}>
-                                        <Button.Group>
-                                            <Button
-                                                variant={lang === 'ko' ? 'filled' : 'light'}
-                                                color="gray"
-                                                size="compact-xs"
-                                                onClick={() => setLang('ko')}
-                                            >
-                                                KO
-                                            </Button>
-                                            <Button
-                                                variant={lang === 'en' ? 'filled' : 'light'}
-                                                color="gray"
-                                                size="compact-xs"
-                                                onClick={() => setLang('en')}
-                                            >
-                                                EN
-                                            </Button>
-                                        </Button.Group>
-                                        <ActionIcon variant="subtle" color="gray" onClick={() => setOpened(false)}>
-                                            <IconX size={16} />
-                                        </ActionIcon>
-                                    </Group>
+                                    <ActionIcon variant="subtle" color="white" onClick={() => setOpened(false)}>
+                                        <IconX size={20} />
+                                    </ActionIcon>
                                 </Group>
 
-                                <ScrollArea h={300} mb="md" offsetScrollbars>
-                                    <Stack gap="sm">
+                                {/* Chat Area */}
+                                <ScrollArea h={450} viewportRef={viewport} p="md" bg="gray.0" style={{ flexGrow: 1 }}>
+                                    <Stack gap="md" py="sm">
                                         {messages.map((msg, idx) => (
-                                            <Box
-                                                key={idx}
-                                                style={{
-                                                    alignSelf: msg.sender === 'ai' ? 'flex-start' : 'flex-end',
-                                                    maxWidth: '85%',
-                                                }}
+                                            <Stack 
+                                              key={idx} 
+                                              gap={4}
+                                              align={msg.sender === 'ai' ? 'flex-start' : 'flex-end'}
                                             >
-                                                <Card
-                                                    p="xs"
-                                                    radius="md"
-                                                    bg={msg.sender === 'ai'
-                                                        ? (isAdminPath ? '#2c2e33' : '#f8f9fa')
-                                                        : (isAdminPath ? 'blue.9' : 'green.7')}
-                                                    withBorder={msg.sender === 'ai'}
-                                                >
-                                                    <Text size="sm" c={msg.sender === 'user' ? 'white' : (isAdminPath ? 'gray.3' : 'dark')}>
-                                                        {msg.text}
-                                                    </Text>
-                                                </Card>
-                                                {msg.actions && (
-                                                    <Stack gap={5} mt="xs">
-                                                        {msg.actions.map((action, aidx) => (
-                                                            <Button
-                                                                key={aidx}
-                                                                variant="light"
-                                                                color={action.color || 'gray'}
-                                                                size="xs"
-                                                                fullWidth
-                                                                justify="flex-start"
-                                                                leftSection={<action.icon size={14} />}
-                                                                onClick={() => handleAction(action.link, action.label)}
-                                                                styles={{
-                                                                    inner: { justifyContent: 'flex-start' }
-                                                                }}
-                                                            >
-                                                                {action.label}
-                                                            </Button>
-                                                        ))}
-                                                    </Stack>
+                                              <Group gap="xs" align="flex-end" justify={msg.sender === 'ai' ? 'flex-start' : 'flex-end'} wrap="nowrap">
+                                                {msg.sender === 'ai' && (
+                                                  <Avatar radius="xl" size="sm" color={agent.color} variant="light">
+                                                    <IconRobot size={14} />
+                                                  </Avatar>
                                                 )}
-                                            </Box>
+                                                <Card 
+                                                  p="sm" 
+                                                  radius="md" 
+                                                  bg={msg.sender === 'ai' ? 'white' : `${agent.color}.6`}
+                                                  c={msg.sender === 'ai' ? 'dark.8' : 'white'}
+                                                  style={{ 
+                                                    maxWidth: '85%',
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                                                    border: msg.sender === 'ai' ? '1px solid #eee' : 'none'
+                                                  }}
+                                                >
+                                                  <Text size="sm" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                                                    {msg.text}
+                                                  </Text>
+                                                </Card>
+                                              </Group>
+                                            </Stack>
                                         ))}
+                                        {loading && (
+                                          <Group gap="xs" align="center" pl={5}>
+                                            <Avatar radius="xl" size="sm" color={agent.color} variant="light">
+                                              <IconRobot size={14} />
+                                            </Avatar>
+                                            <Loader size="xs" color={agent.color} type="dots" />
+                                          </Group>
+                                        )}
                                     </Stack>
                                 </ScrollArea>
-                                <Text size="xs" c="dimmed" ta="center">
-                                    {isAdminPath ? 'Authorized Personnel Only' : '24/7 Smart Support'}
-                                </Text>
+
+                                {/* Input Area */}
+                                <Box p="md" bg="white" style={{ borderTop: '1px solid #eee' }}>
+                                    <Group gap="sm">
+                                        <TextInput
+                                            placeholder={t('ai_concierge_placeholder')}
+                                            variant="filled"
+                                            radius="md"
+                                            style={{ flexGrow: 1 }}
+                                            value={input}
+                                            onChange={(e) => setInput(e.currentTarget.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                            disabled={loading}
+                                        />
+                                        <ActionIcon 
+                                          variant="filled" 
+                                          color={agent.color} 
+                                          radius="md" 
+                                          size="lg" 
+                                          onClick={handleSend}
+                                          disabled={!input.trim() || loading}
+                                        >
+                                          <IconSend size={18} />
+                                        </ActionIcon>
+                                    </Group>
+                                    <Text size="xxxxs" ta="center" c="dimmed" mt={8}>
+                                      {t('ai_concierge_powered')}
+                                    </Text>
+                                </Box>
                             </Card>
                         )}
                     </Box>

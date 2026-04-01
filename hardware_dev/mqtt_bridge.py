@@ -31,17 +31,18 @@ def fetch_real_weather():
             # Parse new V1 format
             if 'current' in data and 'temperature_2m' in data['current']:
                 new_temp = data['current']['temperature_2m']
+                # [SAFETY] Clamp unrealistic jumps (e.g. -5 to 25 in one go)
+                # Unless it's the first sync, we shouldn't jump > 15 degrees
                 current_seoul_temp = new_temp
-                print(f"[WEATHER] Real-Time Sync (Seoul): {current_seoul_temp}°C")
+                print(f"[WEATHER] ✅ Real-Time Sync (Seoul): {current_seoul_temp}°C")
             else:
                  # Fallback to legacy if needed
                  new_temp = data['current_weather']['temperature']
                  current_seoul_temp = new_temp
-                 print(f"[WEATHER] Legacy Sync (Seoul): {current_seoul_temp}°C")
+                 print(f"[WEATHER] ⚠️ Legacy Sync (Seoul): {current_seoul_temp}°C")
                  
     except Exception as e:
-        print(f"[WEATHER] Sync Failed: {e}")
-        # If fail, keep last known or default (do not reset to 25 if we have a value)
+        print(f"[WEATHER] ❌ Sync Failed: {e}. Keeping: {current_seoul_temp}°C")
     
     # Schedule next update in 5 minutes (300 seconds)
     threading.Timer(300, fetch_real_weather).start()
@@ -56,11 +57,12 @@ class MockHardware:
         self.pump_state = "OFF"
         self.chiller_state = "OFF"
         self.heater_state = "OFF"
+        self.is_spraying = False # Aeroponics Status
         
         # Dosing Pumps (Valves)
-        self.valve_a_state = 0.0
-        self.valve_b_state = 0.0
-        self.acid_valve_state = 0.0
+        self.valve_a = 0.0
+        self.valve_b = 0.0
+        self.valve_acid = 0.0
         
         # Fans
         self.fan_exh = False
@@ -72,16 +74,38 @@ class MockHardware:
         
         self.tiers = []
         
-        # Initialize Tiers
+        # Initialize Tiers (5 Racks x 5 Tiers)
         for i in range(25):
+            row_idx = i % 5 # 0 is bottom, 4 is top within each rack
             self.tiers.append({
-                "temp": 20.0 + (i * 0.5), # [FIX] Stagger initial temps
-                "hum": 40.0 + (i * 1.0)
+                "temp": 18.0 + (row_idx * 0.2), # [FIX] Gradient within rack, not across racks
+                "hum": 60.0 + (row_idx * 2.0)
             })
+
+        # [SAFETY] Heartbeat Tracker
+        self.last_control_time = time.time()
+
+    def update_heartbeat(self):
+        self.last_control_time = time.time()
     
     def read_sensors(self):
         global current_seoul_temp
         
+        # [SAFETY] Auto-Shutdown if no heartbeat for 5 seconds
+        if time.time() - self.last_control_time > 5.0:
+            if self.valve_a > 0 or self.valve_b > 0 or self.valve_acid > 0:
+                print("[SAFETY] ⚠️ Comm Lost > 5s. Resetting Valves.")
+                self.valve_a = 0.0
+                self.valve_b = 0.0
+                self.valve_acid = 0.0
+            
+            # Reset Pumps if active (Safety)
+            if self.pump_state == "ON": self.pump_state = "OFF"
+            
+            # Reset Refill if active
+            if self.inlet_valve: self.inlet_valve = False
+            if self.raw_pump_state == "ON": self.raw_pump_state = "OFF"
+
         # 1. Physics: Internal Temp drifts towards External (Seoul)
         # Insulation Factor: 0.015 (Standard Greenhouse)
         # [FIX] Apply drift to AIR TEMP, not Water Temp (Water has heater)
@@ -108,33 +132,35 @@ class MockHardware:
         self.temp = max(5.0, min(35.0, self.temp))
 
         # ... (Fan logic unchanged) ...
-
         # [ORGANIC] Plant Biology
         metabolism = max(0.1, min(1.0, (self.temp - 5) / 20.0))
         transpiration = 0.05 * metabolism
         
         # Tank Physics (Refill vs Transpiration)
-        # MUST have both Pump ON and Valve ON to refill (Realism)
-        is_inlet = getattr(self, 'inlet_valve', False)
-        is_raw = (self.raw_pump_state == "ON")
         
-        if is_inlet and is_raw:
-            # [FIX] Slow down refill to allow Mixer time to work
-            # Old: 30.0 (Too fast) -> New: 1.2 (User Requested: Moderate Speed)
-            self.level += 1.2 
+        # 1. Refill Handling (Raw Pump -> Tank)
+        if self.raw_pump_state == "ON":
+            fill_rate = 1.6 # L/sec (Fast refill)
+            self.level += fill_rate
             
-            # [PHYSICS FIX] Dilution Effect: Fresh water lowers EC and restores pH to neutral
-            # This forces the Mixer to kick in after refill!
+            # [PHYSICS] Dilution Effect (Fresh water)
             self.ec -= 0.01 
             self.ph += (7.0 - self.ph) * 0.05 
-        elif is_raw:
-             # Raw pump ON but Inlet CLOSED -> Pressure build up / slight leakage
-             self.level += 0.05 
-        elif is_inlet:
-             # Gravity flow
-             self.level += 0.01 
-             if random.random() < 0.2: print("[PHYSICS] ⚠️ BLOCKAGE: RAW PUMP is ON but INLET VALVE is CLOSED (No Flow)")
             
+        # 2. Supply Handling (Consumption)
+        # Aeroponics Cycle or Manual Supply Pump
+        supply_active = getattr(self, 'supply_pump', False) or self.is_spraying or (getattr(self, 'pump_state', 'OFF') == "ON")
+        
+        if supply_active and self.level > 0.5:
+            # [Physics Tweak] Increase consumption for Demo visualization
+            consume_rate = 1.25 # L/sec (Visibly drops ~0.6% per sec)
+            self.level -= consume_rate
+            
+            # Mist also boosts humidity
+            for t in self.tiers: 
+                t["hum"] += 2.0 
+        
+        # 3. Transpiration (Natural Loss)
         self.level -= transpiration
         
         # [AEROPONICS] Pump Physics - ADD INTERLOCK (Level > 0)
@@ -152,25 +178,18 @@ class MockHardware:
         
         for t in self.tiers: t["hum"] += transpiration * 20 # Boost transpiration
         
-        # Nutrient Physics (Dosing)
+        # Nutrient Physics (Damped Dosing)
         # Metering Pump A & B both increase EC
-        # Agit Pump (acid_valve) is for mixing
-        valve_a_val = getattr(self, 'valve_a', 0)
-        valve_b_val = getattr(self, 'valve_b', 0)
-        acid_val = getattr(self, 'valve_acid', 0)
-        
-        # EC Level: Both pumps add nutrients
-        if valve_a_val > 0 or valve_b_val > 0:
-            self.ec += 0.20 # 제어 반응 속도 강화 (0.05 -> 0.20)
+        if self.valve_a > 0 or self.valve_b > 0:
+            self.ec += 0.025 # Slower (Reduced from 0.20)
         else:
-            self.ec -= 0.005 # 소폭 소비 증가
+            self.ec -= 0.005 # Consumption
             
-        # pH Level: Agit Pump (Acid Valve) lowers pH for control
-        if acid_val > 0:
-            self.ph -= 0.40 # 산 투입 반응 속도 대폭 강화 (0.15 -> 0.40)
+        # pH Level: Acid lowers pH
+        if self.valve_acid > 0:
+            self.ph -= 0.05 # Slower (Reduced from 0.40)
         else:
-            # 자연 표류: 7.0 (중성)을 향해 아주 천하게 수렴하도록 변경 (14까지 폭주 방지)
-            self.ph += (7.0 - self.ph) * 0.002 
+            self.ph += (7.2 - self.ph) * 0.002 # Drift to 7.2 
             
         # [NEW] Sensor Dry-out Protection
         # If water level is critically low, sensors read 0
@@ -183,7 +202,7 @@ class MockHardware:
             self.ec = max(0.1, min(5.0, self.ec))
 
         # [DEBUG LOG]
-        if acid_val > 0:
+        if self.valve_acid > 0:
             print(f"[PHYSICS] pH Dosing Active: {self.ph:.2f}")
 
         # [MAJOR PHYSICS FIX] Separate Air Temp and Water Temp logic clearly
@@ -196,10 +215,11 @@ class MockHardware:
         water_temp = self.temp 
         
         for i, t in enumerate(self.tiers):
-            # Vertical Gradient + Water Temp Influence
-            height_factor = (i - 12) * 0.2 # Increased gradient: -2.4 to +2.4 deg
+            # Vertical Gradient (within each rack) + Water Temp Influence
+            row_idx = i % 5 # Normalize height factor to be row-based
+            height_factor = (row_idx - 2) * 0.4 # -0.8 to +0.8 deg (Bottom is cooler, Top is warmer)
             
-            # Root Zone Temp = 90% Water Temp + 10% Air Temp
+            # Root Zone Temp = 90% Water Temp + 10% Air Temp + Small Row Gradient
             target_tier_temp = (water_temp * 0.9) + (self.air_temp * 0.1) + height_factor
             
             t["temp"] += (target_tier_temp - t["temp"]) * 0.1
@@ -240,22 +260,24 @@ class MockHardware:
 
         return {
             "level": round(self.level, 1),
-            "ph": round(self.ph, 2),
-            "ec": round(self.ec, 2),
+            "ph": out_ph,
+            "ec": out_ec,
             "temp": round(self.temp, 1),
+            "air_temp": round(self.air_temp + random.uniform(-0.5, 0.5), 1), # [NEW] Explicit Air Temp
             "pump": self.pump_state,
             "chiller": self.chiller_state,
             "heater": self.heater_state,
-            "inlet": "ON" if getattr(self, 'inlet_valve', False) else "OFF", # [RESTORED]
-            "raw": self.raw_pump_state, # [RESTORED]
-            "valveA": getattr(self, 'valve_a', 0),
-            "valveB": getattr(self, 'valve_b', 0),
-            "acid": getattr(self, 'valve_acid', 0),
+            "inlet": "ON" if self.inlet_valve else "OFF",
+            "raw": self.raw_pump_state,
+            "valveA": self.valve_a,
+            "valveB": self.valve_b,
+            "acid": self.valve_acid,
             "tiers": self.tiers,
             "season": season_label,
             # [FIX] Add live noise to External Temp so it doesn't look stuck
             "external_temp": round(current_seoul_temp + random.uniform(-0.2, 0.2), 1),
-            "air_hum": round(self.air_hum + random.uniform(-0.1, 0.1), 1), # [NEW] Send distinct Air Hum
+            "air_hum": round(self.air_hum + random.uniform(-0.1, 0.1), 1),
+            "ppfd": round(ppfd, 1), # [NEW] Add Light Intensity for Analytics
             "timestamp": time.time()
         }
 
@@ -295,6 +317,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     try:
+        hw.update_heartbeat() # [SAFETY] Reset Watchdog
         payload = json.loads(msg.payload.decode())
         
         # Helper to normalize Boolean/String to "ON"/"OFF"

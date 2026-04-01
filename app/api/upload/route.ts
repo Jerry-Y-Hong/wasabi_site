@@ -17,8 +17,6 @@ export async function POST(request: NextRequest) {
             access: 'public',
         });
 
-        console.log('[API] File uploaded to Cloud:', blob.url);
-
         return NextResponse.json({
             success: true,
             path: blob.url  // Returns secure https URL

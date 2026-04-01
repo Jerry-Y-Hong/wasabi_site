@@ -18,7 +18,7 @@ export default function LoginPage() {
         try {
             const success = await setAuthCookie(password);
             if (success) {
-                router.push('/admin');
+                router.push('/admin/dashboard');
             } else {
                 setError('Invalid password');
             }

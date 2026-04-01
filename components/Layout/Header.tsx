@@ -6,37 +6,63 @@ import { usePathname } from 'next/navigation';
 import { TranslationWidget } from './TranslationWidget';
 import classes from './Header.module.css';
 import { useTranslation, dictionary } from '@/lib/i18n';
-import { IconHome, IconArrowUp } from '@tabler/icons-react';
+import { IconHome, IconArrowUp, IconLeaf, IconShoppingCart, IconWorld } from '@tabler/icons-react';
+import { Logo } from '../Branding/Logo';
 
 export function Header() {
     const [opened, { toggle, close }] = useDisclosure(false);
     const { t } = useTranslation();
     const pathname = usePathname();
 
-    const links = [
+    interface LinkItem {
+        link: string;
+        label: string;
+        icon?: React.ReactNode;
+        submenu?: { link: string; label: string }[];
+        external?: boolean;
+    }
+
+    // Unified Global Navigation
+    const links: LinkItem[] = [
         { link: '/', label: t('nav_home'), icon: <IconHome size={16} /> },
-        { link: '/products/seedlings', label: t('nav_seedlings') },
-        { link: '/cultivation', label: t('nav_cultivation') },
-        { link: '/products/fresh', label: t('nav_products') },
-        { link: '/insights', label: t('nav_revolution') },
         {
-            link: '/news',
-            label: t('nav_news'),
+            link: '/tech/solutions',
+            label: t('nav_aero'),
+            icon: <IconLeaf size={16} />,
             submenu: [
-                { link: '/news', label: t('nav_news_all') },
-                { link: '/smartfarm', label: t('sf_hub_title') },
-                { link: '/smartfarm/rda-api', label: t('sf_rda_title') },
-                { link: '/smartfarm/hardware', label: t('sf_hw_title') },
-                { link: '/smartfarm/roadmap', label: t('sf_rd_title') },
-                { link: '/smartfarm/hardware', label: t('nav_au_prime') },
-            ],
+                { link: '/tech/solutions', label: t('nav_aero_home') },
+                { link: '/tech/solutions/control-system', label: t('nav_control_system') },
+                { link: '/tech/smartfarm/modular', label: t('nav_modular') },
+                { link: '/tech/smartfarm', label: t('sf_hub_title') },
+            ]
         },
-        { link: '/smartfarm/modular', label: t('nav_modular') },
-        { link: '/partnership', label: t('nav_partnership') },
-        { link: '/consulting', label: t('nav_consulting') },
-        { link: '/solutions/control-system', label: t('nav_control_system') },
-        { link: '/simulator', label: t('nav_simulator') },
-        { link: 'https://k-hamp-div.vercel.app', label: t('nav_hemp'), external: true },
+        {
+            link: '/food',
+            label: t('nav_food'),
+            icon: <IconShoppingCart size={16} />,
+            submenu: [
+                { link: '/food', label: t('nav_food_home') },
+                { link: '/food', label: t('nav_food_story') },
+                { link: '/products/fresh', label: t('nav_food_best') },
+            ]
+        },
+        {
+            link: '/trade',
+            label: t('nav_trade'),
+            icon: <IconWorld size={16} />,
+            submenu: [
+                { link: '/trade', label: t('nav_trade_home') },
+                { link: '/trade', label: t('nav_trade_export') },
+            ]
+        },
+        {
+            link: '/company',
+            label: t('nav_company'),
+            submenu: [
+                { link: '/partnership', label: t('nav_partnership') },
+                { link: '/consulting', label: t('nav_consulting') },
+            ]
+        },
         { link: '/contact', label: t('nav_contact') },
     ];
 
@@ -44,30 +70,34 @@ export function Header() {
         if (link.submenu) {
             // ... (submenu logic remains same)
             return (
-                <Menu key={idx} id={link.label.replace(/\s+/g, '-').toLowerCase()} shadow="md" width={200} trigger="hover" openDelay={100} closeDelay={400}>
+                <Menu key={idx} id={link.label.replace(/\s+/g, '-').toLowerCase()} shadow="lg" width={220} trigger="hover" openDelay={50} closeDelay={200}>
                     <Menu.Target>
                         <Link
                             href={link.link}
                             className={classes.link}
                             data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
-                            style={{
-                                fontSize: '12px',
-                                padding: '8px 5px',
-                                fontWeight: 800,
-                                whiteSpace: 'nowrap',
-                                backgroundColor: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined,
-                                color: pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined
-                            }}
                         >
-                            <Group gap={4} wrap="nowrap">
+                            <Group gap={6} wrap="nowrap">
                                 {link.icon}
                                 {link.label}
                             </Group>
                         </Link>
                     </Menu.Target>
-                    <Menu.Dropdown>
+                    <Menu.Dropdown style={{
+                        borderRadius: '12px',
+                        border: '1px solid rgba(0,0,0,0.05)',
+                        backdropFilter: 'blur(10px)',
+                        backgroundColor: 'rgba(255,255,255,0.9)'
+                    }}>
                         {link.submenu.map((sub, sidx) => (
-                            <Menu.Item key={sidx} component={Link} href={sub.link} onClick={close}>
+                            <Menu.Item
+                                key={sidx}
+                                component={Link}
+                                href={sub.link}
+                                onClick={close}
+                                fw={600}
+                                style={{ borderRadius: '8px', margin: '2px 4px' }}
+                            >
                                 {sub.label}
                             </Menu.Item>
                         ))}
@@ -85,20 +115,8 @@ export function Header() {
                 onClick={close}
                 target={link.external ? "_blank" : undefined}
                 data-active={pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'true' : undefined}
-                style={{
-                    fontSize: '12px',
-                    padding: '8px 12px',
-                    fontWeight: 800,
-                    whiteSpace: 'nowrap',
-                    backgroundColor: link.link === 'https://k-hamp-div.vercel.app' ? '#4ade80' :
-                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-1)' : undefined),
-                    color: link.link === 'https://k-hamp-div.vercel.app' ? 'black' :
-                        (pathname === link.link || (link.link !== '/' && pathname.startsWith(link.link)) ? 'var(--mantine-color-wasabi-7)' : undefined),
-                    borderRadius: link.link === 'https://k-hamp-div.vercel.app' ? '20px' : 'var(--mantine-radius-md)',
-                    marginLeft: link.link === 'https://k-hamp-div.vercel.app' ? '10px' : '0'
-                }}
             >
-                <Group gap={4} wrap="nowrap">
+                <Group gap={6} wrap="nowrap">
                     {link.icon}
                     {link.label}
                 </Group>
@@ -121,12 +139,7 @@ export function Header() {
                 {/* Left: Logo */}
                 <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                     <Link href="/" style={{ textDecoration: 'none' }}>
-                        <Group gap={8} align="center" wrap="nowrap">
-                            <Image src="/images/logo.jpg?v=100" alt="Logo" h={38} w="auto" style={{ borderRadius: '50%' }} />
-                            <Text size="lg" fw={900} variant="gradient" gradient={{ from: 'wasabi.9', to: 'wasabi.6', deg: 45 }} style={{ whiteSpace: 'nowrap' }}>
-                                {t('nav_brand')}
-                            </Text>
-                        </Group>
+                        <Logo size={40} withText={true} />
                     </Link>
                 </div>
 
@@ -149,35 +162,65 @@ export function Header() {
 
                 <Drawer opened={opened} onClose={close} size="100%" padding="md" title={t('menu_title')} hiddenFrom="lg" zIndex={1000000}>
                     <Stack>
-                        {links.map((link, idx) => (
-                            <Box key={idx}>
-                                <Link
-                                    href={link.link}
-                                    className={classes.link}
-                                    onClick={close}
-                                    style={{ fontSize: '16px', fontWeight: 800, display: 'block', padding: '10px 0' }}
-                                >
-                                    <Group gap="sm">
-                                        {link.icon}
-                                        {link.label}
-                                    </Group>
-                                </Link>
-                                {link.submenu && (
-                                    <Stack gap={4} pl="md" mt={4}>
-                                        {link.submenu.map((sub, sidx) => (
-                                            <Link
-                                                key={sidx}
-                                                href={sub.link}
-                                                onClick={close}
-                                                style={{ fontSize: '14px', fontWeight: 600, color: 'var(--mantine-color-dimmed)', textDecoration: 'none' }}
-                                            >
-                                                • {sub.label}
-                                            </Link>
-                                        ))}
-                                    </Stack>
-                                )}
-                            </Box>
-                        ))}
+                        <Stack gap="xs">
+                            {links.map((link, idx) => (
+                                <Box key={idx} p="xs" style={{
+                                    borderRadius: '12px',
+                                    backgroundColor: pathname === link.link ? 'var(--mantine-color-wasabi-0)' : 'transparent',
+                                    transition: 'background-color 0.2s ease'
+                                }}>
+                                    <Link
+                                        href={link.link}
+                                        className={classes.link}
+                                        onClick={close}
+                                        style={{
+                                            fontSize: '15px',
+                                            fontWeight: 700,
+                                            display: 'flex',
+                                            padding: '8px 0',
+                                            color: pathname === link.link ? 'var(--mantine-color-wasabi-8)' : 'inherit'
+                                        }}
+                                    >
+                                        <Group gap="md">
+                                            <Box style={{
+                                                width: '32px',
+                                                height: '32px',
+                                                borderRadius: '8px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: pathname === link.link ? 'var(--mantine-color-wasabi-1)' : 'var(--mantine-color-gray-1)',
+                                                color: pathname === link.link ? 'var(--mantine-color-wasabi-7)' : 'var(--mantine-color-gray-6)'
+                                            }}>
+                                                {link.icon || <IconLeaf size={18} />}
+                                            </Box>
+                                            {link.label}
+                                        </Group>
+                                    </Link>
+                                    {link.submenu && (
+                                        <Stack gap={4} pl={44} mt={4}>
+                                            {link.submenu.map((sub, sidx) => (
+                                                <Link
+                                                    key={sidx}
+                                                    href={sub.link}
+                                                    onClick={close}
+                                                    style={{
+                                                        fontSize: '14px',
+                                                        fontWeight: 600,
+                                                        color: 'var(--mantine-color-dimmed)',
+                                                        textDecoration: 'none',
+                                                        padding: '6px 0',
+                                                        display: 'block'
+                                                    }}
+                                                >
+                                                    {sub.label}
+                                                </Link>
+                                            ))}
+                                        </Stack>
+                                    )}
+                                </Box>
+                            ))}
+                        </Stack>
                     </Stack>
                 </Drawer>
             </Container>

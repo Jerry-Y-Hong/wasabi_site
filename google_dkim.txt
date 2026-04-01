@@ -1,2 +1,0 @@
-[여v=DKIM1; k=rsa;
-p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtVuiK6FCppzi1NzKbccRGeRcd/VVupwiDSw0ygJhmk11BpIdMVPPqj+aKLzjVbsCBOS356RIfs9VZWD4tfpqJZ/W3FTGTu5YcTGjH9ASb7nz0BdzZVccOsJrkMu6qolAAVbMrQRC5D4TCB/pJ987Zjs96Spz3xvR/xkKKEwYx6TI3gzbBC0vbyvLvHxIbqrCpkqZqbTMiFy/aFy0LP2XuUvVn19r2zJ0tASrOgQmfO7ToTnIdQlIfMtqklF9MkQQmWCU5wMRMBr9RXnsqAI7bVBc1v7DEgVxoFaJGYVam+a1ziTbEYffNzA1jGgU11gHeF+V1Gj2OYIkxnCL/5XqUwIDAQAB기에 DKIM 키 값 전체를 붙여넣고 저장(Ctrl+S)해 주세요]

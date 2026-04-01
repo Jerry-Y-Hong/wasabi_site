@@ -1,53 +1,90 @@
 .header {
-  height: 60px;
-  background-color: var(--mantine-color-body);
-  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  height: 64px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: all 0.3s ease;
+}
+
+:global(.dark) .header {
+  background-color: rgba(26, 27, 30, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .inner {
-  height: 60px;
+  height: 64px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .link {
-  display: block;
+  display: flex;
+  align-items: center;
   line-height: 1;
-  padding: 8px 12px;
+  padding: 10px 16px;
   border-radius: var(--mantine-radius-md);
   text-decoration: none;
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-  font-size: var(--mantine-font-size-sm);
+  font-size: 13px;
   font-weight: 700;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  letter-spacing: -0.01em;
 
   &:hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-    color: var(--mantine-color-wasabi-6);
-  }
-
-  &[data-active] {
-    background-color: var(--mantine-color-wasabi-1);
+    background-color: rgba(0, 0, 0, 0.03);
     color: var(--mantine-color-wasabi-7);
-    font-weight: 900;
+    transform: translateY(-1px);
   }
 
-  /* Active Indicator Dot */
-  &[data-active]::after {
+  :global(.dark) &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Focus/Active state */
+  &[data-active] {
+    color: var(--mantine-color-wasabi-8);
+    font-weight: 800;
+  }
+
+  /* Seamless underline animation */
+  &::after {
     content: '';
     position: absolute;
-    bottom: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
+    bottom: 6px;
+    left: 16px;
+    right: 16px;
+    height: 2px;
     background-color: var(--mantine-color-wasabi-6);
-    border-radius: 50%;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: center;
+  }
+
+  &:hover::after,
+  &[data-active]::after {
+    transform: scaleX(1);
+  }
+
+  /* Specific indicator for active state */
+  &[data-active]::after {
+    background-color: var(--mantine-color-wasabi-7);
+    height: 3px;
+  }
+}
+
+.brandText {
+  letter-spacing: -0.05em;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
   }
 }
 

@@ -10,7 +10,7 @@ export async function setAuthCookie(password: string) {
     // Dynamic password from Vercel Blob
     const CORRECT_PASSWORD = await getStoredPassword();
 
-    // console.log('Auth Check:', cleanPassword, 'vs', CORRECT_PASSWORD); // Debug log
+    //  // Debug log
     if (cleanPassword === CORRECT_PASSWORD.trim()) {
         const cookieStore = await cookies();
         cookieStore.set('wasabi_session_v2', getSessionToken(), {

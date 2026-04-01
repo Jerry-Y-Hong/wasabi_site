@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, Image, Text, Button, Group } from '@mantine/core';
+import { Card, Image, Text, Button, Group, Box } from '@mantine/core';
 import Link from 'next/link';
 import classes from './FeatureCard.module.css';
 import { useTranslation } from '@/lib/i18n';
+import { IconArrowRight } from '@tabler/icons-react';
 
 interface FeatureCardProps {
     image: string;
@@ -16,36 +17,38 @@ export function FeatureCard({ image, title, description, link }: FeatureCardProp
     const { t } = useTranslation();
 
     return (
-        <Card withBorder radius="md" p="md" className="feature-card-hover">
-            <Card.Section>
+        <Card radius="lg" p={0} className={`${classes.card} feature-card-hover`}>
+            <Box className={classes.imageSection}>
                 <Image
                     src={image}
                     alt={title}
-                    height={200}
-                    style={{ objectFit: 'cover' }}
+                    className={classes.image}
                 />
-            </Card.Section>
+                <Box className={classes.overlay} />
+            </Box>
 
-            <Card.Section mt="md" px="md" pb="md">
-                <Text fz="lg" fw={800} c="dark.9" mb={5}>
+            <Box className={classes.content}>
+                <Text fz="lg" fw={800} c="dark.9" mb={5} className={classes.title}>
                     {title}
                 </Text>
                 <Text fz="sm" c="gray.7" fw={500} lineClamp={3}>
                     {description}
                 </Text>
-            </Card.Section>
 
-            <Group mt="auto" px="md" pb="md">
-                <Button
-                    component={Link}
-                    href={link}
-                    radius="md"
-                    style={{ flex: 1 }}
-                    color="wasabi.8"
-                >
-                    {t('btn_more')}
-                </Button>
-            </Group>
+                <Group mt="auto" pt="xl">
+                    <Button
+                        component={Link}
+                        href={link}
+                        radius="md"
+                        fullWidth
+                        className={classes.button}
+                        color="wasabi.8"
+                        rightSection={<IconArrowRight size={16} />}
+                    >
+                        {t('btn_more')}
+                    </Button>
+                </Group>
+            </Box>
         </Card>
     );
 }

@@ -482,7 +482,6 @@ export function Hero() {
         '/images/story_scene_4.png',
     ];
 
-
     const [telemetry, setTelemetry] = useState({
         ppfd: 450.2,
         ec: 1.82,
@@ -649,8 +648,6 @@ export function Hero() {
             if (bestVoice) {
                 utterance.voice = bestVoice;
             }
-
-
 
             utterance.rate = 1.0;
             utterance.volume = 1.0;
@@ -897,33 +894,43 @@ export function Hero() {
             <Container size="xl" className={classes.inner} style={{ position: 'relative', zIndex: 2, height: '100%', minHeight: '720px' }}>
 
                 {/* Title Section (Moved Up to avoid overlap) */}
-                {/* Title Top (t1) - Can span full width */}
+                {/* Combined Title Section (t1 & t2) - Stacked to prevent overlap */}
+                {/* Combined Title Section (t1 & t2) - Swapped Hierarchy */}
                 <div style={{
                     position: 'absolute',
-                    top: '10%',
+                    top: '12%', // Moved up significantly
                     left: '2rem',
-                    width: '90%',
+                    width: '90%', // Much wider to keep t1 on one line
                     zIndex: 10,
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.2rem'
                 }}>
-                    <Title order={3} className={classes.title} style={{ textAlign: 'left' }}>
-                        <span className={classes.highlight}>{currentContent.t1}</span>
+                    {/* t1: NOW THE MAIN TITLE - Big, Green, One Line */}
+                    <Title order={1} className={classes.title} style={{
+                        textAlign: 'left',
+                        fontSize: '3.8rem', // Large size (~60px)
+                        lineHeight: 1.1,
+                        whiteSpace: 'nowrap', // Force one line
+                        overflow: 'hidden',
+                        color: 'var(--mantine-color-wasabi-5)',
+                        textOverflow: 'ellipsis' // Graceful fallback
+                    }}>
+                        {currentContent.t1}
                     </Title>
-                </div>
 
-                {/* Main Subject (t2) - Restricted width to avoid video */}
-                <div style={{
-                    position: 'absolute',
-                    top: '22%',
-                    left: '2rem',
-                    width: '45%',
-                    zIndex: 10,
-                    pointerEvents: 'none'
-                }}>
-                    <Title order={1} style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                        <span style={{ fontSize: '2.5rem', color: '#ffffff', fontWeight: 900 }}>
-                            {currentContent.t2}
-                        </span>
+                    {/* t2: NOW THE SUBTITLE - Smaller, White/Gray */}
+                    <Title order={3} style={{
+                        textAlign: 'left',
+                        color: '#f8f9fa',
+                        fontSize: '1.5rem', // Smaller size
+                        fontWeight: 300,
+                        opacity: 0.9,
+                        marginTop: '0px'
+                    }}>
+                        {/* Removed highlight class as this is now subtitle */}
+                        {currentContent.t2}
                     </Title>
                 </div>
 

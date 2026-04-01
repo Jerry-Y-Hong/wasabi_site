@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import {
@@ -25,7 +25,9 @@ import {
     Loader,
     Center,
     FileButton,
-    SimpleGrid
+    SimpleGrid,
+    Box,
+    ThemeIcon
 } from '@mantine/core';
 import {
     IconSearch,
@@ -46,9 +48,27 @@ import {
     IconCircleCheck,
     IconFileDescription,
     IconRefresh,
-    IconPdf
+    IconPdf,
+    IconChartBar,
+    IconTarget,
+    IconUsers,
+    IconBuildingStore,
+    IconGlassFull,
+    IconTruckDelivery,
+    IconChefHat,
+    IconFish,
+    IconPackage,
+    IconCertificate,
+    IconBuildingFactory,
+    IconTable,
+    IconAnalyze,
+    IconLayoutDashboard
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import {
+    PieChart, Pie, Cell,
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer
+} from 'recharts';
 import {
     getHunterResults,
     saveHunterResult,
@@ -68,98 +88,94 @@ import { logout } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import { translateSearchKeyword, generateProposalEmail } from '@/lib/ai';
+import { HunterResult } from './types';
+import HunterStats from './components/HunterStats';
+import HunterAnalytics from './components/HunterAnalytics';
+import PartnerIntelligenceModal from './components/PartnerIntelligenceModal';
+import HunterControls from './components/HunterControls';
+import HunterSearchResultTable from './components/HunterSearchResultTable';
+import PipelineFilters from './components/PipelineFilters';
+import HunterPipelineTable from './components/HunterPipelineTable';
 
-export interface HunterResult {
-    id: number;
-    name: string;
-    url: string;
-    description?: string;
-    country: string;
-    type: string;
-    relevance: string;
-    status: string;
-    email?: string;
-    phone?: string;
-    contact?: string;
-    lastContacted?: string;
-    aiSummary?: {
-        score: number;
-        analysis: string;
-        angle: string;
-    };
-    intelligenceReport?: string;
-    sns?: {
-        instagram?: string;
-        facebook?: string;
-        linkedin?: string;
-        youtube?: string;
-    };
-    address?: string;
-    category?: string;
-    catalogs?: string[];
-    techSpecs?: { label: string; value: string }[];
-    isMock?: boolean;
-}
-
-const COUNTRIES = [
-    { label: 'Global (All)', value: '' },
-    { label: 'South Korea 🇰🇷', value: 'KR' },
-    { label: 'Japan 🇯🇵', value: 'JP' },
-    { label: 'United States 🇺🇸', value: 'US' },
-    { label: 'China 🇨🇳', value: 'CN' }
-];
-
-// Fixed mapping for display labels vs value
-const COUNTRY_DISPLAY: Record<string, string> = {
-    '': 'Global',
-    'JP': 'Japan',
-    'US': 'United States',
-    'KR': 'South Korea',
-    'CN': 'China'
+// Helper for Urgency Color
+const getUrgencyColor = (urgency: string) => {
+    switch (urgency?.toLowerCase()) {
+        case 'high': return 'red';
+        case 'medium': return 'yellow';
+        case 'low': return 'gray';
+        default: return 'gray';
+    }
 };
-
-const APP_STATUS: Record<string, string> = {
-    'New': 'gray',
-    'AI Analyzed': 'cyan',
-    'Proposal Sent': 'blue',
-    'Proceeding': 'green',
-    'Contracted': 'grape',
-    'Dropped': 'red'
-};
-
-const PARTNER_TYPES = [
-    'Sales: Wholesale/B2B',
-    'Sales: Direct/F&B',
-    'Vendor: Procurement',
-    'Partner: R&D/Tech',
-    'Investor',
-    'Lead',
-    'Other'
-];
-
-const SPECIALTIES = [
-    '건축 및 설계',
-    '재배 시스템',
-    '배지 솔루션',
-    '냉난방 설비',
-    '공조 시스템',
-    '기류 제어',
-    '양액 기계',
-    '관수 설비',
-    '인공 광원',
-    '운영 SW',
-    'IoT 하드웨어',
-    '로봇/자동화',
-    '기타'
-];
 
 export default function HunterAdmin() {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
-    // Smart Targets Definition
-    const TARGET_PRESETS = [
+    // Helper for Urgency Color (Moved inside to access t, or keep outside. We can keep getUrgencyColor outside since it doesn't use t)
+
+    const COUNTRIES = useMemo(() => [
+        { label: t('country_all'), value: '' },
+        { label: t('country_kr'), value: 'KR' },
+        { label: t('country_jp'), value: 'JP' },
+        { label: t('country_us'), value: 'US' },
+        { label: t('country_cn'), value: 'CN' },
+        { label: t('country_de') || 'Germany 🇩🇪', value: 'DE' },
+        { label: t('country_fr') || 'France 🇫🇷', value: 'FR' },
+        { label: t('country_ae') || 'UAE 🇦🇪', value: 'AE' },
+        { label: t('country_th') || 'Thailand 🇹🇭', value: 'TH' },
+        { label: t('country_vn') || 'Vietnam 🇻🇳', value: 'VN' }
+    ], [t]);
+
+    const COUNTRY_DISPLAY: Record<string, string> = useMemo(() => ({
+        '': t('country_all').split(' ')[0],
+        'JP': t('country_jp').split(' ')[0],
+        'US': t('country_us').split(' ')[0],
+        'KR': t('country_kr').split(' ')[0],
+        'CN': t('country_cn').split(' ')[0],
+        'DE': t('country_de').split(' ')[0] || 'Germany',
+        'FR': t('country_fr').split(' ')[0] || 'France',
+        'AE': t('country_ae').split(' ')[0] || 'UAE',
+        'TH': t('country_th').split(' ')[0] || 'Thailand',
+        'VN': t('country_vn').split(' ')[0] || 'Vietnam',
+    }), [t]);
+
+    const APP_STATUS: Record<string, string> = useMemo(() => ({
+        'New': 'gray',
+        'AI Analyzed': 'cyan',
+        'Proposal Sent': 'blue',
+        'Proceeding': 'green',
+        'Contracted': 'grape',
+        'Dropped': 'red'
+    }), []);
+
+    const PARTNER_TYPES = useMemo(() => [
+        t('type_wholesale') || '영업: 도매/B2B (식자재 유통)',
+        t('type_retail') || '영업: 소매/온라인 (스마트스토어)',
+        t('type_procurement') || '조달: 원자재/기자재',
+        t('type_rnd') || '파트너: R&D/기술 제휴',
+        t('type_investor') || '투자자 (Investor)',
+        t('type_lead') || '단순 리드 (Lead)',
+        t('type_other') || '기타'
+    ], [t]);
+
+    const SPECIALTIES = useMemo(() => [
+        t('spec_arch') || '건축 및 설계',
+        t('spec_arch'),
+        t('spec_system'),
+        t('spec_substrate'),
+        t('spec_hvac'),
+        t('spec_airflow'),
+        t('spec_nutrient'),
+        t('spec_irrigation'),
+        t('spec_lighting'),
+        t('spec_software'),
+        t('spec_iot'),
+        t('spec_robot'),
+        t('type_other')
+    ], [t]);
+
+    const TARGET_PRESETS = useMemo(() => [
         {
-            label: 'GLOBAL: Big Fish',
+            label: t('target_global_bigfish'),
             icon: '🐋',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Importer) "Distribution Agreement" -amazon -ebay',
@@ -167,7 +183,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'US: West (CA/WA/OR)',
+            label: t('target_us_west'),
             icon: '🏖️',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("California" OR "Washington" OR "Oregon") -amazon -ebay',
@@ -175,7 +191,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'US: East (NY/FL/MA)',
+            label: t('target_us_east'),
             icon: '🗽',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("New York" OR "Florida" OR "Massachusetts") -amazon -ebay',
@@ -183,7 +199,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'US: Central (TX/IL/GA)',
+            label: t('target_us_central'),
             icon: '🤠',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("Texas" OR "Illinois" OR "Georgia") -amazon -ebay',
@@ -191,39 +207,39 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'JP: Big Fish (Shizuoka/Fuji)',
+            label: t('target_jp_bigfish'),
             icon: '🎌',
             keywords: {
-                'JP': '("わさび" OR "生わ사비") ("静岡" OR "富士") ("卸売" OR "仕入れ" OR "業者") "회사개요" -site:amazon.co.jp -site:rakuten.co.jp',
+                'JP': '("わさび" OR "生わさび") ("静岡" OR "富士") ("卸売" OR "仕入れ" OR "業者") "会社概要" -site:amazon.co.jp -site:rakuten.co.jp',
                 'Global': '"Wasabi" (Wholesale OR Distributor Shizuoka) "Corporate Office" -amazon -ebay'
             }
         },
         {
-            label: 'JP: Food Service',
+            label: t('target_jp_foodservice'),
             icon: '🏢',
             keywords: {
-                'JP': '("業務用" OR "大口注文") ("生わ사비" OR "本와사비") "仕入れ" "業者向け" -review -youtube',
+                'JP': '("業務用" OR "大口注文") ("生わさび" OR "本わさび") "仕入れ" "業者向け" -review -youtube',
                 'Global': 'Commercial Wasabi Bulk Supply Contact Japan'
             }
         },
         {
-            label: 'JP: Trade Lists',
+            label: t('target_jp_tradelists'),
             icon: '📄',
             keywords: {
-                'JP': '(filetype:pdf OR filetype:xlsx) ("わ사비" OR "生와사비") ("業者名簿" OR "取扱業者一覧") -recipe',
+                'JP': '(filetype:pdf OR filetype:xlsx) ("わさび" OR "生わさび") ("業者名簿" OR "取扱業者一覧") -recipe',
                 'Global': 'filetype:pdf "Wasabi" "Exhibitor List" OR "Supplier Directory"'
             }
         },
         {
-            label: 'JP: Agritech R&D',
+            label: t('target_jp_agritech'),
             icon: '🧪',
             keywords: {
-                'JP': '("植物工場" OR "噴霧耕") ("わ사비" OR "ワサ비") "共同연구" OR "기술협력" "法人窓口" -blog',
+                'JP': '("植物工場" OR "噴霧耕") ("わさび" OR "ワサビ") "共同研究" OR "技術協力" "法人窓口" -blog',
                 'Global': 'Japan Smart Farm Wasabi R&D Corporate Partnership'
             }
         },
         {
-            label: 'US: Smart Ag-Tech (Equipment)',
+            label: t('target_us_agtech'),
             icon: '🚜',
             keywords: {
                 'US': '("Smart Farm" OR "Agri-tech") (Distributor OR Wholesaler) (Equipment OR Sensors OR Automation) -amazon -ebay',
@@ -231,7 +247,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'JP: Smart Ag-Tech (System/IoT)',
+            label: t('target_jp_iot'),
             icon: '📡',
             keywords: {
                 'JP': '("スマート農業" OR "植物工場") ("시스템" OR "센서" OR "설비") ("卸売" OR "代理점" OR "導入") -site:amazon.co.jp',
@@ -239,14 +255,14 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: 'KR: Wasabi Farms (Growers)',
+            label: t('target_kr_farms'),
             icon: '🌿',
             keywords: {
                 'KR': '("와사비" OR "고추냉이") ("농장" OR "재배" OR "농가") ("비닐하우스" OR "스마트팜") "위치" -recipe',
                 'Global': 'Wasabi Farms South Korea Greenhouse Growers'
             }
         }
-    ];
+    ], [t]);
 
     // Search State
     const [keyword, setKeyword] = useState('');
@@ -646,20 +662,7 @@ export default function HunterAdmin() {
         stopScanRef.current = true;
     };
 
-    const handlePresetClick = (preset: any) => {
-        let activeCountry = country || 'Global';
-        if (preset.label.includes('🇯🇵') || preset.label.includes('JP')) activeCountry = 'JP';
-        if (preset.label.includes('🇰🇷') || preset.label.includes('KR')) activeCountry = 'KR';
-        if (preset.label.includes('🇺🇸') || preset.label.includes('US')) activeCountry = 'US';
-        if (preset.label.includes('🇨🇳') || preset.label.includes('CN')) activeCountry = 'CN';
-
-        setCountry(activeCountry === 'Global' ? '' : activeCountry);
-        const searchTerm = preset.keywords[activeCountry] || preset.keywords['Global'];
-        setKeyword(searchTerm);
-        performSearch(searchTerm, activeCountry === 'Global' ? '' : activeCountry);
-    };
-
-    const performSearch = async (term: string, countryCode: string | null) => {
+    const handleSearch = async (term: string, countryCode: string | null) => {
         setLoading(true);
         setResults([]);
         setPage(1);
@@ -680,8 +683,6 @@ export default function HunterAdmin() {
                     item.country = countryName;
                 });
             }
-            // DEBUG: Show raw count
-            // notifications.show({ title: 'Debug', message: `Server returned ${data.length} items`, color: 'gray' });
 
             const filteredData = data.filter((newItem: HunterResult) => {
                 if (!newItem.url) return true;
@@ -1097,767 +1098,203 @@ export default function HunterAdmin() {
         notifications.show({ title: 'Refresh Complete', message: `Updated countries for ${updateCount} partners.`, color: 'green' });
     };
 
+
+
     return (
         <Container size="xl" py="xl">
             <Stack gap="xl">
                 <Group justify="space-between">
                     <div>
-                        <Title fw={900} size={32} c="green.9">{t('hunter_title')}</Title>
-                        <Text c="dimmed">{t('hunter_subtitle')}</Text>
+                        <Title fw={900} size={32} c="wasabi.7">{t('hunter_title')}</Title>
+                        <Text c="dimmed" size="lg">{t('hunter_subtitle')}</Text>
                     </div>
-                    <Button leftSection={<IconArrowLeft size={16} />} variant="subtle" onClick={() => router.push('/admin')}>{t('nav_back_to_admin')}</Button>
+                    <Badge color="blue" variant="light" size="lg" p="md">
+                        <Group gap={5}>
+                            <IconRobot size={16} />
+                            <Text fw={700}>Hunter AI Agent Active</Text>
+                        </Group>
+                    </Badge>
                 </Group>
 
-                <Tabs value={activeTab} onChange={setActiveTab} color="green" variant="pills">
+                <HunterStats 
+                    total={savedPartners.length} 
+                    verified={savedPartners.filter(p => (p.aiSummary?.score || 0) >= 7).length}
+                    pending={savedPartners.filter(p => p.status === 'New').length}
+                    scanned={savedPartners.filter(p => p.status === 'AI Analyzed').length}
+                />
+
+                <Tabs value={activeTab} onChange={setActiveTab} color="wasabi" variant="pills">
                     <Tabs.List justify="center" mb="xl">
-                        <Tabs.Tab value="search" leftSection={<IconSearch size={16} />}>Search Discovery</Tabs.Tab>
-                        <Tabs.Tab value="pipeline" leftSection={<IconCheck size={16} />}>My Pipeline ({savedPartners.length})</Tabs.Tab>
+                        <Tabs.Tab value="search" leftSection={<IconSearch size={16} />}>신규 발굴 (Search Discovery)</Tabs.Tab>
+                        <Tabs.Tab value="pipeline" leftSection={<IconCheck size={16} />}>내 파이프라인 ({savedPartners.length})</Tabs.Tab>
+                        <Tabs.Tab value="analytics" leftSection={<IconChartBar size={16} />}>대시보드 분석 (Analytics)</Tabs.Tab>
                     </Tabs.List>
 
+                    <Tabs.Panel value="analytics">
+                        <HunterAnalytics savedPartners={savedPartners} />
+                    </Tabs.Panel>
                     <Tabs.Panel value="search">
-                        <Stack gap="md">
-                            <Card withBorder shadow="sm" p="xl" radius="md">
-                                <Stack gap="md">
-                                    <Text fw={700}>Quick Target Presets</Text>
-                                    <Group gap="xs">
-                                        {TARGET_PRESETS.map((preset, idx) => (
-                                            <Button
-                                                key={idx}
-                                                variant="light"
-                                                color="green"
-                                                size="xs"
-                                                onClick={() => handlePresetClick(preset)}
-                                                leftSection={preset.icon}
-                                            >
-                                                {preset.label}
-                                            </Button>
-                                        ))}
-                                    </Group>
-                                    <Divider my="sm" />
-                                    <Group align="flex-end">
-                                        <Select
-                                            label="Country"
-                                            data={COUNTRIES}
-                                            value={country}
-                                            onChange={setCountry}
-                                            style={{ width: 160 }}
-                                        />
-                                        <TextInput
-                                            label="Search Keyword"
-                                            placeholder="e.g. Wasabi Distributor"
-                                            style={{ flex: 1 }}
-                                            value={keyword}
-                                            onChange={(e) => setKeyword(e.currentTarget.value)}
-                                        />
-                                        <Button
-                                            leftSection={<IconSearch size={16} />}
-                                            color="green"
-                                            loading={loading}
-                                            onClick={() => performSearch(keyword, country)}
-                                        >
-                                            Search
-                                        </Button>
-                                    </Group>
-                                    <Checkbox
-                                        label="Auto-Scan Details (Visit sites to find Contact & Email)"
-                                        checked={autoScan}
-                                        onChange={(e) => setAutoScan(e.currentTarget.checked)}
-                                        size="xs"
-                                        c="dimmed"
-                                    />
-                                </Stack>
-                            </Card>
+                        <Stack gap="xl">
+                            <HunterControls 
+                                TARGET_PRESETS={TARGET_PRESETS}
+                                COUNTRIES={COUNTRIES}
+                                country={country}
+                                setCountry={setCountry}
+                                keyword={keyword}
+                                setKeyword={setKeyword}
+                                loading={loading}
+                                onSearch={handleSearch}
+                                onPresetClick={(preset) => {
+                                    const code = country || 'Global';
+                                    const kw = preset.keywords[code] || preset.keywords['Global'] || preset.label;
+                                    setKeyword(kw);
+                                    handleSearch(kw, country);
+                                }}
+                                autoScan={autoScan}
+                                setAutoScan={setAutoScan}
+                            />
 
                             {results.length > 0 && (
-                                <Stack gap="xs">
-                                    <Group justify="space-between" align="center">
-                                        <Text size="sm" c="dimmed">Found {results.length} new potential partners. {duplicateCount > 0 && `(${duplicateCount} hidden)`}</Text>
-                                        <Button
-                                            variant="light"
-                                            color="blue"
-                                            size="xs"
-                                            leftSection={<IconScan size={14} />}
-                                            onClick={handleScanAllVisible}
-                                        >
-                                            Scan Top 5 Candidates
-                                        </Button>
-                                        <Button
-                                            variant="light"
-                                            color="green"
-                                            size="xs"
-                                            leftSection={<IconPlus size={14} />}
-                                            onClick={handleSaveAllVisible}
-                                        >
-                                            Save All Visible
-                                        </Button>
-                                    </Group>
-                                    <Table verticalSpacing="sm" withTableBorder highlightOnHover>
-                                        <Table.Thead>
-                                            <Table.Th>Category</Table.Th>
-                                            <Table.Th>Organization</Table.Th>
-                                            <Table.Th>Analysis / Contact</Table.Th>
-                                            <Table.Th w={150}>Actions</Table.Th>
-                                        </Table.Thead>
-                                        <Table.Tbody>
-                                            {results.map((element) => (
-                                                <Table.Tr key={element.id}>
-                                                    <Table.Td>
-                                                        <Badge variant="dot" size="sm" color="gray">{element.type || 'Other'}</Badge>
-                                                    </Table.Td>
-                                                    <Table.Td>
-                                                        <Stack gap={0}>
-                                                            <Group gap={8}>
-                                                                <Text
-                                                                    fw={700}
-                                                                    style={{ cursor: 'pointer' }}
-                                                                    c="blue.7"
-                                                                    onClick={() => handlePreview(element)}
-                                                                >
-                                                                    {element.name}
-                                                                </Text>
-                                                                {element.aiSummary && <IconCircleCheck size={16} color="green" />}
-                                                            </Group>
-                                                            <Text size="xs" c="dimmed" lineClamp={1}>{element.url}</Text>
-                                                        </Stack>
-                                                    </Table.Td>
-                                                    <Table.Td>
-                                                        {element.aiSummary ? (
-                                                            <Stack gap={4}>
-                                                                <Group gap={4}>
-                                                                    <Badge
-                                                                        color={element.aiSummary.score >= 8 ? 'blue' : element.aiSummary.score >= 5 ? 'green' : 'orange'}
-                                                                        size="xs"
-                                                                    >
-                                                                        Score: {element.aiSummary.score}
-                                                                    </Badge>
-                                                                    <Text size="xs" fw={700} c="green.8">{element.aiSummary.angle}</Text>
-                                                                </Group>
-                                                                <Text size="xs" fs="italic" lineClamp={1}>"{element.aiSummary.analysis}"</Text>
-                                                            </Stack>
-                                                        ) : (
-                                                            <Text size="xs" c="dimmed">Not scanned yet</Text>
-                                                        )}
-                                                    </Table.Td>
-                                                    <Table.Td>
-                                                        <Group gap={4}>
-                                                            <Tooltip label="Save to Pipeline">
-                                                                <ActionIcon variant="light" color="green" onClick={() => handleSaveToList(element)}><IconPlus size={16} /></ActionIcon>
-                                                            </Tooltip>
-                                                            <Tooltip label="Scan Site">
-                                                                <ActionIcon variant="light" color="blue" onClick={() => handleScan(element)}><IconScan size={16} /></ActionIcon>
-                                                            </Tooltip>
-                                                            <ActionIcon variant="subtle" color="red" onClick={() => handleDismiss(element.id)}><IconTrash size={16} /></ActionIcon>
-                                                        </Group>
-                                                    </Table.Td>
-                                                </Table.Tr>
-                                            ))}
-                                        </Table.Tbody>
-                                    </Table>
-                                    <Button variant="subtle" fullWidth onClick={handleLoadMore} loading={loading}>Load More</Button>
-                                </Stack>
+                                <HunterSearchResultTable 
+                                    results={results}
+                                    duplicateCount={duplicateCount}
+                                    loading={loading}
+                                    onPreview={handlePreview}
+                                    onSaveToList={handleSaveToList}
+                                    onScan={handleScan}
+                                    onDismiss={handleDismiss}
+                                    onLoadMore={handleLoadMore}
+                                    onScanAllVisible={handleScanAllVisible}
+                                    onSaveAllVisible={handleSaveAllVisible}
+                                    getUrgencyColor={getUrgencyColor}
+                                />
                             )}
                         </Stack>
                     </Tabs.Panel>
 
                     <Tabs.Panel value="pipeline">
                         <Stack gap="md">
-                            <Group justify="space-between" align="flex-end">
-                                <Stack gap={5}>
-                                    <Title order={4}>Pipeline Management</Title>
-                                    <SegmentedControl
-                                        size="xs"
-                                        value={pipelineCountryFilter}
-                                        onChange={(val) => {
-                                            setPipelineCountryFilter(val);
-                                            setPipelinePage(1);
-                                        }}
-                                        data={[
-                                            { label: 'All Regions', value: 'All' },
-                                            { label: '🇰🇷 KR', value: 'South Korea' },
-                                            { label: '🇯🇵 JP', value: 'Japan' },
-                                            { label: '🇺🇸 US', value: 'United States' },
-                                            { label: '🌐 Other', value: 'Other' }
-                                        ]}
-                                    />
-                                    <SegmentedControl
-                                        size="xs"
-                                        value={pipelineCategoryFilter}
-                                        onChange={(val) => {
-                                            setPipelineCategoryFilter(val);
-                                            setPipelinePage(1);
-                                        }}
-                                        data={[
-                                            { label: 'All Categories', value: 'All' },
-                                            ...PARTNER_TYPES.map(t => ({ label: t, value: t }))
-                                        ]}
-                                    />
-                                    <Select
-                                        size="xs"
-                                        placeholder="Specialty (Item)"
-                                        value={pipelineSpecialtyFilter}
-                                        onChange={(val) => {
-                                            setPipelineSpecialtyFilter(val || 'All');
-                                            setPipelinePage(1);
-                                        }}
-                                        data={[
-                                            { label: 'All Specialties', value: 'All' },
-                                            ...SPECIALTIES.map(s => ({ label: s, value: s }))
-                                        ]}
-                                        style={{ width: 180 }}
-                                    />
-                                </Stack>
-                                <Group gap="xs">
-                                    <Button
-                                        leftSection={<IconDownload size={16} />}
-                                        variant="outline"
-                                        color="blue"
-                                        onClick={handleImportClick}
-                                    >
-                                        Import Excel/CSV
-                                    </Button>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        style={{ display: 'none' }}
-                                        accept=".csv"
-                                        onChange={handleFileChange}
-                                    />
-                                    <Button
-                                        leftSection={<IconPlus size={16} />}
-                                        variant="outline"
-                                        color="green"
+                            <PipelineFilters 
+                                pipelineCountryFilter={pipelineCountryFilter}
+                                setPipelineCountryFilter={(val) => {
+                                    setPipelineCountryFilter(val);
+                                    setPipelinePage(1);
+                                }}
+                                pipelineCategoryFilter={pipelineCategoryFilter}
+                                setPipelineCategoryFilter={(val) => {
+                                    setPipelineCategoryFilter(val);
+                                    setPipelinePage(1);
+                                }}
+                                pipelineSpecialtyFilter={pipelineSpecialtyFilter}
+                                setPipelineSpecialtyFilter={(val) => {
+                                    setPipelineSpecialtyFilter(val);
+                                    setPipelinePage(1);
+                                }}
+                                PARTNER_TYPES={PARTNER_TYPES}
+                                SPECIALTIES={SPECIALTIES}
+                                onImportClick={handleImportClick}
+                                onAddManual={() => setManualOpened(true)}
+                                onFixCountries={handleAutoRefreshCountries}
+                                bulkCategorizing={bulkCategorizing}
+                                onStopScan={handleStopScan}
+                                onBulkCategorize={handleBulkCategorize}
+                                selectedCount={selectedIds.length}
+                                totalFilteredCount={filteredPartners.length}
+                                onClearSelection={() => setSelectedIds([])}
+                                onSelectAll={toggleSelectAll}
+                                onSelectPage={toggleSelectPage}
+                                onBulkSend={handleBulkSend}
+                                bulkSending={bulkSending}
+                                onBulkMove={handleBulkFastMove}
+                                onBulkSpecialty={async (spec) => {
+                                    if (selectedIds.length === 0) return;
+                                    const res = await updateHunterInfoBulk(selectedIds, { category: spec });
+                                    if (res.success) {
+                                        notifications.show({ title: '종목 지정 완료', message: `${res.updated}개의 업체를 [${spec}]으로 지정했습니다.`, color: 'teal' });
+                                        setSelectedIds([]);
+                                        loadSavedPartners();
+                                    }
+                                }}
+                            />
 
-                                        onClick={() => setManualOpened(true)}
-                                    >
-                                        Add Manual
-                                    </Button>
-                                    <Button
-                                        leftSection={<IconRefresh size={16} />}
-                                        variant="outline"
-                                        color="orange"
-                                        size="sm"
-                                        onClick={handleAutoRefreshCountries}
-                                    >
-                                        Fix Countries
-                                    </Button>
-                                    {bulkCategorizing ? (
-                                        <Button
-                                            leftSection={<IconX size={16} />}
-                                            variant="filled"
-                                            color="red"
-                                            onClick={handleStopScan}
-                                        >
-                                            Stop Scan
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            leftSection={<IconScan size={16} />}
-                                            variant="light"
-                                            color="grape"
-                                            loading={bulkCategorizing}
-                                            disabled={selectedIds.length === 0}
-                                            onClick={handleBulkCategorize}
-                                        >
-                                            Bulk AI Categorize ({selectedIds.length})
-                                        </Button>
-                                    )}
-                                    <Group gap="sm">
-                                        <Stack gap={0}>
-                                            <Text size="xs" fw={700} c="blue.8">
-                                                Selected: {selectedIds.length} / {filteredPartners.length}
-                                            </Text>
-                                            {selectedIds.length > 0 && (
-                                                <Button
-                                                    variant="subtle"
-                                                    size="compact-xs"
-                                                    color="red"
-                                                    p={0}
-                                                    onClick={() => setSelectedIds([])}
-                                                    leftSection={<IconX size={12} />}
-                                                >
-                                                    Clear All
-                                                </Button>
-                                            )}
-                                        </Stack>
-
-                                        <Menu shadow="md" width={200}>
-                                            <Menu.Target>
-                                                <Button variant="outline" size="sm" color="gray">
-                                                    Select Options
-                                                </Button>
-                                            </Menu.Target>
-                                            <Menu.Dropdown>
-                                                <Menu.Item onClick={toggleSelectAll}>Toggle All ({filteredPartners.length})</Menu.Item>
-                                                <Menu.Item onClick={toggleSelectPage}>Toggle Current Page ({paginatedPartners.length})</Menu.Item>
-                                            </Menu.Dropdown>
-                                        </Menu>
-
-                                        <Button
-                                            leftSection={<IconRocket size={16} />}
-                                            color="blue"
-                                            disabled={selectedIds.length === 0}
-                                            loading={bulkSending}
-                                            onClick={handleBulkSend}
-                                        >
-                                            Mass Send AI Proposals ({selectedIds.length})
-                                        </Button>
-
-                                        <Menu shadow="md" width={200}>
-                                            <Menu.Target>
-                                                <Button
-                                                    variant="subtle"
-                                                    color="gray"
-                                                    disabled={selectedIds.length === 0}
-                                                    leftSection={<IconCheck size={16} />}
-                                                >
-                                                    Change Category ({selectedIds.length})
-                                                </Button>
-                                            </Menu.Target>
-                                            <Menu.Dropdown>
-                                                <Menu.Label>대분류 이동:</Menu.Label>
-                                                {PARTNER_TYPES.map(type => (
-                                                    <Menu.Item
-                                                        key={type}
-                                                        onClick={() => handleBulkFastMove(type)}
-                                                    >
-                                                        {type}
-                                                    </Menu.Item>
-                                                ))}
-                                                <Divider />
-                                                <Menu.Label>세부 종목(Specialty) 지정:</Menu.Label>
-                                                <div style={{ maxHeight: 250, overflowY: 'auto' }}>
-                                                    {SPECIALTIES.map(spec => (
-                                                        <Menu.Item
-                                                            key={spec}
-                                                            onClick={async () => {
-                                                                if (selectedIds.length === 0) return;
-                                                                const res = await updateHunterInfoBulk(selectedIds, { category: spec });
-                                                                if (res.success) {
-                                                                    notifications.show({ title: '종목 지정 완료', message: `${res.updated}개의 업체를 [${spec}]으로 지정했습니다.`, color: 'teal' });
-                                                                    setSelectedIds([]);
-                                                                    loadSavedPartners();
-                                                                }
-                                                            }}
-                                                        >
-                                                            {spec}
-                                                        </Menu.Item>
-                                                    ))}
-                                                </div>
-                                            </Menu.Dropdown>
-                                        </Menu>
-                                    </Group>
-                                </Group>
-                            </Group>
-
-                            <Table striped highlightOnHover withTableBorder>
-                                <Table.Thead>
-                                    <Table.Tr>
-                                        <Table.Th><Checkbox size="xs" onChange={toggleSelectAll} /></Table.Th>
-                                        <Table.Th>Category</Table.Th>
-                                        <Table.Th>Organization</Table.Th>
-                                        <Table.Th>Status</Table.Th>
-                                        <Table.Th>Region</Table.Th>
-                                        <Table.Th>Contact</Table.Th>
-                                        <Table.Th>Actions</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>
-                                    {paginatedPartners.map((element) => (
-                                        <Table.Tr key={element.id}>
-                                            <Table.Td>
-                                                <Checkbox checked={selectedIds.includes(element.id)} onChange={() => toggleSelect(element.id)} size="xs" />
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Stack gap={4}>
-                                                    <Badge variant="dot" size="sm" color="gray">{element.type || 'Other'}</Badge>
-                                                    {element.category && <Badge variant="light" size="xs" color="teal">{element.category}</Badge>}
-                                                </Stack>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Stack gap={0}>
-                                                    <Group gap={4}>
-                                                        <Text
-                                                            fw={700}
-                                                            size="sm"
-                                                            style={{ cursor: 'pointer' }}
-                                                            c="blue.7"
-                                                            onClick={() => handlePreview(element)}
-                                                        >
-                                                            {element.name}
-                                                        </Text>
-                                                        {element.aiSummary && (
-                                                            <Badge size="xs" color={element.aiSummary.score >= 8 ? 'blue' : element.aiSummary.score >= 5 ? 'green' : 'orange'}>
-                                                                {element.aiSummary.score}/10
-                                                            </Badge>
-                                                        )}
-                                                    </Group>
-                                                    {element.aiSummary && <Text size="xs" c="grape" fw={600}>{element.aiSummary.angle}</Text>}
-                                                </Stack>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Menu shadow="md" width={150}>
-                                                    <Menu.Target>
-                                                        <Badge color={APP_STATUS[element.status || 'New']} variant="light" style={{ cursor: 'pointer' }}>
-                                                            {element.status || 'New'}
-                                                        </Badge>
-                                                    </Menu.Target>
-                                                    <Menu.Dropdown>
-                                                        {Object.keys(APP_STATUS).map(s => (
-                                                            <Menu.Item key={s} onClick={() => handleChangeStatus(element.id, s)}>{s}</Menu.Item>
-                                                        ))}
-                                                    </Menu.Dropdown>
-                                                </Menu>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Menu shadow="md" width={150}>
-                                                    <Menu.Target>
-                                                        <Tooltip label={element.country || 'Global'}>
-                                                            <Badge variant="outline" color="gray" style={{ cursor: 'pointer' }}>
-                                                                {(() => {
-                                                                    const name = (element.country || 'Global').toLowerCase();
-                                                                    if (name.includes('korea') || name === 'kr') return 'KR';
-                                                                    if (name.includes('japan') || name === 'jp') return 'JP';
-                                                                    if (name.includes('united states') || name.includes('usa') || name === 'us') return 'US';
-                                                                    if (name.includes('china') || name === 'cn') return 'CN';
-                                                                    if (name.includes('vietnam') || name === 'vn') return 'VN';
-                                                                    if (name.includes('thai') || name === 'th') return 'TH';
-                                                                    if (name === 'global') return 'GL';
-                                                                    return name.substring(0, 2).toUpperCase();
-                                                                })()}
-                                                            </Badge>
-                                                        </Tooltip>
-                                                    </Menu.Target>
-                                                    <Menu.Dropdown>
-                                                        {['Japan', 'South Korea', 'United States', 'China', 'Global'].map(c => (
-                                                            <Menu.Item key={c} onClick={() => handleChangeCountry(element.id, c)}>{c}</Menu.Item>
-                                                        ))}
-                                                    </Menu.Dropdown>
-                                                </Menu>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Stack gap={0}>
-                                                    {element.email && <Text size="xs" fw={700} c="blue">{element.email}</Text>}
-                                                    <Text size="xs" c="dimmed">{element.phone || element.contact || '-'}</Text>
-                                                </Stack>
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <Group gap={4}>
-                                                    <Tooltip label="Edit Info">
-                                                        <ActionIcon size="sm" variant="light" color="blue" onClick={() => handleEdit(element)}><IconEdit size={14} /></ActionIcon>
-                                                    </Tooltip>
-                                                    <Button size="compact-xs" variant="light" color="green" onClick={() => handlePreview(element)}>Proposal</Button>
-                                                    <Tooltip label="Scan Website">
-                                                        <ActionIcon size="sm" variant="light" color="grape" onClick={() => handleScan(element)}><IconScan size={14} /></ActionIcon>
-                                                    </Tooltip>
-                                                    <Tooltip label="Visit Website">
-                                                        <ActionIcon size="sm" variant="default" component="a" href={element.url} target="_blank"><IconWorld size={14} /></ActionIcon>
-                                                    </Tooltip>
-                                                    <Tooltip label="Delete">
-                                                        <ActionIcon size="sm" variant="subtle" color="red" onClick={() => handleDelete(element.id)}><IconTrash size={14} /></ActionIcon>
-                                                    </Tooltip>
-                                                </Group>
-                                            </Table.Td>
-                                        </Table.Tr>
-                                    ))}
-                                </Table.Tbody>
-                            </Table>
-
-                            {filteredPartners.length > PIPELINE_PAGE_SIZE && (
-                                <Group justify="center" mt="md">
-                                    <Pagination
-                                        total={Math.ceil(filteredPartners.length / PIPELINE_PAGE_SIZE)}
-                                        value={pipelinePage}
-                                        onChange={setPipelinePage}
-                                        size="sm"
-                                    />
-                                </Group>
-                            )}
+                            <HunterPipelineTable 
+                                partners={paginatedPartners}
+                                selectedIds={selectedIds}
+                                onToggleSelect={toggleSelect}
+                                onToggleSelectAll={toggleSelectAll}
+                                onPreview={handlePreview}
+                                onChangeStatus={handleChangeStatus}
+                                onChangeCountry={handleChangeCountry}
+                                onEdit={handleEdit}
+                                onScan={handleScan}
+                                onDelete={handleDelete}
+                                APP_STATUS={APP_STATUS}
+                                currentPage={pipelinePage}
+                                totalPages={Math.ceil(filteredPartners.length / PIPELINE_PAGE_SIZE)}
+                                onPageChange={setPipelinePage}
+                            />
                         </Stack>
                     </Tabs.Panel>
                 </Tabs>
             </Stack>
 
-            <Modal opened={opened} onClose={() => setOpened(false)} title="Partner Intelligence & Strategy" size="lg">
-                {selectedPartner && (
-                    <Stack gap="md">
-                        <Card withBorder radius="md" p="md">
-                            <Group justify="space-between" mb="xs">
-                                <Title order={4}>{selectedPartner.name}</Title>
-                                <Badge color={APP_STATUS[selectedPartner.status || 'New']}>{selectedPartner.status || 'New'}</Badge>
-                            </Group>
-                            <Group gap="xs">
-                                <Badge variant="outline" color="gray">{selectedPartner.country || 'Global'}</Badge>
-                                <Text size="sm" c="dimmed">{selectedPartner.url}</Text>
-                            </Group>
-                        </Card>
+            <PartnerIntelligenceModal 
+                opened={opened}
+                onClose={() => setOpened(false)}
+                selectedPartner={selectedPartner}
+                modalTab={modalTab}
+                setModalTab={setModalTab}
+                emailMode={emailMode}
+                setEmailMode={setEmailMode}
+                draftEmail={draftEmail}
+                researching={researching}
+                loading={loading}
+                onDeepResearch={handleDeepResearch}
+                onDraftEmail={handleDraftEmail}
+                onCopyIntelligence={handleCopyIntelligence}
+                onConfirmDraft={(id) => { handleChangeStatus(id, 'Drafted'); setOpened(false); }}
+                getUrgencyColor={getUrgencyColor}
+                APP_STATUS={APP_STATUS}
+            />
 
-                        <Tabs value={modalTab} onChange={setModalTab} color="blue" variant="outline">
-                            <Tabs.List mb="md">
-                                <Tabs.Tab value="strategy" leftSection={<IconRobot size={14} />}>Strategy & Draft</Tabs.Tab>
-                                <Tabs.Tab value="intelligence" color="blue" leftSection={<IconSearch size={14} />}>
-                                    Deep Intelligence {selectedPartner.intelligenceReport && <Badge size="xs" ml={5} variant="filled">New</Badge>}
-                                </Tabs.Tab>
-                            </Tabs.List>
-
-                            <Tabs.Panel value="strategy">
-                                <Stack gap="md">
-                                    {selectedPartner.aiSummary && (
-                                        <Card withBorder bg="blue.0" p="md">
-                                            <Group justify="space-between" mb="xs">
-                                                <Text fw={700} size="sm">AI Analysis Result</Text>
-                                                <Badge size="lg" color={selectedPartner.aiSummary.score >= 8 ? 'blue' : selectedPartner.aiSummary.score >= 5 ? 'green' : 'orange'}>
-                                                    Score: {selectedPartner.aiSummary.score}/10
-                                                </Badge>
-                                            </Group>
-                                            <Text fw={700} size="sm" mb={4}>Best Sales Angle:</Text>
-                                            <Text size="md" c="blue.9" fw={800}>{selectedPartner.aiSummary.angle}</Text>
-                                            <Divider my="sm" />
-                                            <Text fw={700} size="sm" mb={4}>Fitness Analysis:</Text>
-                                            <Text size="sm" fs="italic">"{selectedPartner.aiSummary.analysis}"</Text>
-                                        </Card>
-                                    )}
-
-                                    {(selectedPartner.address || selectedPartner.sns) && (
-                                        <Card withBorder p="sm" radius="md">
-                                            <Stack gap="xs">
-                                                <Text fw={700} size="xs" c="dimmed">BUSINESS DETAILS</Text>
-                                                {selectedPartner.address && (
-                                                    <Group gap="xs">
-                                                        <Badge variant="dot" color="gray">Address</Badge>
-                                                        <Text size="sm">{selectedPartner.address}</Text>
-                                                    </Group>
-                                                )}
-                                                {selectedPartner.sns && (
-                                                    <Group gap="sm">
-                                                        {selectedPartner.sns.instagram && (
-                                                            <ActionIcon variant="subtle" color="pink" component="a" href={selectedPartner.sns.instagram} target="_blank">
-                                                                <IconWorld size={18} />
-                                                            </ActionIcon>
-                                                        )}
-                                                        {selectedPartner.sns.facebook && (
-                                                            <ActionIcon variant="subtle" color="blue" component="a" href={selectedPartner.sns.facebook} target="_blank">
-                                                                <IconWorld size={18} />
-                                                            </ActionIcon>
-                                                        )}
-                                                        {selectedPartner.sns.youtube && (
-                                                            <ActionIcon variant="subtle" color="red" component="a" href={selectedPartner.sns.youtube} target="_blank">
-                                                                <IconWorld size={18} />
-                                                            </ActionIcon>
-                                                        )}
-                                                    </Group>
-                                                )}
-                                            </Stack>
-                                        </Card>
-                                    )}
-
-                                    {selectedPartner.catalogs && selectedPartner.catalogs.length > 0 && (
-                                        <Card withBorder p="sm" radius="md">
-                                            <Stack gap="xs">
-                                                <Text fw={700} size="xs" c="dimmed">CATALOGS & BROCHURES</Text>
-                                                <SimpleGrid cols={2} spacing="xs">
-                                                    {selectedPartner.catalogs.map((url, idx) => (
-                                                        <Button
-                                                            key={idx}
-                                                            variant="light"
-                                                            color="gray"
-                                                            size="xs"
-                                                            component="a"
-                                                            href={url}
-                                                            target="_blank"
-                                                            leftSection={url.endsWith('.pdf') ? <IconPdf size={14} /> : <IconFileDescription size={14} />}
-                                                        >
-                                                            Catalog #{idx + 1}
-                                                        </Button>
-                                                    ))}
-                                                </SimpleGrid>
-                                            </Stack>
-                                        </Card>
-                                    )}
-
-                                    {emailMode && draftEmail ? (
-                                        <Stack gap="sm">
-                                            <Divider my="xs" label="AI Generated Proposal Draft" labelPosition="center" />
-                                            <Card withBorder p="md" bg="green.0">
-                                                <Stack gap="xs">
-                                                    <Group justify="space-between">
-                                                        <Text fw={700} size="sm">Subject: {draftEmail.subject}</Text>
-                                                        <ActionIcon variant="subtle" color="green" onClick={() => {
-                                                            navigator.clipboard.writeText(`Subject: ${draftEmail.subject}\n\n${draftEmail.body}`);
-                                                            notifications.show({ title: 'Copied!', message: 'Email draft copied to clipboard.', color: 'green' });
-                                                        }}>
-                                                            <IconCopy size={16} />
-                                                        </ActionIcon>
-                                                    </Group>
-                                                    <Divider />
-                                                    <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{draftEmail.body}</Text>
-                                                </Stack>
-                                            </Card>
-                                            <Button leftSection={<IconCheck size={16} />} color="green" onClick={() => { handleChangeStatus(selectedPartner.id, 'Drafted'); setOpened(false); }}>
-                                                Confirm & Mark as Drafted
-                                            </Button>
-                                            <Button variant="subtle" color="gray" onClick={() => setEmailMode(false)}>Back</Button>
-                                        </Stack>
-                                    ) : (
-                                        <Group grow mt="sm">
-                                            <Button
-                                                leftSection={<IconSearch size={16} />}
-                                                variant="light"
-                                                color="blue"
-                                                loading={researching === selectedPartner.id}
-                                                onClick={() => handleDeepResearch(selectedPartner.id)}
-                                            >
-                                                Run Deep Research
-                                            </Button>
-                                            <Button
-                                                leftSection={<IconMail size={16} />}
-                                                color="green"
-                                                loading={loading}
-                                                onClick={handleDraftEmail}
-                                            >
-                                                Generate Email
-                                            </Button>
-                                        </Group>
-                                    )}
-                                </Stack>
-                            </Tabs.Panel>
-
-                            <Tabs.Panel value="intelligence">
-                                {selectedPartner.intelligenceReport ? (
-                                    <Stack gap="sm" mt="sm">
-                                        <Group justify="flex-end">
-                                            <Button
-                                                size="compact-xs"
-                                                variant="light"
-                                                leftSection={<IconCopy size={14} />}
-                                                onClick={handleCopyIntelligence}
-                                            >
-                                                리포트 전체 복사 (카톡용)
-                                            </Button>
-                                        </Group>
-                                        <Card withBorder p="md" bg="blue.0" radius="md">
-                                            <div className="prose prose-sm max-w-none" style={{ fontSize: '14px', lineHeight: '1.7' }}>
-                                                <ReactMarkdown>{selectedPartner.intelligenceReport}</ReactMarkdown>
-                                            </div>
-                                        </Card>
-                                    </Stack>
-                                ) : (
-                                    <Card withBorder p="xl" bg="gray.0" radius="md" mt="sm">
-                                        <Center style={{ flexDirection: 'column', height: 200 }}>
-                                            <IconSearch size={40} color="gray" style={{ opacity: 0.5 }} />
-                                            <Text c="dimmed" mt="sm" fw={700}>Deep Research Not Performed</Text>
-                                            <Text c="dimmed" size="xs">Go to "Strategy & Draft" tab and click "Run Deep Research".</Text>
-                                        </Center>
-                                    </Card>
-                                )}
-                            </Tabs.Panel>
-                        </Tabs>
-                    </Stack>
-                )}
-            </Modal>
-
-            <Modal opened={editOpened} onClose={() => setEditOpened(false)} title="Edit Partner Info">
-                <Stack>
-                    <TextInput label="Name" value={editForm.name || ''} onChange={(e) => setEditForm({ ...editForm, name: e.currentTarget.value })} />
-                    <Select
-                        label="Category (Main)"
-                        data={PARTNER_TYPES}
-                        value={editForm.type}
-                        onChange={(val) => setEditForm({ ...editForm, type: val || 'Other' })}
-                    />
-                    <Select
-                        label="Specialty (Sub-category)"
-                        data={SPECIALTIES}
-                        value={editForm.category}
-                        onChange={(val) => setEditForm({ ...editForm, category: val || '기타' })}
-                    />
-                    <TextInput label="Email" value={editForm.email || ''} onChange={(e) => setEditForm({ ...editForm, email: e.currentTarget.value })} />
-                    <TextInput label="Phone" value={editForm.phone || ''} onChange={(e) => setEditForm({ ...editForm, phone: e.currentTarget.value })} />
-
-                    <Divider label="Catalogs" labelPosition="center" />
-                    <Stack gap="xs">
-                        {editForm.catalogs?.map((url, idx) => (
-                            <Group key={idx} justify="space-between">
-                                <Text size="xs" truncate style={{ flex: 1 }}>{url.split('/').pop()}</Text>
-                                <ActionIcon color="red" variant="subtle" size="sm" onClick={() => {
-                                    const next = editForm.catalogs?.filter((_, i) => i !== idx);
-                                    setEditForm({ ...editForm, catalogs: next });
-                                }}><IconTrash size={14} /></ActionIcon>
-                            </Group>
-                        ))}
-                        <FileButton onChange={(file) => handleUploadCatalog(file, true)} accept="application/pdf,image/*">
-                            {(props) => <Button {...props} variant="light" size="sm" leftSection={<IconPlus size={16} />}>Add Catalog File</Button>}
-                        </FileButton>
-                    </Stack>
-
-                    <Button onClick={handleSaveEdit} color="green">Save Changes</Button>
+            {/* Edit Partner Modal */}
+            <Modal opened={editOpened} onClose={() => setEditOpened(false)} title="상세 정보 수정 (Edit Partner Info)" size="lg" radius="md">
+                <Stack gap="md">
+                    <SimpleGrid cols={2}>
+                        <TextInput label="Partner Name" placeholder="회사명" value={editForm.name || ''} onChange={(e) => setEditForm({...editForm, name: e.target.value})} />
+                        <TextInput label="Website URL" placeholder="https://..." value={editForm.url || ''} onChange={(e) => setEditForm({...editForm, url: e.target.value})} />
+                    </SimpleGrid>
+                    <SimpleGrid cols={2}>
+                        <Select label="Country" data={COUNTRIES.filter(c => c.value !== '').map(c => ({ label: c.label, value: c.label.split(' ')[0] }))} value={editForm.country || 'South Korea'} onChange={(v) => setEditForm({...editForm, country: v || 'South Korea'})} />
+                        <Select label="Partner Type" data={PARTNER_TYPES} value={editForm.type || 'Other'} onChange={(v) => setEditForm({...editForm, type: v || 'Other'})} />
+                    </SimpleGrid>
+                    <SimpleGrid cols={2}>
+                        <TextInput label="Contact Person" placeholder="성함/직함" value={editForm.contact || ''} onChange={(e) => setEditForm({...editForm, contact: e.target.value})} />
+                        <TextInput label="Email Address" placeholder="hello@company.com" value={editForm.email || ''} onChange={(e) => setEditForm({...editForm, email: e.target.value})} />
+                    </SimpleGrid>
+                    <TextInput label="Phone Number" placeholder="+1-234-567-890" value={editForm.phone || ''} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} />
+                    <Group justify="flex-end">
+                        <Button color="gray" variant="light" onClick={() => setEditOpened(false)}>Cancel</Button>
+                        <Button color="wasabi" onClick={handleSaveEdit}>Save Changes</Button>
+                    </Group>
                 </Stack>
             </Modal>
 
-            <Modal opened={manualOpened} onClose={() => setManualOpened(false)} title="Add Manual Partner" size="md">
-                <Stack>
-                    <TextInput
-                        label="Organization Name"
-                        required
-                        placeholder="e.g. K-Farm Global"
-                        value={manualForm.name}
-                        onChange={(e) => setManualForm({ ...manualForm, name: e.target.value })}
-                    />
-                    <TextInput
-                        label="Website URL"
-                        placeholder="https://..."
-                        value={manualForm.url}
-                        onChange={(e) => setManualForm({ ...manualForm, url: e.target.value })}
-                    />
-                    <Select
-                        label="Country"
-                        data={['South Korea', 'Japan', 'United States', 'China', 'Global']}
-                        value={manualForm.country}
-                        onChange={(val) => setManualForm({ ...manualForm, country: val || 'Global' })}
-                    />
-                    <Select
-                        label="Category (Main)"
-                        data={PARTNER_TYPES}
-                        value={manualForm.type}
-                        onChange={(val) => setManualForm({ ...manualForm, type: val || 'Other' })}
-                    />
-                    <Select
-                        label="Specialty (Sub-category)"
-                        data={SPECIALTIES}
-                        value={manualForm.category}
-                        onChange={(val) => setManualForm({ ...manualForm, category: val || '기타' })}
-                    />
-                    <TextInput
-                        label="Email"
-                        placeholder="contact@company.com"
-                        value={manualForm.email}
-                        onChange={(e) => setManualForm({ ...manualForm, email: e.target.value })}
-                    />
-                    <TextInput
-                        label="Phone"
-                        placeholder="+82-..."
-                        value={manualForm.phone}
-                        onChange={(e) => setManualForm({ ...manualForm, phone: e.target.value })}
-                    />
-
-                    <Divider label="Catalogs" labelPosition="center" />
-                    <Stack gap="xs">
-                        {manualForm.catalogs?.map((url, idx) => (
-                            <Group key={idx} justify="space-between">
-                                <Text size="xs" truncate style={{ flex: 1 }}>{url.split('/').pop()}</Text>
-                                <ActionIcon color="red" variant="subtle" size="sm" onClick={() => {
-                                    const next = manualForm.catalogs?.filter((_, i) => i !== idx);
-                                    setManualForm({ ...manualForm, catalogs: next });
-                                }}><IconTrash size={14} /></ActionIcon>
-                            </Group>
-                        ))}
-                        <FileButton onChange={(file) => handleUploadCatalog(file, false)} accept="application/pdf,image/*">
-                            {(props) => <Button {...props} variant="light" size="sm" leftSection={<IconPlus size={16} />}>Upload Catalog</Button>}
-                        </FileButton>
-                    </Stack>
-
-                    <Button mt="md" fullWidth color="green" onClick={handleManualSave}>Add to Pipeline</Button>
+            {/* Manual Add Modal */}
+            <Modal opened={manualOpened} onClose={() => setManualOpened(false)} title="수동 업체 등록 (Manual Add Partner)" size="lg" radius="md">
+                <Stack gap="md">
+                    <SimpleGrid cols={2}>
+                        <TextInput label="Partner Name *" required placeholder="회사명" value={manualForm.name || ''} onChange={(e) => setManualForm({...manualForm, name: e.target.value})} />
+                        <TextInput label="Website URL" placeholder="https://..." value={manualForm.url || ''} onChange={(e) => setManualForm({...manualForm, url: e.target.value})} />
+                    </SimpleGrid>
+                    <SimpleGrid cols={2}>
+                        <Select label="Country" data={COUNTRIES.filter(c => c.value !== '').map(c => ({ label: c.label, value: c.label.split(' ')[0] }))} value={manualForm.country || 'South Korea'} onChange={(v) => setManualForm({...manualForm, country: v || 'South Korea'})} />
+                        <Select label="Initial Mode" data={PARTNER_TYPES} value={manualForm.type} onChange={(v) => setManualForm({...manualForm, type: v || 'Other'})} />
+                    </SimpleGrid>
+                    <Button color="wasabi" fullWidth mt="md" onClick={handleManualSave}>Register Partner</Button>
                 </Stack>
             </Modal>
-        </Container >
+        </Container>
     );
 }
+

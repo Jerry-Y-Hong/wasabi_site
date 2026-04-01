@@ -10,8 +10,36 @@ const nextConfig = {
       },
     ],
   },
-  serverActions: {
-    bodySizeLimit: '50mb',
+  // serverActions is now default or moved in newer Next.js versions
+
+  async redirects() {
+    return [
+      {
+        source: '/solutions/:path*',
+        destination: '/tech/solutions/:path*',
+        permanent: true,
+      },
+      {
+        source: '/smartfarm/:path*',
+        destination: '/tech/smartfarm/:path*',
+        permanent: true,
+      },
+      {
+        source: '/technology/:path*',
+        destination: '/tech/technology/:path*',
+        permanent: true,
+      },
+      {
+        source: '/cultivation/:path*',
+        destination: '/tech/cultivation/:path*',
+        permanent: true,
+      },
+      {
+        source: '/tech',
+        destination: '/tech/solutions',
+        permanent: false,
+      },
+    ];
   },
 };
 

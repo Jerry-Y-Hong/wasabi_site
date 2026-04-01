@@ -9,7 +9,7 @@ import mqtt from 'mqtt';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, AreaChart, Area } from 'recharts';
 
 // --- Configuration ---
-const BROKER_URL = 'ws://broker.emqx.io:8083/mqtt'; // Public WebSocket Broker
+const BROKER_URL = 'wss://broker.emqx.io:8084/mqtt'; // Public Secure WebSocket Broker
 const TOPIC_SENSOR = 'k-farm/wasabi/jerry/sensors_v2';
 
 interface SensorData {
@@ -71,17 +71,17 @@ export default function AnalyticsPage() {
     };
 
     useEffect(() => {
-        console.log("📡 Connecting to MQTT Broker for Analytics...");
+
         setStatus("CONNECTING");
 
         const client = mqtt.connect(BROKER_URL);
         clientRef.current = client;
 
         client.on('connect', () => {
-            console.log("✅ Analytics Connected!");
+
             setStatus("CONNECTED");
             client.subscribe(TOPIC_SENSOR, (err) => {
-                if (!err) console.log(`Probe attached to: ${TOPIC_SENSOR}`);
+                if (!err) { }
             });
         });
 
@@ -152,16 +152,11 @@ export default function AnalyticsPage() {
         return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     };
 
-
-
     return (
         <Container size="xl" py={40} bg="gray.0" style={{ minHeight: '100vh', borderRadius: '16px' }}>
             {/* Header */}
             <Group justify="space-between" align="flex-end" mb={40}>
                 <div>
-                    <Button variant="subtle" color="gray" leftSection={<IconArrowLeft size={16} />} onClick={() => router.push('/simulator')} mb="xs" style={{ paddingLeft: 0 }}>
-                        Back to Simulator
-                    </Button>
                     <Group gap="xs" mb={5}>
                         <Badge variant="gradient" gradient={{ from: 'violet', to: 'grape' }} size="lg">BETA LAB</Badge>
                         <Badge color={status === 'CONNECTED' ? 'green' : 'red'}>{status}</Badge>

@@ -49,7 +49,7 @@ export default function VideoProducerPage() {
         // Load Animator State (Safe Parsing)
         try {
             const saved = localStorage.getItem('wasabi-animator-state');
-            console.log('[Debug] Loading from LocalStorage:', saved);
+
             if (saved) {
                 const parsed = JSON.parse(saved);
                 setStartImg(parsed.startImg);
@@ -57,7 +57,7 @@ export default function VideoProducerPage() {
                 setDuration(parsed.duration || 5);
                 setIsLoop(parsed.isLoop !== undefined ? parsed.isLoop : true);
                 setAnimatorNarration(parsed.narration || '');
-                console.log('[Debug] State restored:', parsed);
+
             }
         } catch (e) {
             console.error('[Error] Failed to load animator state:', e);
