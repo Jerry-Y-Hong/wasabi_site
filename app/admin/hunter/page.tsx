@@ -179,7 +179,7 @@ export default function HunterAdmin() {
 
     const TARGET_PRESETS = useMemo(() => [
         {
-            label: t('target_global_bigfish'),
+            label: t('target_global_bigfish') || '글로벌 주요 바이어',
             icon: '🐋',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Importer) "Distribution Agreement" -amazon -ebay',
@@ -187,7 +187,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_us_west'),
+            label: t('target_us_west') || '미서부 유통/도매상',
             icon: '🏖️',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("California" OR "Washington" OR "Oregon") -amazon -ebay',
@@ -195,7 +195,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_us_east'),
+            label: t('target_us_east') || '미동부 유통/도매상',
             icon: '🗽',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("New York" OR "Florida" OR "Massachusetts") -amazon -ebay',
@@ -203,7 +203,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_us_central'),
+            label: t('target_us_central') || '미중부 유통/도매상',
             icon: '🤠',
             keywords: {
                 'US': '"Wasabi" (Wholesale OR Distributor) ("Texas" OR "Illinois" OR "Georgia") -amazon -ebay',
@@ -211,7 +211,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_jp_bigfish'),
+            label: t('target_jp_bigfish') || '일본 내수 주요 유통사',
             icon: '🎌',
             keywords: {
                 'JP': '("わさび" OR "生わさび") ("静岡" OR "富士") ("卸売" OR "仕入れ" OR "業者") "会社概要" -site:amazon.co.jp -site:rakuten.co.jp',
@@ -219,7 +219,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_jp_foodservice'),
+            label: t('target_jp_foodservice') || '일본 업소용 대량 수요처',
             icon: '🏢',
             keywords: {
                 'JP': '("業務用" OR "大口注文") ("生わさび" OR "本わさび") "仕入れ" "業者向け" -review -youtube',
@@ -227,7 +227,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_jp_tradelists'),
+            label: t('target_jp_tradelists') || '일본 박람회 카탈로그',
             icon: '📄',
             keywords: {
                 'JP': '(filetype:pdf OR filetype:xlsx) ("わさび" OR "生わさび") ("業者名簿" OR "取扱業者一覧") -recipe',
@@ -235,7 +235,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_jp_agritech'),
+            label: t('target_jp_agritech') || '일본 애그테크 협력사',
             icon: '🧪',
             keywords: {
                 'JP': '("植物工場" OR "噴霧耕") ("わさび" OR "ワサビ") "共同研究" OR "技術協力" "法人窓口" -blog',
@@ -243,7 +243,7 @@ export default function HunterAdmin() {
             }
         },
         {
-            label: t('target_us_agtech'),
+            label: t('target_us_agtech') || '미국 스마트팜 기자재 바이어',
             icon: '🚜',
             keywords: {
                 'US': '("Smart Farm" OR "Agri-tech") (Distributor OR Wholesaler) (Equipment OR Sensors OR Automation) -amazon -ebay',
